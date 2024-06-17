@@ -160,6 +160,14 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
       tableData.add(docData);
     }
 
+    print(orderLast!['ตารางราคา']);
+    print(orderLast!['ตารางราคา']);
+    print(orderLast!['ตารางราคา']);
+    print(orderLast!['ตารางราคา']);
+    print(orderLast!['ตารางราคา']);
+    print(orderLast!['ตารางราคา']);
+    print(orderLast!['ตารางราคา']);
+
     if (orderLast!['ตารางราคา'] == 'ไม่มีข้อมูล') {
       print('null');
     } else {
@@ -189,7 +197,7 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
         HttpsCallable callable2 =
             FirebaseFunctions.instance.httpsCallable('getApiMfood');
         var params2 = <String, dynamic>{
-          "url": "http://mobile.mfood.co.th:7104/MBServices.asmx?op=Sell_Price",
+          "url": "http://mobile.mfood.co.th:7105/MBServices.asmx?op=Sell_Price",
           "xml":
               '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
         };

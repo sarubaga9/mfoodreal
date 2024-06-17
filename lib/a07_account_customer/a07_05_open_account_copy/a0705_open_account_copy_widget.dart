@@ -9,8 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'a0705_open_account_copy_model.dart';
-export 'a0705_open_account_copy_model.dart';
-import 'package:m_food/widgets/menu_sidebar_widget.dart';
+export 'a0705_open_account_copy_model.dart';import 'package:m_food/widgets/menu_sidebar_widget.dart';
 
 class A0705OpenAccountCopyWidget extends StatefulWidget {
   const A0705OpenAccountCopyWidget({Key? key}) : super(key: key);

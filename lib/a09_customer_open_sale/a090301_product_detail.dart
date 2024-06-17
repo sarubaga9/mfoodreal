@@ -202,7 +202,7 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
           FirebaseFunctions.instance.httpsCallable('getApiMfood');
       var paramsPromotion = <String, dynamic>{
         "url":
-            "http://mobile.mfood.co.th:7104/MBServices.asmx?op=CHECK_PROMOTION_INFO",
+            "http://mobile.mfood.co.th:7105/MBServices.asmx?op=CHECK_PROMOTION_INFO",
         "xml":
             '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>${data['ClientIdจากMfoodAPI']}</sCLIENT_ID><sPRODUCT_CODE>${productDetail!['PRODUCT_ID']}</sPRODUCT_CODE><sORDER_DATE>$formattedDate</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
         // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>01000003</sCLIENT_ID><sPRODUCT_CODE>0140006421000</sPRODUCT_CODE><sORDER_DATE>2024-03-18</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'

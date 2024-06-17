@@ -20,7 +20,13 @@ import 'package:m_food/controller/user_controller.dart';
 class CustomerList extends StatefulWidget {
   final String? status;
 
-  const CustomerList({super.key, this.status});
+  final List<Map<String, dynamic>?>? dataOrderList;
+
+  CustomerList({
+    super.key,
+    this.status,
+    @required this.dataOrderList,
+  });
 
   @override
   _CustomerListState createState() => _CustomerListState();
@@ -38,6 +44,7 @@ class _CustomerListState extends State<CustomerList> {
 
   final userController = Get.find<UserController>();
   RxMap<String, dynamic>? userData;
+  List<Map<String, dynamic>?>? mapDataOrdersDataList = [];
 
   List<Map<String, dynamic>>? mapDataOrdersDataFirst = [];
   List<Map<String, dynamic>>? mapDataOrdersDataSecond = [];
@@ -209,82 +216,88 @@ class _CustomerListState extends State<CustomerList> {
 
       userData = userController.userData;
 
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection(AppSettings.customerType == CustomerType.Test
-                  ? 'CustomerTest'
-                  : 'Customer')
-              .get();
+      mapDataOrdersDataList = widget.dataOrderList;
 
-      for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
-        Map<String, dynamic> customerData =
-            customerDoc.data() as Map<String, dynamic>;
-        customerDataList.add(customerData);
-      }
+      // QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      //     await FirebaseFirestore.instance
+      //         .collection(AppSettings.customerType == CustomerType.Test
+      //             ? 'CustomerTest'
+      //             : 'Customer')
+      //         .get();
 
-      customerDataList
-          .removeWhere((customerData) => customerData['สถานะ'] == false);
-
-      // print('A0901 ต้องเปิดคอมเม้นนี้ เพื่อกรองข้อมูลตามจริง');
-      //==================================================
-      // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
-      customerDataList.removeWhere((customerData) =>
-          userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
+      // for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
+      //   Map<String, dynamic> customerData =
+      //       customerDoc.data() as Map<String, dynamic>;
+      //   customerDataList.add(customerData);
+      // }
 
       // customerDataList
-      //     .removeWhere((customerData) => customerData['ค้างชำระ'] == false);
+      //     .removeWhere((customerData) => customerData['สถานะ'] == false);
 
-      //==================================================
-      customerDataList.sort((a, b) {
-        String nameA = a['ชื่อนามสกุล'];
-        String nameB = b['ชื่อนามสกุล'];
+      // // print('A0901 ต้องเปิดคอมเม้นนี้ เพื่อกรองข้อมูลตามจริง');
+      // //==================================================
+      // // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
+      // customerDataList.removeWhere((customerData) =>
+      //     userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
 
-        return nameA.compareTo(nameB);
-      });
+      // // customerDataList
+      // //     .removeWhere((customerData) => customerData['ค้างชำระ'] == false);
 
-      customerAllDataList = customerDataList;
+      // //==================================================
+      // customerDataList.sort((a, b) {
+      //   String nameA = a['ชื่อนามสกุล'];
+      //   String nameB = b['ชื่อนามสกุล'];
 
-      for (int i = 0; i < customerDataList.length; i++) {
-        // print(i);
-        CollectionReference subCollectionRefOrder = FirebaseFirestore.instance
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'CustomerTest/${customerDataList[i]['CustomerID']}/Orders'
-                : 'Customer/${customerDataList[i]['CustomerID']}/Orders');
+      //   return nameA.compareTo(nameB);
+      // });
 
-        QuerySnapshot subCollectionSnapshotOrder =
-            await subCollectionRefOrder.get();
+      // customerAllDataList = customerDataList;
 
-        // print(customerDataList[i]['CustomerID']);
+      // for (int i = 0; i < customerDataList.length; i++) {
+      //   // print(i);
+      //   CollectionReference subCollectionRefOrder = FirebaseFirestore.instance
+      //       .collection(AppSettings.customerType == CustomerType.Test
+      //           ? 'CustomerTest/${customerDataList[i]['CustomerID']}/Orders'
+      //           : 'Customer/${customerDataList[i]['CustomerID']}/Orders');
 
-        if (subCollectionSnapshotOrder.docs.length == 0) {
-          // mapDataOrdersData!.add({});
-        } else {
-          subCollectionSnapshotOrder.docs.forEach((doc) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   QuerySnapshot subCollectionSnapshotOrder =
+      //       await subCollectionRefOrder.get();
 
-            data['CustomerID'] = customerDataList[i]['CustomerID'];
-            data['CustomerName'] = customerDataList[i]['CustomerName'];
+      // print(customerDataList[i]['CustomerID']);
 
-            if (data['OrdersDateID'] == null) {
-              // mapDataOrdersData!.add({});
-            } else {
-              DateTime dateTime = DateTime.parse(data['OrdersDateID']);
-              String monthName = DateFormat('MMMM').format(dateTime);
-              // print(monthName);
-              if (monthName == first) {
-                mapDataOrdersDataFirst!.add(data);
-                // print('add frist');
-              } else if (monthName == second) {
-                mapDataOrdersDataSecond!.add(data);
-                // print('add second');
-              } else if (monthName == third) {
-                mapDataOrdersDataThird!.add(data);
-                // print('add third');
-              } else {}
-            }
-          });
-        }
+      print('44444');
+
+      if (mapDataOrdersDataList!.length == 0) {
+        // mapDataOrdersData!.add({});
+        print('if');
+      } else {
+        print('else');
+        mapDataOrdersDataList!.forEach((doc) {
+          Map<String, dynamic> data = doc as Map<String, dynamic>;
+
+          if (data['OrdersDateID'] == null) {
+            // mapDataOrdersData!.add({});
+          } else {
+            DateTime dateTime = DateTime.parse(data['OrdersDateID']);
+            String monthName = DateFormat('MMMM').format(dateTime);
+            // print(monthName);
+            if (monthName == first) {
+              mapDataOrdersDataFirst!.add(data);
+              // print('add frist');
+            } else if (monthName == second) {
+              mapDataOrdersDataSecond!.add(data);
+              // print('add second');
+            } else if (monthName == third) {
+              mapDataOrdersDataThird!.add(data);
+              // print('add third');
+            } else {}
+          }
+        });
       }
+
+      print('55555');
+
+      // }
 
       print(mapDataOrdersDataFirst!.length);
       for (var element in mapDataOrdersDataFirst!) {
@@ -615,7 +628,9 @@ class _CustomerListState extends State<CustomerList> {
                                                           builder: (context) =>
                                                               A160101CustomerChooseDay(
                                                                   listOrders:
-                                                                      sendMapThree!),
+                                                                      sendMapThree!,
+                                                                  date: selectedDate
+                                                                      .toString()),
                                                         ));
                                                   } else if (DateFormat('MMMM')
                                                           .format(
@@ -651,7 +666,9 @@ class _CustomerListState extends State<CustomerList> {
                                                           builder: (context) =>
                                                               A160101CustomerChooseDay(
                                                                   listOrders:
-                                                                      sendMapTwo!),
+                                                                      sendMapTwo!,
+                                                                  date: selectedDate
+                                                                      .toString()),
                                                         ));
                                                   } else if (DateFormat('MMMM')
                                                           .format(
@@ -686,7 +703,9 @@ class _CustomerListState extends State<CustomerList> {
                                                           builder: (context) =>
                                                               A160101CustomerChooseDay(
                                                                   listOrders:
-                                                                      sendMapOne!),
+                                                                      sendMapOne!,
+                                                                  date: selectedDate
+                                                                      .toString()),
                                                         ));
                                                   }
                                                 }
@@ -1029,9 +1048,6 @@ class _CustomerListState extends State<CustomerList> {
                     //     ],
                     //   ),
                     // ),
-
-
-
 
                     // for (int i = 0; i < customerDataList.length; i++)
                     //   customerDataList.length == 0

@@ -71,6 +71,9 @@ class _ListOpenSaleWidgetState extends State<ListOpenSaleWidget> {
           userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
       //==================================================
 
+      print(userData!['EmployeeID']);
+
+
       // print(customerDataList.length);
       // print(customerDataList.length);
       // print(customerDataList.length);
@@ -86,10 +89,10 @@ class _ListOpenSaleWidgetState extends State<ListOpenSaleWidget> {
 
       customerAllDataList = customerDataList;
 
-      print(customerDataList[0]);
-      print(customerDataList[0]);
-      print(customerDataList[0]);
-      print(customerDataList[0]);
+      // print(customerDataList[0]);
+      // print(customerDataList[0]);
+      // print(customerDataList[0]);
+      // print(customerDataList[0]);
 
       if (mounted) {
         setState(() {
@@ -257,6 +260,8 @@ class _ListOpenSaleWidgetState extends State<ListOpenSaleWidget> {
                           hoverColor: Colors.transparent,
                           highlightColor: Colors.transparent,
                           onTap: () async {
+                            print('asdfdsdf');
+                            print(customerDataList[i]['CustomerID']);
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(

@@ -14,8 +14,14 @@ import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 
 class A1601CustomerWaitOrder extends StatefulWidget {
+  final List<Map<String, dynamic>?>? dataOrderList;
+
   final String? status;
-  const A1601CustomerWaitOrder({super.key, this.status});
+  const A1601CustomerWaitOrder({
+    super.key,
+    this.status,
+    @required this.dataOrderList,
+  });
 
   @override
   _A1601CustomerWaitOrderState createState() => _A1601CustomerWaitOrderState();
@@ -62,6 +68,7 @@ class _A1601CustomerWaitOrderState extends State<A1601CustomerWaitOrder> {
   Widget build(BuildContext context) {
     print('==============================');
     print('This is A1601 customer wait order');
+    print(('object'));
     print('==============================');
     print(widget.status);
     userData = userController.userData;
@@ -343,7 +350,9 @@ class _A1601CustomerWaitOrderState extends State<A1601CustomerWaitOrder> {
                         child: Padding(
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 10.0, 0.0, 0.0),
-                          child: CustomerList(status: widget.status),
+                          child: CustomerList(
+                              status: widget.status,
+                              dataOrderList: widget.dataOrderList),
                         ),
                       ),
                     ],

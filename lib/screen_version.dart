@@ -91,7 +91,7 @@ class _ScreenVersionState extends State<ScreenVersion> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'เวอร์ชั่นแอพพลิเคชั่น 1.0',
+                          'เวอร์ชั่นแอพพลิเคชั่น 1.3',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
                                     fontFamily: 'Kanit',

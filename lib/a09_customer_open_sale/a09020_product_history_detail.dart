@@ -391,8 +391,8 @@ class _A09020ProductHistoryDetailState
           FirebaseFunctions.instance.httpsCallable('getApiMfood');
       var paramsBillLast = <String, dynamic>{
         "url":
-            "http://mobile.mfood.co.th:7104/MBServices.asmx?op=BILL_DISCOUNT_INFO",
-        // "http://mobile.mfood.co.th:7104/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+            "http://mobile.mfood.co.th:7105/MBServices.asmx?op=BILL_DISCOUNT_INFO",
+        // "http://mobile.mfood.co.th:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
         "xml":
             //pro type discount
             // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'

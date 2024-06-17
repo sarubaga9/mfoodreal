@@ -57,6 +57,7 @@ void handleDynamicLink(PendingDynamicLinkData? initialLink) {
 }
 
 void main() async {
+  print('เวอร์ชั่นหลังจากวันที่ 17 06 2567');
   // เริ่มโปรแกรมด้วยค่าเริ่มต้นเป็น Real
   print("Initial Customer Type: ${AppSettings.customerType}");
 

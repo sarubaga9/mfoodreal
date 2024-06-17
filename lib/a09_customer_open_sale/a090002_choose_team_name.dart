@@ -28,7 +28,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class A090002ChooseTeamName extends StatefulWidget {
-  const A090002ChooseTeamName({Key? key}) : super(key: key);
+  final List<String?>? listID;
+  final Map<String, dynamic>? saleTeamGroup;
+  const A090002ChooseTeamName({
+    Key? key,
+    @required this.listID,
+    @required this.saleTeamGroup,
+  }) : super(key: key);
 
   @override
   _A090002ChooseTeamNameState createState() => _A090002ChooseTeamNameState();
@@ -42,9 +48,44 @@ class _A090002ChooseTeamNameState extends State<A090002ChooseTeamName> {
 
   bool isLoading = false;
 
+  List<String?>? listID = [];
+  List<String?>? listName = [];
+
+  Map<String, dynamic>? saleTeamGroup;
+
+  void getData() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      print('loadoad');
+      print('loadoad');
+      print('loadoad');
+      print('loadoad');
+      print('loadoad');
+      print('loadoad');
+      print('loadoad');
+      userData = userController.userData;
+
+      listID = widget.listID;
+      saleTeamGroup = widget.saleTeamGroup;
+      print('upadte');
+      print(saleTeamGroup!['สมาชิกในกลุ่ม'].length);
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (r) {
+      print(r);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    getData();
   }
 
   @override
@@ -75,8 +116,6 @@ class _A090002ChooseTeamNameState extends State<A090002ChooseTeamName> {
     print('==============================');
     print('This is A0900 choose page');
     print('==============================');
-
-    userData = userController.userData;
 
     return Scaffold(
       key: scaffoldKey,
@@ -375,6 +414,7 @@ class _A090002ChooseTeamNameState extends State<A090002ChooseTeamName> {
                         ),
                       ),
                       //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
+
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
                             10.0, 10.0, 10.0, 0.0),
@@ -397,16 +437,78 @@ class _A090002ChooseTeamNameState extends State<A090002ChooseTeamName> {
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 10.0, 0.0, 0.0),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    for (int i = 0; i < 10; i++)
+                                    // for (int i = 0; i < 10; i++)
+
+                                    for (int i = 0;
+                                        i <
+                                            saleTeamGroup!['สมาชิกในกลุ่ม']
+                                                .length;
+                                        i++)
                                       GestureDetector(
-                                          onTap: () => Navigator.push(
-                                              context,
-                                              CupertinoPageRoute(
-                                                builder: (context) =>
-                                                    A090003ChooseCustomerByTeam(),
-                                              )),
-                                          child: Text('นายอำนาจ ไกรศร'))
+                                        onTap: () => Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) =>
+                                                  A090003ChooseCustomerByTeam(
+                                                      idEmployee: saleTeamGroup![
+                                                              'สมาชิกในกลุ่ม']
+                                                          [i]['EmployeeID']),
+                                            )),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 4, 0, 0),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                saleTeamGroup!['สมาชิกในกลุ่ม']
+                                                        [i]['EmployeeID'] +
+                                                    '   ',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyLarge
+                                                        .override(
+                                                          fontFamily: 'Kanit',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryText,
+                                                        ),
+                                              ),
+                                              Text(
+                                                saleTeamGroup!['สมาชิกในกลุ่ม']
+                                                        [i]['Name'] +
+                                                    ' ',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyLarge
+                                                        .override(
+                                                          fontFamily: 'Kanit',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryText,
+                                                        ),
+                                              ),
+                                              Text(
+                                                saleTeamGroup!['สมาชิกในกลุ่ม']
+                                                    [i]['Surname'],
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyLarge
+                                                        .override(
+                                                          fontFamily: 'Kanit',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryText,
+                                                        ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
                                   ],
                                 ),
                               ),

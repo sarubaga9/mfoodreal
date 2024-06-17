@@ -20,8 +20,14 @@ import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 
 class A1604SearchOrder extends StatefulWidget {
+  final List<Map<String, dynamic>>? dataOrderList;
+
   final String? status;
-  const A1604SearchOrder({super.key, this.status});
+  const A1604SearchOrder({
+    super.key,
+    this.status,
+    @required this.dataOrderList,
+  });
 
   @override
   _A1604SearchOrderState createState() => _A1604SearchOrderState();
@@ -78,68 +84,76 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       selectedDateBefore = null;
       selectedDateAfter = null;
 
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection(AppSettings.customerType == CustomerType.Test
-                  ? 'CustomerTest'
-                  : 'Customer')
-              .get();
+      mapDataOrdersData = widget.dataOrderList;
 
-      for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
-        Map<String, dynamic> customerData =
-            customerDoc.data() as Map<String, dynamic>;
-        customerDataList.add(customerData);
-      }
+      print(mapDataOrdersData!.length);
+      print(mapDataOrdersData!.length);
+      print(mapDataOrdersData!.length);
+      print(mapDataOrdersData!.length);
+      print(mapDataOrdersData!.length);
 
-      customerDataList
-          .removeWhere((customerData) => customerData['สถานะ'] == false);
+      // QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      //     await FirebaseFirestore.instance
+      //         .collection(AppSettings.customerType == CustomerType.Test
+      //             ? 'CustomerTest'
+      //             : 'Customer')
+      //         .get();
 
-      // print('A0901 ต้องเปิดคอมเม้นนี้ เพื่อกรองข้อมูลตามจริง');
-      //==================================================
-      // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
-      customerDataList.removeWhere((customerData) =>
-          userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
+      // for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
+      //   Map<String, dynamic> customerData =
+      //       customerDoc.data() as Map<String, dynamic>;
+      //   customerDataList.add(customerData);
+      // }
 
       // customerDataList
-      //     .removeWhere((customerData) => customerData['ค้างชำระ'] == false);
+      //     .removeWhere((customerData) => customerData['สถานะ'] == false);
 
-      //==================================================
-      customerDataList.sort((a, b) {
-        String nameA = a['ชื่อนามสกุล'];
-        String nameB = b['ชื่อนามสกุล'];
+      // // print('A0901 ต้องเปิดคอมเม้นนี้ เพื่อกรองข้อมูลตามจริง');
+      // //==================================================
+      // // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
+      // customerDataList.removeWhere((customerData) =>
+      //     userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
 
-        return nameA.compareTo(nameB);
-      });
+      // // customerDataList
+      // //     .removeWhere((customerData) => customerData['ค้างชำระ'] == false);
 
-      customerAllDataList = customerDataList;
+      // //==================================================
+      // customerDataList.sort((a, b) {
+      //   String nameA = a['ชื่อนามสกุล'];
+      //   String nameB = b['ชื่อนามสกุล'];
 
-      for (int i = 0; i < customerDataList.length; i++) {
-        // print(i);
-        CollectionReference subCollectionRefOrder = FirebaseFirestore.instance
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'CustomerTest/${customerDataList[i]['CustomerID']}/Orders'
-                : 'Customer/${customerDataList[i]['CustomerID']}/Orders');
+      //   return nameA.compareTo(nameB);
+      // });
 
-        QuerySnapshot subCollectionSnapshotOrder =
-            await subCollectionRefOrder.get();
+      // customerAllDataList = customerDataList;
 
-        // print(customerDataList[i]['CustomerID']);
+      // for (int i = 0; i < customerDataList.length; i++) {
+      //   // print(i);
+      //   CollectionReference subCollectionRefOrder = FirebaseFirestore.instance
+      //       .collection(AppSettings.customerType == CustomerType.Test
+      //           ? 'CustomerTest/${customerDataList[i]['CustomerID']}/Orders'
+      //           : 'Customer/${customerDataList[i]['CustomerID']}/Orders');
 
-        if (subCollectionSnapshotOrder.docs.length == 0) {
-          // mapDataOrdersData!.add({});
-        } else {
-          subCollectionSnapshotOrder.docs.forEach((doc) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   QuerySnapshot subCollectionSnapshotOrder =
+      //       await subCollectionRefOrder.get();
 
-            data['CustomerID'] = customerDataList[i]['CustomerID'];
-            data['CustomerName'] = customerDataList[i]['ชื่อนามสกุล'];
+      //   // print(customerDataList[i]['CustomerID']);
 
-            print(data['CustomerName']);
+      //   if (subCollectionSnapshotOrder.docs.length == 0) {
+      //     // mapDataOrdersData!.add({});
+      //   } else {
+      //     subCollectionSnapshotOrder.docs.forEach((doc) {
+      //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-            mapDataOrdersData!.add(data);
-          });
-        }
-      }
+      //       data['CustomerID'] = customerDataList[i]['CustomerID'];
+      //       data['CustomerName'] = customerDataList[i]['ชื่อนามสกุล'];
+
+      //       print(data['CustomerName']);
+
+      //       mapDataOrdersData!.add(data);
+      //     });
+      //   }
+      // }
 
       print(mapDataOrdersData!.length);
       setState(() {
@@ -192,7 +206,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-                customerID: mapData['CustomerID'], orderDataMap: mapData),
+                customerID: mapData['CustomerDoc']['CustomerID'],
+                orderDataMap: mapData),
           ));
     }
   }
@@ -201,7 +216,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     print(id);
 
     Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['CustomerID'] == id,
+      (element) => element['CustomerDoc']['CustomerID'] == id,
       orElse: () => {},
     );
     print(id);
@@ -221,7 +236,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-                customerID: mapData['CustomerID'], orderDataMap: mapData),
+                customerID: mapData['CustomerDoc']['CustomerID'],
+                orderDataMap: mapData),
           ));
     }
   }
@@ -230,7 +246,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     print(id);
 
     Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['CustomerName'] == id,
+      (element) => element['CustomerDoc']['ชื่อนามสกุล'] == id,
       orElse: () => {},
     );
     print(id);
@@ -250,7 +266,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-                customerID: mapData['CustomerID'], orderDataMap: mapData),
+                customerID: mapData['CustomerDoc']['CustomerID'],
+                orderDataMap: mapData),
           ));
     }
   }
@@ -321,7 +338,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
 
       mapData = mapDataOrdersData!
           .where(
-            (element) => element['CustomerID'] == customerID,
+            (element) => element['CustomerDoc']['CustomerID'] == customerID,
           )
           .toList();
 
@@ -351,9 +368,10 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       mapData = mapDataOrdersData!
           .where(
             // (element) => element['CustomerName'] == customerName,
-            (element) => element['CustomerName'].toString().contains(
-                  customerName,
-                ),
+            (element) =>
+                element['CustomerDoc']['ชื่อนามสกุล'].toString().contains(
+                      customerName,
+                    ),
           )
           .toList();
       if (!mapData.isNotEmpty) {
@@ -382,8 +400,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       mapData = mapDataOrdersData!
           .where(
             (element) =>
-                element['CustomerName'] == customerName &&
-                element['CustomerID'] == customerID,
+                element['CustomerDoc']['ชื่อนามสกุล'] == customerName &&
+                element['CustomerDoc']['CustomerID'] == customerID,
           )
           .toList();
       if (!mapData.isNotEmpty) {
@@ -413,7 +431,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
         return orderDate.isAfter(firstDay!) &&
             orderDate.isBefore(lastDay!) &&
-            element['CustomerID'] == customerID;
+            element['CustomerDoc']['CustomerID'] == customerID;
       }).toList();
 
       if (!mapData.isNotEmpty) {
@@ -444,7 +462,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         return orderDate.isAfter(firstDay!) &&
             orderDate.isBefore(lastDay!) &&
             // element['CustomerName'] == customerName!;
-            element['CustomerName'].toString().contains(
+            element['CustomerDoc']['ชื่อนามสกุล'].toString().contains(
                   customerName,
                 );
       }).toList();
@@ -470,9 +488,12 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         !firstStringDay) {
       //ค้นหาแค่ระยะเวลา
       print('1111111111');
+      print('อยู่ตรงนี้');
 
       mapData = mapDataOrdersData!.where((element) {
+        print(element['OrdersDateID']);
         DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
+        print('ก่อน lastDay');
 
         print(lastDay);
         print(lastDay);
@@ -481,6 +502,10 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         print(lastDay);
         return orderDate.isAfter(firstDay!) && orderDate.isBefore(lastDay!);
       }).toList();
+
+      print(mapData.length);
+      print(mapData.length);
+      print(mapData.length);
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
       } else {
@@ -508,9 +533,11 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
         return orderDate.isAfter(firstDay!) &&
             orderDate.isBefore(lastDay!) &&
-            element['CustomerID'] == customerID &&
+            element['CustomerDoc']['CustomerID'] == customerID &&
             // element['CustomerName'] == customerName;
-            element['CustomerName'].toString().contains(customerName);
+            element['CustomerDoc']['ชื่อนามสกุล']
+                .toString()
+                .contains(customerName);
       }).toList();
 
       if (!mapData.isNotEmpty) {

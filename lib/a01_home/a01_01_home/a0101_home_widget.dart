@@ -1069,9 +1069,12 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
                                                               if (userData!
                                                                   .isEmpty) {
+                                                                print('if');
                                                                 entry['Favorite'] =
                                                                     false;
                                                               } else {
+                                                                print('else');
+
                                                                 for (int i = 0;
                                                                     i <
                                                                         userData!['สินค้าถูกใจ']

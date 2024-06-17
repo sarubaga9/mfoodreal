@@ -199,39 +199,39 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
 
       print('333333');
 
-      for (int i = 0; i < mapDataOrdersData!.length; i++) {
-        print(i);
-        CollectionReference subCollectionRefCustomer = FirebaseFirestore
-            .instance
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'CustomerTest'
-                : 'Customer');
+      // for (int i = 0; i < mapDataOrdersData!.length; i++) {
+      //   print(i);
+      //   CollectionReference subCollectionRefCustomer = FirebaseFirestore
+      //       .instance
+      //       .collection(AppSettings.customerType == CustomerType.Test
+      //           ? 'CustomerTest'
+      //           : 'Customer');
 
-        QuerySnapshot subCollectionSnapshotCustomer =
-            await subCollectionRefCustomer.get();
+      //   QuerySnapshot subCollectionSnapshotCustomer =
+      //       await subCollectionRefCustomer.get();
 
-        if (subCollectionSnapshotCustomer.docs.length == 0) {
-        } else {
-          subCollectionSnapshotCustomer.docs.forEach((doc) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   if (subCollectionSnapshotCustomer.docs.length == 0) {
+      //   } else {
+      //     subCollectionSnapshotCustomer.docs.forEach((doc) {
+      //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-            if (data['CustomerID'] == null) {
-            } else {
-              if (mapDataOrdersData![i]!['CustomerID'] == data['CustomerID']) {
-                print(data['ประเภทลูกค้า']);
-                print(data['ชื่อนามสกุล']);
-                print(data['ชื่อบริษัท']);
-                mapDataOrdersData![i]!['CustomerName'] =
-                    data['ประเภทลูกค้า'] == 'Personal'
-                        ? data['ชื่อนามสกุล']
-                        : data['ชื่อบริษัท'];
-              } else {}
-            }
-          });
-        }
+      //       if (data['CustomerID'] == null) {
+      //       } else {
+      //         if (mapDataOrdersData![i]!['CustomerID'] == data['CustomerID']) {
+      //           print(data['ประเภทลูกค้า']);
+      //           print(data['ชื่อนามสกุล']);
+      //           print(data['ชื่อบริษัท']);
+      //           mapDataOrdersData![i]!['CustomerName'] =
+      //               data['ประเภทลูกค้า'] == 'Personal'
+      //                   ? data['ชื่อนามสกุล']
+      //                   : data['ชื่อบริษัท'];
+      //         } else {}
+      //       }
+      //     });
+      //   }
 
-        print(mapDataOrdersData![i]);
-      }
+      //   print(mapDataOrdersData![i]);
+      // }
 
       print('======== 5 ========');
       print(mapDataOrdersData!.length);
@@ -853,7 +853,7 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerID']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             14,
@@ -867,7 +867,7 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerName']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -881,7 +881,7 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '${mapDataOrdersData![index]!['OrdersDateID']}',
+                                                                    '${mapDataOrdersData![index]!['SALE_ORDER_ID_REF'] == null ? 'รอดำเนินการ' : mapDataOrdersData![index]!['SALE_ORDER_ID_REF']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -928,7 +928,7 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                           context,
                                                                           CupertinoPageRoute(
                                                                             builder: (context) =>
-                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]['CustomerID'], orderDataMap: mapDataOrdersData![index]),
+                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]['CustomerDoc']['CustomerID'], orderDataMap: mapDataOrdersData![index]),
                                                                           ));
                                                                     },
                                                                     child: Text(

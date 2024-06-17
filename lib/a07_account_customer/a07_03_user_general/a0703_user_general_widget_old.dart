@@ -9,8 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'a0703_user_general_model.dart';
-export 'a0703_user_general_model.dart';
-import 'package:m_food/widgets/menu_sidebar_widget.dart';
+export 'a0703_user_general_model.dart';import 'package:m_food/widgets/menu_sidebar_widget.dart';
 
 class A0703UserGeneralWidgetOld extends StatefulWidget {
   const A0703UserGeneralWidgetOld({Key? key}) : super(key: key);

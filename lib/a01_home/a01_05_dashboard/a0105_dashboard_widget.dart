@@ -14,6 +14,7 @@ import 'package:m_food/a14_visit_save_time/a1401_visit_save_time.dart';
 import 'package:m_food/a15_report_check_in/a1501_report_check_in.dart';
 import 'package:m_food/a16_wait_order/a1600_customer_choose.dart';
 import 'package:m_food/a16_wait_order/a1601_customer_wait_order.dart';
+import 'package:m_food/a16_wait_order/a1601_customer_wait_order_menu.dart';
 import 'package:m_food/a17_plan_send_order/a1701_plan_send.dart';
 import 'package:m_food/a20_add_new_customer_first/a2001_add_new_customer_first.dart';
 import 'package:m_food/a21_version/a2101_version.dart';
@@ -2873,7 +2874,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                       context,
                                       CupertinoPageRoute(
                                         builder: (context) =>
-                                            A1601CustomerWaitOrder(status: ''),
+                                            A1601CustomerWaitOrderMenu(),
                                       )),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
@@ -3064,7 +3065,9 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                       CupertinoPageRoute(
                                         builder: (context) =>
                                             A1600CustomerChoose(
-                                                status: 'ทั้งหมด'),
+                                          id: userData!['UserID'],
+                                          status: 'ทั้งหมด',
+                                        ),
                                       )),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,

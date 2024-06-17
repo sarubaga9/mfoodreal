@@ -18,8 +18,10 @@ import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 
 class A06001CustomerHistoryToday extends StatefulWidget {
-  const A06001CustomerHistoryToday({
+  final List<Map<String, dynamic>?>? dataOrderList;
+  A06001CustomerHistoryToday({
     super.key,
+    @required this.dataOrderList,
   });
 
   @override
@@ -51,7 +53,57 @@ class _A06001CustomerHistoryTodayState
   void initState() {
     super.initState();
 
-    fetchData();
+    // fetchData();
+
+    getData();
+  }
+
+  void getData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    userData = userController.userData;
+
+    List<Map<String, dynamic>?>? mapDataOrdersDataOld = widget.dataOrderList;
+    // mapDataOrdersData = mapDataOrdersDataOld;
+
+    print(mapDataOrdersData!.length);
+
+    // mapDataOrdersData!.removeWhere((element) {
+    //   print(element!['OrdersDateID']);
+    //   DateTime orderTime = DateTime.parse(element['OrdersDateID']);
+
+    //   DateTime now = DateTime.now();
+
+    //   if (now.day == orderTime.day &&
+    //       now.month == orderTime.month &&
+    //       now.year == orderTime.year) {
+    //     return false;
+    //   } else {
+    //     return true;
+    //   }
+    // });
+
+    for (int i = 0; i < mapDataOrdersDataOld!.length; i++) {
+      DateTime orderTime =
+          DateTime.parse(mapDataOrdersDataOld[i]!['OrdersDateID']);
+
+      DateTime now = DateTime.now();
+
+      if (now.day == orderTime.day &&
+          now.month == orderTime.month &&
+          now.year == orderTime.year) {
+        mapDataOrdersData!.add(mapDataOrdersDataOld[i]);
+      } else {}
+    }
+    print(mapDataOrdersData!.length);
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void fetchData() async {
@@ -395,7 +447,7 @@ class _A06001CustomerHistoryTodayState
   @override
   Widget build(BuildContext context) {
     print('==============================');
-    print('This is A0902 customer history open list');
+    print('This is A06001 customer history today');
     // print(widget.customerID);
     print('==============================');
 
@@ -903,7 +955,7 @@ class _A06001CustomerHistoryTodayState
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerID']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             14,
@@ -917,7 +969,7 @@ class _A06001CustomerHistoryTodayState
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerName']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -931,7 +983,7 @@ class _A06001CustomerHistoryTodayState
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '${mapDataOrdersData![index]!['OrdersDateID']}',
+                                                                    '${mapDataOrdersData![index]!['SALE_ORDER_ID_REF'] == null ? 'รอการอัพเดท' : mapDataOrdersData![index]!['SALE_ORDER_ID_REF']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -978,7 +1030,7 @@ class _A06001CustomerHistoryTodayState
                                                                           context,
                                                                           CupertinoPageRoute(
                                                                             builder: (context) =>
-                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]!['CustomerID'], orderDataMap: mapDataOrdersData![index]),
+                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]!['CustomerDoc']['CustomerID'], orderDataMap: mapDataOrdersData![index]),
                                                                           ));
                                                                     },
                                                                     child: Text(
@@ -1007,325 +1059,327 @@ class _A06001CustomerHistoryTodayState
                                           ),
 
                                     Divider(),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    Container(
-                                      // color: Colors.amber,
-                                      // width: 225,
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(3.0, 0.0, 0.0, 0.0),
-                                        child: Text(
-                                          'รีพอร์ตการสั่งขายประจำวันที่ ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyLarge
-                                              .override(
-                                                  fontSize: 20,
-                                                  fontFamily: 'Kanit',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryText,
-                                                  fontWeight: FontWeight.w400),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Container(
-                                      // color: Colors.amber,
-                                      // width: 225,
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(3.0, 0.0, 0.0, 0.0),
-                                        child: Text(
-                                          'สมชาย วงศ์พัฒนากุล กำหนดดูแล วันที่ ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyLarge
-                                              .override(
-                                                  fontSize: 20,
-                                                  fontFamily: 'Kanit',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryText,
-                                                  fontWeight: FontWeight.w400),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          mapDataOrdersData!.isEmpty ? 50 : 5,
-                                    ),
-                                    mapDataOrdersData!.length == 0
-                                        ? Text(
-                                            'วันนี้ยังไม่มีคำสั่งขายค่ะ!!',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyLarge
-                                                .override(
-                                                    fontSize: 14,
-                                                    fontFamily: 'Kanit',
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primaryText,
-                                                    fontWeight:
-                                                        FontWeight.w800),
-                                          )
-                                        : SizedBox(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            height: (60 *
-                                                    mapDataOrdersData!.length) +
-                                                60,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(4),
-                                              child: DataTable2(
-                                                  border: TableBorder.all(
-                                                      width: 0.2),
-                                                  columnSpacing: 12,
-                                                  horizontalMargin: 12,
-                                                  minWidth: 600,
-                                                  columns: [
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          'ลำดับ',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 50),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          '   รหัสลูกค้า',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 100),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          '   ชื่อลูกค้า',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 150),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          '         Sale Order',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 150),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          '  เวลาเปิดใบสั่งขาย',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 100),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          '   ยอดเงิน',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 75),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                          '  ติดตามสถานะ',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyLarge
-                                                              .override(
-                                                                  fontSize: 12,
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800),
-                                                        ),
-                                                        // size: ColumnSize.L,
-                                                        fixedWidth: 100),
-                                                  ],
-                                                  rows: List<DataRow>.generate(
-                                                      mapDataOrdersData!.length,
-                                                      (index) => DataRow(
-                                                              cells: [
-                                                                DataCell(
-                                                                  Text(
-                                                                    '    ${(index + 1).toString()}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize:
-                                                                            14,
-                                                                        fontFamily:
-                                                                            'Kanit',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                  Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerID']}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize:
-                                                                            14,
-                                                                        fontFamily:
-                                                                            'Kanit',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                  Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerName']}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize:
-                                                                            10,
-                                                                        fontFamily:
-                                                                            'Kanit',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                  Text(
-                                                                    '${mapDataOrdersData![index]!['OrdersDateID']}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize:
-                                                                            10,
-                                                                        fontFamily:
-                                                                            'Kanit',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                  Text(
-                                                                    '${DateFormat("dd-MM-yyyy \nเวลา HH:mm:ss น.").format(DateTime.parse(mapDataOrdersData![index]!['OrdersDateID']))}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontFamily:
-                                                                            'Kanit',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                  Text(
-                                                                    '    ${double.parse(mapDataOrdersData![index]!['มูลค่าสินค้ารวม'].toString()).toStringAsFixed(2)}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontFamily:
-                                                                            'Kanit',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
-                                                                        fontWeight:
-                                                                            FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                  Text(
-                                                                    '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
-                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                        fontSize: 14,
-                                                                        fontFamily: 'Kanit',
-                                                                        color: mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ'
-                                                                            ? Colors.green.shade900
-                                                                            : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ยกทั้งตระกร้า' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'รอตัดสต็อก' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == null
-                                                                                ? Colors.yellow.shade900
-                                                                                : FlutterFlowTheme.of(context).primaryText,
-                                                                        fontWeight: FontWeight.w400),
-                                                                  ),
-                                                                ),
-                                                              ]))),
-                                            ),
-                                          ),
+                                    // SizedBox(
+                                    //   height: 50,
+                                    // ),
+                                    // Container(
+                                    //   // color: Colors.amber,
+                                    //   // width: 225,
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsetsDirectional
+                                    //         .fromSTEB(3.0, 0.0, 0.0, 0.0),
+                                    //     child: Text(
+                                    //       'รีพอร์ตการสั่งขายประจำวันที่ ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+                                    //       style: FlutterFlowTheme.of(context)
+                                    //           .bodyLarge
+                                    //           .override(
+                                    //               fontSize: 20,
+                                    //               fontFamily: 'Kanit',
+                                    //               color: FlutterFlowTheme.of(
+                                    //                       context)
+                                    //                   .primaryText,
+                                    //               fontWeight: FontWeight.w400),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // SizedBox(
+                                    //   height: 5,
+                                    // ),
+                                    // Container(
+                                    //   // color: Colors.amber,
+                                    //   // width: 225,
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsetsDirectional
+                                    //         .fromSTEB(3.0, 0.0, 0.0, 0.0),
+                                    //     child: Text(
+                                    //       'สมชาย วงศ์พัฒนากุล กำหนดดูแล วันที่ ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+                                    //       style: FlutterFlowTheme.of(context)
+                                    //           .bodyLarge
+                                    //           .override(
+                                    //               fontSize: 20,
+                                    //               fontFamily: 'Kanit',
+                                    //               color: FlutterFlowTheme.of(
+                                    //                       context)
+                                    //                   .primaryText,
+                                    //               fontWeight: FontWeight.w400),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // SizedBox(
+                                    //   height:
+                                    //       mapDataOrdersData!.isEmpty ? 50 : 5,
+                                    // ),
+                                    // mapDataOrdersData!.length == 0
+                                    //     ? Text(
+                                    //         'วันนี้ยังไม่มีคำสั่งขายค่ะ!!',
+                                    //         style: FlutterFlowTheme.of(context)
+                                    //             .bodyLarge
+                                    //             .override(
+                                    //                 fontSize: 14,
+                                    //                 fontFamily: 'Kanit',
+                                    //                 color: FlutterFlowTheme.of(
+                                    //                         context)
+                                    //                     .primaryText,
+                                    //                 fontWeight:
+                                    //                     FontWeight.w800),
+                                    //       )
+                                    //     : SizedBox(
+                                    //         width: MediaQuery.of(context)
+                                    //             .size
+                                    //             .width,
+                                    //         height: (60 *
+                                    //                 mapDataOrdersData!.length) +
+                                    //             60,
+                                    //         child: Padding(
+                                    //           padding: const EdgeInsets.all(4),
+                                    //           child: DataTable2(
+                                    //               border: TableBorder.all(
+                                    //                   width: 0.2),
+                                    //               columnSpacing: 12,
+                                    //               horizontalMargin: 12,
+                                    //               minWidth: 600,
+                                    //               columns: [
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       'ลำดับ',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 14,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 50),
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       '   รหัสลูกค้า',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 14,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 100),
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       '   ชื่อลูกค้า',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 14,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 150),
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       '         Sale Order',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 14,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 150),
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       '  เวลาเปิดใบสั่งขาย',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 14,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 100),
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       '   ยอดเงิน',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 14,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 75),
+                                    //                 DataColumn2(
+                                    //                     label: Text(
+                                    //                       '  ติดตามสถานะ',
+                                    //                       style: FlutterFlowTheme
+                                    //                               .of(context)
+                                    //                           .bodyLarge
+                                    //                           .override(
+                                    //                               fontSize: 12,
+                                    //                               fontFamily:
+                                    //                                   'Kanit',
+                                    //                               color: FlutterFlowTheme.of(
+                                    //                                       context)
+                                    //                                   .primaryText,
+                                    //                               fontWeight:
+                                    //                                   FontWeight
+                                    //                                       .w800),
+                                    //                     ),
+                                    //                     // size: ColumnSize.L,
+                                    //                     fixedWidth: 100),
+                                    //               ],
+                                    //               rows: List<DataRow>.generate(
+                                    //                   mapDataOrdersData!.length,
+                                    //                   (index) => DataRow(
+                                    //                           cells: [
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 '    ${(index + 1).toString()}',
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize:
+                                    //                                         14,
+                                    //                                     fontFamily:
+                                    //                                         'Kanit',
+                                    //                                     color: FlutterFlowTheme.of(context)
+                                    //                                         .primaryText,
+                                    //                                     fontWeight:
+                                    //                                         FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize:
+                                    //                                         14,
+                                    //                                     fontFamily:
+                                    //                                         'Kanit',
+                                    //                                     color: FlutterFlowTheme.of(context)
+                                    //                                         .primaryText,
+                                    //                                     fontWeight:
+                                    //                                         FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerName']}',
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize:
+                                    //                                         10,
+                                    //                                     fontFamily:
+                                    //                                         'Kanit',
+                                    //                                     color: FlutterFlowTheme.of(context)
+                                    //                                         .primaryText,
+                                    //                                     fontWeight:
+                                    //                                         FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 '${mapDataOrdersData![index]!['OrdersDateID']}',
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize:
+                                    //                                         10,
+                                    //                                     fontFamily:
+                                    //                                         'Kanit',
+                                    //                                     color: FlutterFlowTheme.of(context)
+                                    //                                         .primaryText,
+                                    //                                     fontWeight:
+                                    //                                         FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 '${DateFormat("dd-MM-yyyy \nเวลา HH:mm:ss น.").format(DateTime.parse(mapDataOrdersData![index]!['OrdersDateID']))}',
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize:
+                                    //                                         12,
+                                    //                                     fontFamily:
+                                    //                                         'Kanit',
+                                    //                                     color: FlutterFlowTheme.of(context)
+                                    //                                         .primaryText,
+                                    //                                     fontWeight:
+                                    //                                         FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 // '    ${double.parse(mapDataOrdersData![index]!['มูลค่าสินค้ารวม'].toString()).toStringAsFixed(2)}',
+                                    //                                 '    ${NumberFormat('#,##0.00').format(double.parse(mapDataOrdersData![index]!['มูลค่าสินค้ารวม'].toString())).toString()}',
+
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize:
+                                    //                                         12,
+                                    //                                     fontFamily:
+                                    //                                         'Kanit',
+                                    //                                     color: FlutterFlowTheme.of(context)
+                                    //                                         .primaryText,
+                                    //                                     fontWeight:
+                                    //                                         FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                             DataCell(
+                                    //                               Text(
+                                    //                                 '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
+                                    //                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                    //                                     fontSize: 14,
+                                    //                                     fontFamily: 'Kanit',
+                                    //                                     color: mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ'
+                                    //                                         ? Colors.green.shade900
+                                    //                                         : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ยกทั้งตระกร้า' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'รอตัดสต็อก' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == null
+                                    //                                             ? Colors.yellow.shade900
+                                    //                                             : FlutterFlowTheme.of(context).primaryText,
+                                    //                                     fontWeight: FontWeight.w400),
+                                    //                               ),
+                                    //                             ),
+                                    //                           ]))),
+                                    //         ),
+                                    //       ),
 
                                     // for (int i = 0;
                                     //     i < mapDataOrdersData!.length;

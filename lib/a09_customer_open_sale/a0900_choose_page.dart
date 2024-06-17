@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:m_food/a07_account_customer/a07_01_open_account/a070101_pdpa_account_widget.dart';
 import 'package:m_food/a07_account_customer/a07_13_accept/a0714_reject_widget.dart';
 import 'package:m_food/a09_customer_open_sale/a090001_choose_team.dart';
+import 'package:m_food/a09_customer_open_sale/a090004_choose_name.dart';
 import 'package:m_food/a09_customer_open_sale/a0901_customer_list.dart';
 import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
@@ -41,9 +42,103 @@ class _A0900ChoosePageState extends State<A0900ChoosePage> {
 
   bool isLoading = false;
 
+  List<Map<String, dynamic>> saleTeamGroup = [];
+
+  bool isManager = false;
+
+  Future<void> getData() async {
+    userData = userController.userData;
+
+    isLoading = true;
+    setState(() {});
+
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await FirebaseFirestore.instance.collection('จัดการทีมขาย').get();
+
+    for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
+      Map<String, dynamic> customerData =
+          customerDoc.data() as Map<String, dynamic>;
+      saleTeamGroup.add(customerData);
+    }
+
+    // saleTeamGroup.removeWhere((customerData) => customerData['สมาชิกในกลุ่ม'].firstWhere());
+    print('----1----');
+
+    print(saleTeamGroup.length);
+
+    saleTeamGroup.forEach((element) {
+      print(element);
+    });
+
+    int index = 0;
+
+    saleTeamGroup.removeWhere((customerData) {
+      print(index);
+      print(customerData['หัวหน้างาน']);
+      if (customerData['หัวหน้างาน'].isEmpty) {
+        print('null');
+      } else {
+        print(customerData['หัวหน้างาน'][0]['EmployeeID']);
+      }
+      print(userData!['EmployeeID']);
+
+      if ((customerData['หัวหน้างาน'].isEmpty)) {
+        index++;
+        print(customerData['หัวหน้างาน']);
+        print('1');
+        return true;
+      } else {
+        if (customerData['หัวหน้างาน'][0]['EmployeeID'] == null) {
+          index++;
+          print(customerData['หัวหน้างาน'][0]);
+          print('2');
+
+          return true;
+        } else {
+          index++;
+          print(customerData['หัวหน้างาน'][0]);
+          print('3');
+
+          return customerData['หัวหน้างาน']
+              .any((member) => member['EmployeeID'] != userData!['EmployeeID']);
+        }
+      }
+    });
+
+    print('----2----');
+    print(saleTeamGroup.length);
+    saleTeamGroup.forEach((element) {
+      print(element);
+    });
+    if (saleTeamGroup.isEmpty) {
+    } else {
+      isManager = true;
+    }
+
+    // print(customerDataList.length);
+    // print(customerDataList.length);
+    // print(customerDataList.length);
+    // print(customerDataList.length);
+    // print(customerDataList.length);
+
+    // saleTeamGroup.sort((a, b) {
+    //   String nameA = a['ชื่อนามสกุล'];
+    //   String nameB = b['ชื่อนามสกุล'];
+
+    //   return nameA.compareTo(nameB);
+    // });
+
+    isLoading = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    getData();
   }
 
   @override
@@ -415,54 +510,111 @@ class _A0900ChoosePageState extends State<A0900ChoosePage> {
                             ],
                           ),
                         ),
-                      ), //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            // Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //       builder: (context) =>
-                            //           const A090001ChooseTeam(),
-                            //     )).whenComplete(() async {
-                            //   setState(() {});
-                            // });
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 5.0, 0.0),
-                                child: Icon(
-                                  Icons.person_search_rounded,
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
-                                  // color: FlutterFlowTheme.of(context).alternate,
-                                  size: 30.0,
+                      ),
+                      //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
+                      !isManager
+                          ? SizedBox()
+                          : Padding(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              child: InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) =>
+                                            const A090001ChooseTeam(),
+                                      )).whenComplete(() async {
+                                    setState(() {});
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 5.0, 0.0),
+                                      child: Icon(
+                                        Icons.person_search_rounded,
+                                        // color: FlutterFlowTheme.of(context)
+                                        //     .secondaryText,
+                                        color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                        size: 30.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      'เข้าสู่รายชื่อสมาชิกในทีม',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyLarge
+                                          .override(
+                                            fontFamily: 'Kanit',
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            // color: FlutterFlowTheme.of(context)
+                                            //     .secondaryText,
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                'เข้าสู่รายชื่อลูกค้าของสมาชิกในทีม',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Kanit',
-                                      // color: FlutterFlowTheme.of(context)
-                                      //     .primaryText,
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
+                            ),
+                      //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
+                      isManager
+                          ? SizedBox()
+                          : Padding(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              child: InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) =>
+                                            A090004ChooseName(),
+                                      )).whenComplete(() async {
+                                    setState(() {});
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 5.0, 0.0),
+                                      child: Icon(
+                                        Icons.person_search_rounded,
+                                        // color: FlutterFlowTheme.of(context)
+                                        //     .secondaryText,
+                                        color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                        size: 30.0,
+                                      ),
                                     ),
+                                    Text(
+                                      'เข้าสู่รายชื่อที่ได้รับมอบหมายงาน',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyLarge
+                                          .override(
+                                            fontFamily: 'Kanit',
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            // color: FlutterFlowTheme.of(context)
+                                            //     .secondaryText,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
+                            ),
                     ],
                   ),
                 ),

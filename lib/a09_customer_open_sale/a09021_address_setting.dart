@@ -148,7 +148,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
       // for (var element in waySendListData!) {
       //   if (element!['IS_ACTIVE'] == true) {
       //     // waySendList.add(element['VHC_DESC']);
-      //     waySendList.add('${element['VHC_ID']} ${element['VHC_DESC']}');
+      //     waySendList.add('${element['VHC_CODE']} ${element['VHC_DESC']}');
       //   }
       // }
 
@@ -331,7 +331,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
 
                     if (element['วันที่จัดส่ง']['ส่งทุกวัน']) {
                       waySendList
-                          .add('${element['VHC_ID']} ${element['VHC_DESC']}');
+                          .add('${element['VHC_CODE']} ${element['VHC_DESC']}');
                       // print('ส่งทุกวัน');
                     } else {
                       // print('ส่งไม่ทุกวัน');
@@ -342,39 +342,39 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
 
                         if (element['วันที่จัดส่ง']['ส่งทุกวันอาทิตย์']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       } else if (dayName == 'Monday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันจันทร์']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       } else if (dayName == 'Tuesday') {
                         // print('เข้าลูป Tuesday');
                         // print(element['วันที่จัดส่ง']['ส่งทุกวันอังคาร']);
                         if (element['วันที่จัดส่ง']['ส่งทุกวันอังคาร']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       } else if (dayName == 'Wednesday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันพุธ']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       } else if (dayName == 'Thursday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันพฤหัสบดี']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       } else if (dayName == 'Friday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันศุกร์']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       } else if (dayName == 'Saturday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันเสาร์']) {
                           waySendList.add(
-                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                         }
                       }
                     }
@@ -1040,7 +1040,8 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                   print(addressDropdownController.text);
                                   print(addressDropdownController.text);
 
-                                  postalCode = postalCodeDropdown[indexAddress-1];
+                                  postalCode =
+                                      postalCodeDropdown[indexAddress - 1];
 
                                   print("รหัสไปรษณีย์: $postalCode");
 
@@ -1073,7 +1074,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                         // print(element2);
                                         if (element2 == postalCode) {
                                           waySendList.add(
-                                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                         }
                                       }
                                     }
@@ -1190,7 +1191,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                         if (element['วันที่จัดส่ง']
                                             ['ส่งทุกวัน']) {
                                           waySendList.add(
-                                              '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                           // print('ส่งทุกวัน');
                                         } else {
                                           // print('ส่งไม่ทุกวัน');
@@ -1203,13 +1204,13 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันอาทิตย์']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           } else if (dayName == 'Monday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันจันทร์']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           } else if (dayName == 'Tuesday') {
                                             // print('เข้าลูป Tuesday');
@@ -1218,31 +1219,31 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันอังคาร']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           } else if (dayName == 'Wednesday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันพุธ']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           } else if (dayName == 'Thursday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันพฤหัสบดี']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           } else if (dayName == 'Friday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันศุกร์']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           } else if (dayName == 'Saturday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันเสาร์']) {
                                               waySendList.add(
-                                                  '${element['VHC_ID']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
                                             }
                                           }
                                         }
@@ -1619,6 +1620,12 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                                 'ตัวเลือก'
                                             ? 'ไม่มีข้อมูล'
                                             : tablePriceList[indexAddress];
+                                    print(
+                                        '12312312342143564678764545324534689765546756542342356553');
+                                    print(orderLast['ตารางราคา']);
+                                    print(orderLast['ตารางราคา']);
+                                    print(orderLast['ตารางราคา']);
+                                    print(orderLast['ตารางราคา']);
                                     print(orderLast['ตารางราคา']);
 
                                     // print(orderLast['สถานที่จัดส่ง']);
@@ -1632,7 +1639,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                     } else {
                                       foundMap = waySendListData?.firstWhere(
                                         (Map<String, dynamic>? map) =>
-                                            '${map?['VHC_ID']} ${map?['VHC_DESC']}'
+                                            '${map?['VHC_CODE']} ${map?['VHC_DESC']}'
                                             // map?['VHC_DESC']
                                             ==
                                             waySendDropdownController.text,
@@ -1723,7 +1730,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                                 .httpsCallable('getApiMfood');
                                         var params2 = <String, dynamic>{
                                           "url":
-                                              "http://mobile.mfood.co.th:7104/MBServices.asmx?op=Sell_Price",
+                                              "http://mobile.mfood.co.th:7105/MBServices.asmx?op=Sell_Price",
                                           "xml":
                                               '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
                                         };

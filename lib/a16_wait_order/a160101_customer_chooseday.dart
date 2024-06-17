@@ -18,10 +18,12 @@ import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 
 class A160101CustomerChooseDay extends StatefulWidget {
+  final String? date;
   final List<Map<String, dynamic>>? listOrders;
   const A160101CustomerChooseDay({
     this.listOrders,
     super.key,
+    this.date,
   });
 
   @override
@@ -200,45 +202,45 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
 
       print('333333');
 
-      for (int i = 0; i < mapDataOrdersData!.length; i++) {
-        print(i);
-        CollectionReference subCollectionRefCustomer = FirebaseFirestore
-            .instance
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'CustomerTest'
-                : 'Customer');
+      // for (int i = 0; i < mapDataOrdersData!.length; i++) {
+      //   print(i);
+      //   CollectionReference subCollectionRefCustomer = FirebaseFirestore
+      //       .instance
+      //       .collection(AppSettings.customerType == CustomerType.Test
+      //           ? 'CustomerTest'
+      //           : 'Customer');
 
-        QuerySnapshot subCollectionSnapshotCustomer =
-            await subCollectionRefCustomer.get();
+      //   QuerySnapshot subCollectionSnapshotCustomer =
+      //       await subCollectionRefCustomer.get();
 
-        if (subCollectionSnapshotCustomer.docs.length == 0) {
-        } else {
-          subCollectionSnapshotCustomer.docs.forEach((doc) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   if (subCollectionSnapshotCustomer.docs.length == 0) {
+      //   } else {
+      //     subCollectionSnapshotCustomer.docs.forEach((doc) {
+      //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-            if (data['CustomerID'] == null) {
-            } else {
-              if (mapDataOrdersData![i]!['CustomerID'] == data['CustomerID']) {
-                print(data['ประเภทลูกค้า']);
-                print(data['ชื่อนามสกุล']);
-                print(data['ชื่อบริษัท']);
-                mapDataOrdersData![i]!['CustomerName'] =
-                    data['ประเภทลูกค้า'] == 'Personal'
-                        ? data['ชื่อนามสกุล']
-                        : data['ชื่อบริษัท'];
-              } else {}
-            }
-          });
-        }
+      //       if (data['CustomerID'] == null) {
+      //       } else {
+      //         if (mapDataOrdersData![i]!['CustomerID'] == data['CustomerID']) {
+      //           print(data['ประเภทลูกค้า']);
+      //           print(data['ชื่อนามสกุล']);
+      //           print(data['ชื่อบริษัท']);
+      //           mapDataOrdersData![i]!['CustomerName'] =
+      //               data['ประเภทลูกค้า'] == 'Personal'
+      //                   ? data['ชื่อนามสกุล']
+      //                   : data['ชื่อบริษัท'];
+      //         } else {}
+      //       }
+      //     });
+      //   }
 
-        print(mapDataOrdersData![i]);
-      }
+      //   print(mapDataOrdersData![i]);
+      // }
 
-      print('======== 5 ========');
-      print(mapDataOrdersData!.length);
-      mapDataOrdersData!.forEach((element) {
-        print(element);
-      });
+      // print('======== 5 ========');
+      // print(mapDataOrdersData!.length);
+      // mapDataOrdersData!.forEach((element) {
+      //   print(element);
+      // });
 
       if (mounted) {
         setState(() {
@@ -656,7 +658,7 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                             .fromSTEB(3.0, 0.0, 0.0, 0.0),
                                         child: Text(
                                           // 'รีพอร์ตการสั่งขายประจำวันที่ ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
-                                          'รีพอร์ตการสั่งขายประจำวันที่ ${DateFormat("dd-MM-yyyy").format(DateTime.parse(mapDataOrdersData![0]!['OrdersDateID']))}',
+                                          'รีพอร์ตการสั่งขายประจำวันที่ ${DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.date!))}',
 
                                           style: FlutterFlowTheme.of(context)
                                               .bodyLarge
@@ -859,7 +861,7 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerID']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             14,
@@ -873,7 +875,7 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerName']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -886,8 +888,8 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                   ),
                                                                 ),
                                                                 DataCell(
-                                                                  Text(
-                                                                    '${mapDataOrdersData![index]!['OrdersDateID']}',
+                                                                  Text(  
+                                                                    '${mapDataOrdersData![index]!['SALE_ORDER_ID_REF']== null ? 'รอการอัพเดท' :mapDataOrdersData![index]!['SALE_ORDER_ID_REF'] }',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -915,7 +917,7 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '    ${double.parse(mapDataOrdersData![index]!['มูลค่าสินค้ารวม'].toString()).toStringAsFixed(2)}',
+                                                                    '    ${NumberFormat('#,##0.00').format(double.parse(mapDataOrdersData![index]!['มูลค่าสินค้ารวม'].toString())).toString()}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             12,
@@ -934,7 +936,7 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                           context,
                                                                           CupertinoPageRoute(
                                                                             builder: (context) =>
-                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]['CustomerID'], orderDataMap: mapDataOrdersData![index]),
+                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]['CustomerDoc']['CustomerID'], orderDataMap: mapDataOrdersData![index]),
                                                                           ));
                                                                     },
                                                                     child: Text(

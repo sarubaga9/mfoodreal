@@ -91,6 +91,7 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
 
         print(mapDataOrdersData);
       } else {
+        // mapDataOrdersData = [];
         print('ไม่พบเอกสารที่มี ID เป็น "124"');
       }
 
@@ -110,13 +111,15 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
         // print('------------');
       });
 
-      //==============================================================
-      CollectionReference orderColection = FirebaseFirestore.instance
-          .collection(AppSettings.customerType == CustomerType.Test
-              ? 'OrdersTest'
-              : 'Orders');
+      print('3');
 
-      // ('OrdersTest');
+      //==============================================================
+      CollectionReference orderColection =
+          FirebaseFirestore.instance.collection('Orders');
+
+                //==============================================================
+      //CollectionReference orderColection =
+          //FirebaseFirestore.instance.collection('OrdersTest');
 
       QuerySnapshot orderSubCollections = await orderColection.get();
 
@@ -128,6 +131,8 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
         // print(data);
         // print('------------');
       });
+
+      print('33');
 
       orderListStatename = (orderListStatename ?? [])
           .where((map) => map != null)
@@ -146,6 +151,8 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
       print('------------');
 
       //==============================================================
+
+      print('ทดสอบ1');
 
       for (int i = 0; i < mapDataOrdersData!.length; i++) {
         bool check = orderListStatename!.any((element) =>
@@ -172,6 +179,8 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
           mapDataOrdersData![i]!['SectionID2'] = null;
         }
       }
+
+      print('ทดสอบ2');
 
       if (mounted) {
         setState(() {
@@ -298,6 +307,7 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
     // DateTime twoMonthsAgo = currentDate.subtract(Duration(days: 30));
     // print('Three Months Ago in Thai: ${formatThaiMonth(twoMonthsAgo.month)}');
     DateTime oneMonthsAgo = currentDate.subtract(Duration(days: 0));
+    print('bb');
 
     // ย้อนหลัง 1 เดือน
     DateTime twoMonthsAgo =
@@ -309,8 +319,13 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
     // print(
     // 'Three Months Ago in Thai: ${formatThaiMonth(oneMonthsAgo.month)} ${oneMonthsAgo.year + 543}');
 
+    print('bbb');
+
+    print(mapDataOrdersData);
+
     sortOrdersByUpdateTime(mapDataOrdersData);
     // print(mapDataOrdersData!.length);
+    print('bbbb');
 
     List<Map<String, dynamic>?>? mapDataOne =
         filterOrdersByMonth(mapDataOrdersData, oneMonthsAgo.month.toString());
@@ -318,6 +333,7 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
         filterOrdersByMonth(mapDataOrdersData, twoMonthsAgo.month.toString());
     List<Map<String, dynamic>?>? mapDataThree =
         filterOrdersByMonth(mapDataOrdersData, threeMonthsAgo.month.toString());
+    print('bbbbb');
 
     // print(mapDataOne!.length);
     // print(mapDataTwo!.length);
@@ -640,6 +656,7 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
+                                        print('ไปอีกหน้า ${widget.customerID}');
                                         Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -649,6 +666,8 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
                                                 orderDataMap: {},
                                               ),
                                             ));
+
+                                        print('ไปได้');
                                       },
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,

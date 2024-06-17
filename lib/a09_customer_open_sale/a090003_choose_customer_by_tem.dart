@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:m_food/a07_account_customer/a07_01_open_account/a070101_pdpa_account_widget.dart';
 import 'package:m_food/a07_account_customer/a07_13_accept/a0714_reject_widget.dart';
 import 'package:m_food/a09_customer_open_sale/a0901_customer_list.dart';
+import 'package:m_food/a09_customer_open_sale/widget/list_open_sale_team_widget.dart';
 import 'package:m_food/a09_customer_open_sale/widget/list_open_sale_widget.dart';
 import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
@@ -27,23 +28,73 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class A090003ChooseCustomerByTeam extends StatefulWidget {
-  const A090003ChooseCustomerByTeam({Key? key}) : super(key: key);
+  final String? idEmployee;
+  A090003ChooseCustomerByTeam({Key? key, @required this.idEmployee})
+      : super(key: key);
 
   @override
-  _A090003ChooseCustomerByTeamState createState() => _A090003ChooseCustomerByTeamState();
+  _A090003ChooseCustomerByTeamState createState() =>
+      _A090003ChooseCustomerByTeamState();
 }
 
-class _A090003ChooseCustomerByTeamState extends State<A090003ChooseCustomerByTeam> {
+class _A090003ChooseCustomerByTeamState
+    extends State<A090003ChooseCustomerByTeam> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final userController = Get.find<UserController>();
   RxMap<String, dynamic>? userData;
+  List<Map<String, dynamic>?>? mapData = [];
+
 
   bool isLoading = false;
+
+  void getData() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      userData = userController.userData;
+
+      // อ้างอิงไปยัง collection ที่ต้องการกรอง
+      CollectionReference customers = FirebaseFirestore.instance.collection(
+          AppSettings.customerType == CustomerType.Test
+              ? 'CustomerTest'
+              : 'Customer');
+
+      // ใช้ where เพื่อกรองข้อมูลตาม field และ value ที่กำหนด
+      QuerySnapshot querySnapshot = await customers
+          .where('รหัสพนักงานขาย', isEqualTo: widget.idEmployee)
+          .where('IS_ACTIVE', isEqualTo: true)
+          .get();
+
+      // ตรวจสอบผลลัพธ์
+      querySnapshot.docs.forEach((doc) {
+        print(doc.data());
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData!.add(data);
+      });
+
+      mapData = (mapData ?? [])
+          .where((map) => map != null)
+          .cast<Map<String, dynamic>>()
+          .toList();
+
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (r) {
+      print(r);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+
+    getData();
   }
 
   @override
@@ -353,26 +404,26 @@ class _A090003ChooseCustomerByTeamState extends State<A090003ChooseCustomerByTea
                         ],
                       ),
                       //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 50, 10, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              'เลือกรายชื่อสมาชิกที่ต้องการเข้าไปดู',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyLarge
-                                  .override(
-                                    fontSize: 18,
-                                    fontFamily: 'Kanit',
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryText,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.fromLTRB(10, 50, 10, 0),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     mainAxisSize: MainAxisSize.max,
+                      //     children: [
+                      //       Text(
+                      //         'เลือกรายชื่อสมาชิกที่ต้องการเข้าไปดู',
+                      //         style: FlutterFlowTheme.of(context)
+                      //             .bodyLarge
+                      //             .override(
+                      //               fontSize: 18,
+                      //               fontFamily: 'Kanit',
+                      //               color: FlutterFlowTheme.of(context)
+                      //                   .primaryText,
+                      //             ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
@@ -395,7 +446,7 @@ class _A090003ChooseCustomerByTeamState extends State<A090003ChooseCustomerByTea
                               child: Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 10.0, 0.0, 0.0),
-                                child: ListOpenSaleWidget(),
+                                child: ListOpenSaleTeamWidget(mapData: mapData),
                               ),
                             ),
                           ],

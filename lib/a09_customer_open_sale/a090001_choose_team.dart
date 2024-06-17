@@ -27,7 +27,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class A090001ChooseTeam extends StatefulWidget {
-  const A090001ChooseTeam({Key? key}) : super(key: key);
+  const A090001ChooseTeam({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _A090001ChooseTeamState createState() => _A090001ChooseTeamState();
@@ -42,6 +44,7 @@ class _A090001ChooseTeamState extends State<A090001ChooseTeam> {
   bool isLoading = false;
 
   List<Map<String, dynamic>> saleTeamGroup = [];
+  List<List<String?>?> listTeamID = [];
 
   Future<void> getData() async {
     userData = userController.userData;
@@ -68,19 +71,27 @@ class _A090001ChooseTeamState extends State<A090001ChooseTeam> {
     });
 
     saleTeamGroup.removeWhere((customerData) {
-      print(customerData['สมาชิกในกลุ่ม']
-          .any((member) => member['EmployeeID'] != userData!['EmployeeID']));
+      print(customerData['หัวหน้างาน']);
 
       print(userData!['EmployeeID']);
-      return customerData['สมาชิกในกลุ่ม']
-          .any((member) => member['EmployeeID'] != userData!['EmployeeID']);
+
+      if (customerData['หัวหน้างาน'].isEmpty) {
+        return true;
+      } else {
+        return customerData['หัวหน้างาน']
+            .any((member) => member['EmployeeID'] != userData!['EmployeeID']);
+      }
     });
 
     print('----2----');
     print(saleTeamGroup.length);
-    saleTeamGroup.forEach((element) {
-      print(element);
-    });
+    for (int i = 0; i < saleTeamGroup.length; i++) {
+      listTeamID.add([]);
+      saleTeamGroup[i]['สมาชิกในกลุ่ม'].forEach((element) {
+        print(element);
+        listTeamID[i]!.add(element['EmployeeID']);
+      });
+    }
 
     // print(customerDataList.length);
     // print(customerDataList.length);
@@ -435,49 +446,53 @@ class _A090001ChooseTeamState extends State<A090001ChooseTeam> {
                         ),
                       ),
                       //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 50, 10, 0),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) =>
-                                      const A090002ChooseTeamName(),
-                                )).whenComplete(() async {
-                              setState(() {});
-                            });
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 5.0, 0.0),
-                                child: Icon(
-                                  Icons.circle,
-                                  color: FlutterFlowTheme.of(context).alternate,
-                                  size: 30.0,
-                                ),
-                              ),
-                              Text(
-                                'ฝ่ายขาย 1 (กรุงเทพและปริมณฑล)',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Kanit',
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
+                      for (int i = 0; i < saleTeamGroup.length; i++)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 50, 10, 0),
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => A090002ChooseTeamName(
+                                      listID: listTeamID[i],
+                                      saleTeamGroup: saleTeamGroup[i],
                                     ),
-                              ),
-                            ],
+                                  )).whenComplete(() async {
+                                setState(() {});
+                              });
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 0.0, 5.0, 0.0),
+                                  child: Icon(
+                                    Icons.circle,
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
+                                    size: 30.0,
+                                  ),
+                                ),
+                                Text(
+                                  saleTeamGroup[i]['ชื่อกลุ่มพนักงาน'],
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyLarge
+                                      .override(
+                                        fontFamily: 'Kanit',
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                       //============ เปิดหน้าบัญชีใหม่เข้าสูระบบ =================
                       // Padding(
                       //   padding: EdgeInsets.fromLTRB(10, 10, 10, 0),

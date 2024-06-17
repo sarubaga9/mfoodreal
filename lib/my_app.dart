@@ -151,6 +151,8 @@ class _MyAppState extends State<MyApp> {
         });
       } else {
         print('ข้อความนี้เป็นตัวอักษร');
+        print('1');
+        print(message);
         await FirebaseFirestore.instance
             .collection('User')
             .where('Username', isEqualTo: message)
@@ -259,7 +261,7 @@ class _MyAppState extends State<MyApp> {
         isLoading = true;
       });
 
-      String versionNow = '1.1';
+      String versionNow = '1.4';
 
       print(versionNow);
 
@@ -537,6 +539,8 @@ class _MyAppState extends State<MyApp> {
         });
       } else {
         print('ข้อความนี้เป็นตัวอักษร');
+        print('2');
+        print(message);
         await FirebaseFirestore.instance
             .collection('User')
             .where('Username', isEqualTo: message)
@@ -563,7 +567,9 @@ class _MyAppState extends State<MyApp> {
                 //       )
                 //     : print(dataMap['Level']);
 
+                print('ee');
                 await messaging.requestPermission();
+                print('vv');
               },
             );
           },
@@ -572,6 +578,7 @@ class _MyAppState extends State<MyApp> {
 //=========================================================================
       userData = userController.userData;
       employeeData = userController.employeeData;
+      print(userData);
 //=========================================================================
       if (message == 'No data found!') {
       } else {
@@ -610,6 +617,7 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         isLoading = false;
       });
+      print('success');
     }
   }
 
@@ -2336,6 +2344,9 @@ class _MyAppState extends State<MyApp> {
     // navigatorKey.currentState
     //     ?.pushNamed('/deeplink', arguments: {'ref': widget.initialRouteArgs});
 
+    print('build ');
+    print(isLoading);
+    print(checkVersion);
     return isLoading
         ? MaterialApp(
             locale: _locale,
@@ -2384,8 +2395,9 @@ class _MyAppState extends State<MyApp> {
                 // },
                 navigatorKey: navigatorKey,
                 onGenerateRoute: (settings) {
+                  print('1123243432');
                   if (settings.name == '/deeplink') {
-                    // print('hhhhhhh');
+                    print('hhhhhhh');
                     // print(settings.name);
                     // print(settings.arguments);
 
