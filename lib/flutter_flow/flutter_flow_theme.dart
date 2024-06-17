@@ -31,6 +31,15 @@ abstract class FlutterFlowTheme {
   late Color warning;
   late Color error;
   late Color info;
+  //=====================================================
+
+  @Deprecated('Use displaySmallFamily instead')
+  String get greenFamily => greenSmallFamily;
+  @Deprecated('Use displaySmallFamily instead')
+  String get redFamily => redSmallFamily;
+  @Deprecated('Use displaySmallFamily instead')
+  String get orangeFamily => orangeSmallFamily;
+  //=====================================================
 
   @Deprecated('Use displaySmallFamily instead')
   String get title1Family => displaySmallFamily;
@@ -67,6 +76,16 @@ abstract class FlutterFlowTheme {
   TextStyle get displayMedium => typography.displayMedium;
   String get displaySmallFamily => typography.displaySmallFamily;
   TextStyle get displaySmall => typography.displaySmall;
+  //=====================================================
+  TextStyle get greenSmall => typography.greenSmall;
+  String get greenSmallFamily => typography.greenSmallFamily;
+  TextStyle get redSmall => typography.redSmall;
+  String get redSmallFamily => typography.redSmallFamily;
+  TextStyle get orangeSmall => typography.orangeSmall;
+  String get orangeSmallFamily => typography.orangeSmallFamily;
+  TextStyle get greySmall => typography.greySmall;
+  String get greySmallFamily => typography.greySmallFamily;
+  //=====================================================
   String get headlineLargeFamily => typography.headlineLargeFamily;
   TextStyle get headlineLarge => typography.headlineLarge;
   String get headlineMediumFamily => typography.headlineMediumFamily;
@@ -75,6 +94,10 @@ abstract class FlutterFlowTheme {
   TextStyle get headlineSmall => typography.headlineSmall;
   String get titleLargeFamily => typography.titleLargeFamily;
   TextStyle get titleLarge => typography.titleLarge;
+  //=====================================================
+  String get titleLargeFamilyFont => typography.titleLargeFontFamily;
+  TextStyle get titleLargeFont => typography.titleLargeFont;
+  //=======================================================
   String get titleMediumFamily => typography.titleMediumFamily;
   TextStyle get titleMedium => typography.titleMedium;
   String get titleSmallFamily => typography.titleSmallFamily;
@@ -89,8 +112,13 @@ abstract class FlutterFlowTheme {
   TextStyle get bodyLarge => typography.bodyLarge;
   String get bodyMediumFamily => typography.bodyMediumFamily;
   TextStyle get bodyMedium => typography.bodyMedium;
+
+  TextStyle get bodyMediumWhite => typography.bodyMediumWhite;
   String get bodySmallFamily => typography.bodySmallFamily;
+
   TextStyle get bodySmall => typography.bodySmall;
+
+  TextStyle get bodySmallRed => typography.bodySmallRed;
 
   Typography get typography => ThemeTypography(this);
 }
@@ -128,6 +156,16 @@ abstract class Typography {
   TextStyle get displayMedium;
   String get displaySmallFamily;
   TextStyle get displaySmall;
+  //=====================================================
+  TextStyle get greenSmall;
+  String get greenSmallFamily;
+  TextStyle get redSmall;
+  String get redSmallFamily;
+  TextStyle get orangeSmall;
+  String get orangeSmallFamily;
+  TextStyle get greySmall;
+  String get greySmallFamily;
+  //=====================================================
   String get headlineLargeFamily;
   TextStyle get headlineLarge;
   String get headlineMediumFamily;
@@ -136,6 +174,11 @@ abstract class Typography {
   TextStyle get headlineSmall;
   String get titleLargeFamily;
   TextStyle get titleLarge;
+  //======
+  String get titleLargeFontFamily;
+  TextStyle get titleLargeFont;
+  //=========
+
   String get titleMediumFamily;
   TextStyle get titleMedium;
   String get titleSmallFamily;
@@ -150,8 +193,10 @@ abstract class Typography {
   TextStyle get bodyLarge;
   String get bodyMediumFamily;
   TextStyle get bodyMedium;
+  TextStyle get bodyMediumWhite;
   String get bodySmallFamily;
   TextStyle get bodySmall;
+  TextStyle get bodySmallRed;
 }
 
 class ThemeTypography extends Typography {
@@ -180,6 +225,40 @@ class ThemeTypography extends Typography {
         fontWeight: FontWeight.w600,
         fontSize: 34.0,
       );
+
+  //=====================================================
+  String get greenSmallFamily => 'Kanit';
+  TextStyle get greenSmall => GoogleFonts.getFont(
+        'Kanit',
+        color: Colors.green.shade900,
+        // fontWeight: FontWeight.w600,
+        fontSize: 12.0,
+      );
+
+  String get redSmallFamily => 'Kanit';
+  TextStyle get redSmall => GoogleFonts.getFont(
+        'Kanit',
+        color: Colors.red.shade900,
+        // fontWeight: FontWeight.w600,
+        fontSize: 12.0,
+      );
+
+  String get orangeSmallFamily => 'Kanit';
+  TextStyle get orangeSmall => GoogleFonts.getFont(
+        'Kanit',
+        color: Colors.deepOrange,
+        // fontWeight: FontWeight.w600,
+        fontSize: 12.0,
+      );
+
+  String get greySmallFamily => 'Kanit';
+  TextStyle get greySmall => GoogleFonts.getFont(
+        'Kanit',
+        color: Colors.grey,
+        fontWeight: FontWeight.normal,
+        fontSize: 14.0,
+      );
+  //=====================================================
   String get headlineLargeFamily => 'Kanit';
   TextStyle get headlineLarge => GoogleFonts.getFont(
         'Kanit',
@@ -208,6 +287,16 @@ class ThemeTypography extends Typography {
         fontWeight: FontWeight.w500,
         fontSize: 20.0,
       );
+
+  //=============
+  String get titleLargeFontFamily => 'Kanit';
+  TextStyle get titleLargeFont => GoogleFonts.getFont(
+        'Kanit',
+        color: theme.primaryText,
+        fontWeight: FontWeight.w500,
+        fontSize: 16.0,
+      );
+  //=============
   String get titleMediumFamily => 'Kanit';
   TextStyle get titleMedium => GoogleFonts.getFont(
         'Kanit',
@@ -257,10 +346,25 @@ class ThemeTypography extends Typography {
         fontWeight: FontWeight.normal,
         fontSize: 12.0,
       );
+
+  TextStyle get bodyMediumWhite => GoogleFonts.getFont(
+        'Kanit',
+        color: Colors.white,
+        fontWeight: FontWeight.normal,
+        fontSize: 12.0,
+      );
   String get bodySmallFamily => 'Kanit';
   TextStyle get bodySmall => GoogleFonts.getFont(
         'Kanit',
         color: theme.primaryText,
+        fontWeight: FontWeight.normal,
+        fontSize: 10.0,
+      );
+
+  String get bodySmallRedFamily => 'Kanit';
+  TextStyle get bodySmallRed => GoogleFonts.getFont(
+        'Kanit',
+        color: Colors.red,
         fontWeight: FontWeight.normal,
         fontSize: 10.0,
       );

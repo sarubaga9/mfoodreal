@@ -8,6 +8,9 @@ class FFIcons {
   static const String _mfood2Family = 'Mfood2';
   static const String _mDIMenuV20Family = 'MDIMenuV20';
   static const String _ocrFamily = 'Ocr';
+  static const String _trashCanFamily = 'TrashCan';
+  static const String _penPlusFamily = 'PenPlus';
+  static const String _builMapLocationFamily = 'BuilMapLocation';
 
   // MDIMenu
   static const IconData knoteCheckOutline =
@@ -133,4 +136,20 @@ class FFIcons {
 
   // OCR
   static const IconData kocr = IconData(0xe900, fontFamily: _ocrFamily);
+
+  // trash-can
+  static const IconData ktrashCan =
+      IconData(0xe900, fontFamily: _trashCanFamily);
+
+  // pen-plus
+  static const IconData kmapMarkerCheck =
+      IconData(0xe900, fontFamily: _penPlusFamily);
+  static const IconData kmapMarkerCheckOutline =
+      IconData(0xe901, fontFamily: _penPlusFamily);
+  static const IconData kplus = IconData(0xe902, fontFamily: _penPlusFamily);
+  static const IconData kpenPlus = IconData(0xe903, fontFamily: _penPlusFamily);
+
+  // BuilMapLocation
+  static const IconData kofficeBuildingMarkerOutline =
+      IconData(0xe900, fontFamily: _builMapLocationFamily);
 }

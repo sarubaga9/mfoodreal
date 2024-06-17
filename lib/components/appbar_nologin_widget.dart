@@ -70,7 +70,8 @@ class _AppbarNologinWidgetState extends State<AppbarNologinWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          context.safePop();
+                          Navigator.pop(context);
+                          // context.safePop();
                         },
                         child: Icon(
                           Icons.chevron_left,

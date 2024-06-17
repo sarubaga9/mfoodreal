@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "417066876911",
+    "project_id": "mfood-1a0a3",
+    "storage_bucket": "mfood-1a0a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417066876911:android:bab97667b0a7d7034ec01a",
+        "android_client_info": {
+          "package_name": "com.mycompany.mfood"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ3iSLMgkllMobTN_9KWxyH2iwU52aodo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417066876911:android:8e01b69899df0cf84ec01a",
+        "android_client_info": {
+          "package_name": "com.nininshopping.mfoodtest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ3iSLMgkllMobTN_9KWxyH2iwU52aodo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

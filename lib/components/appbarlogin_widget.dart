@@ -1,3 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:m_food/controller/shared_preference_controller.dart';
+import 'package:m_food/controller/user_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +40,71 @@ class _AppbarloginWidgetState extends State<AppbarloginWidget> {
     _model.maybeDispose();
 
     super.dispose();
+  } //============================================================================
+
+  String message = '';
+  final SharedPreferenceController myController = SharedPreferenceController();
+  bool isLoadingLogout = false;
+
+  Future<void> saveDataToSharedPreferences(String key, String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+    // print(value);
+  }
+
+  Future<void> saveData(String userId) async {
+    await saveDataToSharedPreferences('message_key', userId);
+    // print('Data saved.');
+  }
+
+  void saveDataForLogout() async {
+    try {
+      final userController = Get.find<UserController>();
+      setState(() {
+        isLoadingLogout = true;
+      });
+
+      await FirebaseFirestore.instance
+          .collection('User')
+          .doc(userController.userData!['UserID'])
+          .update(
+        {
+          'UserTokenID': '',
+        },
+      ).then((value) async {
+        final test =
+            FirebaseFirestore.instance.collection('User').doc('NoUser').get();
+        final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+            await test;
+        if (documentSnapshot.exists) {
+          final data = documentSnapshot.data();
+        } else {
+          print('ไม่พบข้อมูลสำหรับเอกสารนี้');
+        }
+        print('documentdatalogout');
+        print(documentSnapshot.data());
+        print('savedata');
+        await saveData('');
+        print('updatestring');
+        await myController.updateString('');
+        print('updateuser');
+        await userController.updateUserDataPhone(documentSnapshot);
+        print('logout');
+        await Future.delayed(Duration(seconds: 3));
+        // .then((value) => context.push('A011_Home'));
+      });
+    } catch (error) {
+      print('error profile_screen.dart -> ${error}');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingLogout = false;
+        });
+      }
+      // runApp(A011HomeWidget());
+      Navigator.pop(context);
+      // context.push('/');
+    }
   }
 
   @override
@@ -64,6 +135,7 @@ class _AppbarloginWidgetState extends State<AppbarloginWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          Navigator.pop(context);
                           context.safePop();
                         },
                         child: Icon(
@@ -176,7 +248,8 @@ class _AppbarloginWidgetState extends State<AppbarloginWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          context.pushNamed('A01_05_Dashboard');
+                          // context.pushNamed('A01_05_Dashboard');
+                          saveDataForLogout();
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(50.0),

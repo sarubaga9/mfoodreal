@@ -15,26 +15,28 @@ class AppbarSearchWidget extends StatefulWidget {
 }
 
 class _AppbarSearchWidgetState extends State<AppbarSearchWidget> {
-  late AppbarSearchModel _model;
+  // late AppbarSearchModel _model;
+
+  TextEditingController textController = TextEditingController();
 
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
-    _model.onUpdate();
+    // _model.onUpdate();
   }
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => AppbarSearchModel());
+    // _model = createModel(context, () => AppbarSearchModel());
 
-    _model.textController ??= TextEditingController();
-    _model.textFieldFocusNode ??= FocusNode();
+    // _model.textController ??= TextEditingController();
+    // _model.textFieldFocusNode ??= FocusNode();
   }
 
   @override
   void dispose() {
-    _model.maybeDispose();
+    // _model.maybeDispose();
 
     super.dispose();
   }
@@ -108,8 +110,9 @@ class _AppbarSearchWidgetState extends State<AppbarSearchWidget> {
               ),
               alignment: AlignmentDirectional(0.00, 0.00),
               child: TextFormField(
-                controller: _model.textController,
-                focusNode: _model.textFieldFocusNode,
+                // controller: _model.textController,
+                // focusNode: _model.textFieldFocusNode,
+                controller: textController,
                 autofocus: true,
                 obscureText: false,
                 decoration: InputDecoration(
@@ -129,7 +132,7 @@ class _AppbarSearchWidgetState extends State<AppbarSearchWidget> {
                   ),
                 ),
                 style: FlutterFlowTheme.of(context).bodyMedium,
-                validator: _model.textControllerValidator.asValidator(context),
+                // validator: _model.textControllerValidator.asValidator(context),
               ),
             ),
           ],

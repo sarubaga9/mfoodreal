@@ -6,17 +6,20 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'form_general_user_widget.dart' show FormGeneralUserWidget;
+// import 'form_general_user_widget_before.dart' show FormGeneralUserWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'form_general_user_widget.dart' show FormGeneralUserWidget;
+
 
 class FormGeneralUserModel extends FlutterFlowModel<FormGeneralUserWidget> {
   ///  State fields for stateful widgets in this component.
 
   // State field(s) for RadioButton widget.
   FormFieldController<String>? radioButtonValueController;
+  FormFieldController<String>? radioButtonValueControllerVat;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
@@ -37,6 +40,27 @@ class FormGeneralUserModel extends FlutterFlowModel<FormGeneralUserWidget> {
   FocusNode? textFieldFocusNode5;
   TextEditingController? textController5;
   String? Function(BuildContext, String?)? textController5Validator;
+  FocusNode? textFieldFocusNode5Company;
+  TextEditingController? textController5Company;
+  String? Function(BuildContext, String?)? textController5ValidatorCompany;
+
+
+  FocusNode? textFieldFocusNode1Company;
+  TextEditingController? textController1Company;
+  String? Function(BuildContext, String?)? textController1ValidatorCompany;
+  FocusNode? textFieldFocusNode2Company;
+  TextEditingController? textController2Company;
+  String? Function(BuildContext, String?)? textController2ValidatorCompany;
+  FocusNode? textFieldFocusNode3Company;
+  TextEditingController? textController3Company;
+  String? Function(BuildContext, String?)? textController3ValidatorCompany;
+  FocusNode? textFieldFocusNode4Company;
+  TextEditingController? textController4Company;
+  String? Function(BuildContext, String?)? textController4ValidatorCompany;
+  FocusNode? textFieldFocusNode41Company;
+  TextEditingController? textController41Company;
+  String? Function(BuildContext, String?)? textController41ValidatorCompany;
+
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode6;
   TextEditingController? textController6;
@@ -64,6 +88,7 @@ class FormGeneralUserModel extends FlutterFlowModel<FormGeneralUserWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
+
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode12;
   TextEditingController? textController12;
@@ -100,7 +125,15 @@ class FormGeneralUserModel extends FlutterFlowModel<FormGeneralUserWidget> {
   FocusNode? textFieldFocusNode17;
   TextEditingController? textController17;
   String? Function(BuildContext, String?)? textController17Validator;
+  FocusNode? textFieldFocusNode171;
+  TextEditingController? textController171;
+  String? Function(BuildContext, String?)? textController171Validator;
+  FocusNode? textFieldFocusNode172;
+  TextEditingController? textController172;
+  String? Function(BuildContext, String?)? textController172Validator;
   // State field(s) for DropDown widget.
+
+
   String? dropDownValue6;
   FormFieldController<String>? dropDownValueController6;
   // State field(s) for TextField widget.
@@ -126,6 +159,10 @@ class FormGeneralUserModel extends FlutterFlowModel<FormGeneralUserWidget> {
   FocusNode? textFieldFocusNode19;
   TextEditingController? textController19;
   String? Function(BuildContext, String?)? textController19Validator;
+
+    FocusNode? textFieldFocusNode191;
+  TextEditingController? textController191;
+  String? Function(BuildContext, String?)? textController19Validator1;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode20;
   TextEditingController? textController20;
@@ -154,6 +191,14 @@ class FormGeneralUserModel extends FlutterFlowModel<FormGeneralUserWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue18;
   FormFieldController<String>? dropDownValueController18;
+    String? dropDownValue182;
+  FormFieldController<String>? dropDownValueController182;
+    String? dropDownValue183;
+  FormFieldController<String>? dropDownValueController183;
+    String? dropDownValue184;
+  FormFieldController<String>? dropDownValueController184;
+    String? dropDownValue185;
+  FormFieldController<String>? dropDownValueController185;
   // State field(s) for DropDown widget.
   String? dropDownValue19;
   FormFieldController<String>? dropDownValueController19;

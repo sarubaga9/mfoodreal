@@ -1,5 +1,5 @@
 // Export pages
-export '/a01_home/a01_01_home/a0101_home_widget.dart' show A0101HomeWidget;
+export 'a01_home/a01_01_home/a0101_home_widget old.dart' show A0101HomeWidget;
 export '/a02_favorite/a02_01_favorite/a0201_favorite_widget.dart'
     show A0201FavoriteWidget;
 export '/a03_chat/a03_01_chat/a0301_chat_widget.dart' show A0301ChatWidget;

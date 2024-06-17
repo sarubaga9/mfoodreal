@@ -1,6 +1,6 @@
 import '/components/appbar_o_pen_widget.dart';
 import '/components/form_legal_entity_copy_widget.dart';
-import '/components/menu_sidebar_widget.dart';
+import '../../components/menu_sidebar_widget_old.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';

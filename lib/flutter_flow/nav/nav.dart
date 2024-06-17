@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m_food/a01_home/a01_01_home/a0101_home_widget%20old.dart';
+import 'package:m_food/main3333.dart';
+import 'package:m_food/nav_bar_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '/index.dart';
-import '/main.dart';
+import '../../main_old.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/lat_lng.dart';
 import '/flutter_flow/place.dart';
@@ -48,7 +51,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/a0101Home',
           builder: (context, params) => params.isEmpty
               ? NavBarPage(initialPage: 'A01_01_Home')
-              : A0101HomeWidget(),
+              : A0101HomeWidgetOld(),
         ),
         FFRoute(
           name: 'A02_01_Favorite',
@@ -319,7 +322,7 @@ class FFParameters {
   // Parameters are empty if the params map is empty or if the only parameter
   // present is the special extra parameter reserved for the transition info.
   bool get isEmpty =>
-      state.allParams.isEmpty ||
+      !state.allParams.isNotEmpty ||
       (state.extraMap.length == 1 &&
           state.extraMap.containsKey(kTransitionInfoKey));
   bool isAsyncParam(MapEntry<String, dynamic> param) =>

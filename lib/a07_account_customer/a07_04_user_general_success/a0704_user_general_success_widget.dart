@@ -1,6 +1,6 @@
 import '/components/appbar_o_pen_widget.dart';
 import '/components/form_general_user_copy_widget.dart';
-import '/components/menu_sidebar_widget.dart';
+import '../../components/menu_sidebar_widget_old.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'a0704_user_general_success_model.dart';
 export 'a0704_user_general_success_model.dart';
+import 'package:m_food/widgets/menu_sidebar_widget.dart';
 
 class A0704UserGeneralSuccessWidget extends StatefulWidget {
   const A0704UserGeneralSuccessWidget({Key? key}) : super(key: key);

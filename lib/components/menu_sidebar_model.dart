@@ -1,6 +1,7 @@
+import 'package:m_food/widgets/menu_sidebar_widget.dart' show MenuSidebarWidget;
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'menu_sidebar_widget.dart' show MenuSidebarWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';

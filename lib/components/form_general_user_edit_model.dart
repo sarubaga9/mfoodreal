@@ -6,14 +6,15 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'form_general_user_edit_widget.dart' show FormGeneralUserEditWidget;
+// import 'form_general_user_widget_before.dart' show FormGeneralUserWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'form_general_user_widget.dart' show FormGeneralUserWidget;
 
-class FormGeneralUserEditModel
-    extends FlutterFlowModel<FormGeneralUserEditWidget> {
+
+class FormGeneralUserEditModel extends FlutterFlowModel<FormGeneralUserWidget> {
   ///  State fields for stateful widgets in this component.
 
   // State field(s) for RadioButton widget.
@@ -38,6 +39,27 @@ class FormGeneralUserEditModel
   FocusNode? textFieldFocusNode5;
   TextEditingController? textController5;
   String? Function(BuildContext, String?)? textController5Validator;
+  FocusNode? textFieldFocusNode5Company;
+  TextEditingController? textController5Company;
+  String? Function(BuildContext, String?)? textController5ValidatorCompany;
+
+
+  FocusNode? textFieldFocusNode1Company;
+  TextEditingController? textController1Company;
+  String? Function(BuildContext, String?)? textController1ValidatorCompany;
+  FocusNode? textFieldFocusNode2Company;
+  TextEditingController? textController2Company;
+  String? Function(BuildContext, String?)? textController2ValidatorCompany;
+  FocusNode? textFieldFocusNode3Company;
+  TextEditingController? textController3Company;
+  String? Function(BuildContext, String?)? textController3ValidatorCompany;
+  FocusNode? textFieldFocusNode4Company;
+  TextEditingController? textController4Company;
+  String? Function(BuildContext, String?)? textController4ValidatorCompany;
+  FocusNode? textFieldFocusNode41Company;
+  TextEditingController? textController41Company;
+  String? Function(BuildContext, String?)? textController41ValidatorCompany;
+
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode6;
   TextEditingController? textController6;
@@ -65,6 +87,7 @@ class FormGeneralUserEditModel
   // State field(s) for DropDown widget.
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
+
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode12;
   TextEditingController? textController12;
@@ -101,6 +124,12 @@ class FormGeneralUserEditModel
   FocusNode? textFieldFocusNode17;
   TextEditingController? textController17;
   String? Function(BuildContext, String?)? textController17Validator;
+  FocusNode? textFieldFocusNode171;
+  TextEditingController? textController171;
+  String? Function(BuildContext, String?)? textController171Validator;
+  FocusNode? textFieldFocusNode172;
+  TextEditingController? textController172;
+  String? Function(BuildContext, String?)? textController172Validator;
   // State field(s) for DropDown widget.
   String? dropDownValue6;
   FormFieldController<String>? dropDownValueController6;

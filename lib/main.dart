@@ -1,261 +1,160 @@
-import 'package:provider/provider.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
-import 'flutter_flow/flutter_flow_theme.dart';
-import 'flutter_flow/flutter_flow_util.dart';
-import 'flutter_flow/internationalization.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
-import 'flutter_flow/nav/nav.dart';
-import 'index.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
+import 'package:m_food/a01_home/a01_01_home/a0101_home_widget.dart';
+import 'package:m_food/app.dart';
+import 'package:m_food/controller/category_product_controller.dart';
+import 'package:m_food/controller/customer_controller.dart';
+import 'package:m_food/controller/dynamic_link.dart';
+import 'package:m_food/controller/news_controller.dart';
+import 'package:m_food/controller/product_controller.dart';
+import 'package:m_food/controller/product_group_controller.dart';
+import 'package:m_food/controller/shared_preference_controller.dart';
+import 'package:m_food/controller/user_controller.dart';
+import 'package:m_food/flutter_flow/flutter_flow_theme.dart';
+import 'package:m_food/flutter_flow/flutter_flow_util.dart';
+import 'package:m_food/flutter_flow/internationalization.dart';
+import 'package:m_food/index.dart';
+import 'package:m_food/main3333.dart';
+import 'package:m_food/main_old.dart';
+import 'package:m_food/my_app.dart';
+import 'package:m_food/widgets/circular_loading.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+enum CustomerType {
+  Real,
+  Test,
+}
+
+class AppSettings {
+  static CustomerType customerType = CustomerType.Test;
+}
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+void handleDynamicLink(PendingDynamicLinkData? initialLink) {
+  if (initialLink != null) {
+    final Uri deepLink = initialLink.link;
+    print('Received deep link: $deepLink');
+    navigatorKey.currentState
+        ?.pushNamed('/deeplink', arguments: deepLink.queryParameters);
+  } else {
+    print('nodata');
+  }
+}
 
 void main() async {
+  // เริ่มโปรแกรมด้วยค่าเริ่มต้นเป็น Real
+  print("Initial Customer Type: ${AppSettings.customerType}");
+
+  // ทดสอบการเปลี่ยนค่าเป็น Test
+  AppSettings.customerType = CustomerType.Real;
+
+  print("Updated Customer Type: ${AppSettings.customerType}");
+
+  // สามารถเรียกใช้ AppSettings.customerType จากทุกที่ในโปรแกรม
+
+  Future<String?> readDataFromSharedPreferences(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  String dateForResetPassword = '';
+  String tokenResetPassword = '';
+
   WidgetsFlutterBinding.ensureInitialized();
-  usePathUrlStrategy();
+  // await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseAppCheck.instance.activate();
+  await DynamicLinkProvider().initDynamicLink();
+  //===============================================================
+  Get.put(UserController());
+  Get.put(SharedPreferenceController());
+  Get.put(NewsController());
+  Get.put(CustomerController());
+  Get.put(ProductController());
+  Get.put(ProductGroupController());
+  Get.put(CategoryProductController());
+  print('Main() Fuctions');
+  //===============================================================
+  FirebaseDynamicLinks.instance.onLink.listen((pendingDynamicLinkData) async {
+    // await Fluttertoast.showToast(msg: 'มาจาก dynamic link');
+    if (pendingDynamicLinkData != null) {
+      final Uri deepLink = pendingDynamicLinkData.link;
+      //================================================================
+      String? dataDateForResetPassword =
+          await readDataFromSharedPreferences('date');
+      dateForResetPassword =
+          dataDateForResetPassword == '' || dataDateForResetPassword == null
+              ? 'No data found!'
+              : dataDateForResetPassword;
+      //================================================================
+      String? dataTokenResetPassword =
+          await readDataFromSharedPreferences('TokenResetPassword');
+      tokenResetPassword =
+          dataTokenResetPassword == '' || dataTokenResetPassword == null
+              ? 'No data found!'
+              : dataTokenResetPassword;
+      //================================================================
+      String textDataDateForResetPassword = dateForResetPassword;
+      String textdataTokenResetPassword = tokenResetPassword;
+      //================================================================
+      if (deepLink.queryParameters['ref'] == textdataTokenResetPassword) {
+        DateTime parsedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss')
+            .parse(textDataDateForResetPassword);
+        DateTime now = DateTime.now();
+        Duration difference = now.difference(parsedDateTime);
+        bool isMoreThanOneHour = difference.inHours > 1;
+        //================================================================
+        if (isMoreThanOneHour) {
+          print('เวลาปัจจุบันมากกว่า 1 ชั่วโมง จาก DateTime.now()');
+          runApp(MyApp(navigatorKey: navigatorKey));
+        } else {
+          print('เวลาปัจจุบันไม่เกิน 1 ชั่วโมง จาก DateTime.now()');
+          await FirebaseFirestore.instance
+              .collection('User')
+              .where('TokenResetPassword',
+                  isEqualTo: textdataTokenResetPassword)
+              .get()
+              .then(
+            (value) {
+              if (value.docs.isNotEmpty) {
+                Map<String, dynamic> data =
+                    value.docs.first.data() as Map<String, dynamic>;
+                //================================================================
+                Map<String, dynamic> to = {'ref': textdataTokenResetPassword};
+                //================================================================
+                navigatorKey.currentState?.pushNamed('/deeplink',
+                    arguments: deepLink.queryParameters);
+                //================================================================
+                print('มีเอกสาร');
+              } else {
+                print('ไม่มีเอกสาร');
+                runApp(MyApp(navigatorKey: navigatorKey));
+              }
+            },
+          );
+        }
+      } else {
+        runApp(MyApp(navigatorKey: navigatorKey));
+      }
+    }
+  });
 
-  final appState = FFAppState(); // Initialize FFAppState
-  await appState.initializePersistedState();
-
-  runApp(ChangeNotifierProvider(
-    create: (context) => appState,
-    child: MyApp(),
-  ));
-}
-
-class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
-  @override
-  State<MyApp> createState() => _MyAppState();
-
-  static _MyAppState of(BuildContext context) =>
-      context.findAncestorStateOfType<_MyAppState>()!;
-}
-
-class _MyAppState extends State<MyApp> {
-  Locale? _locale;
-  ThemeMode _themeMode = ThemeMode.system;
-
-  late AppStateNotifier _appStateNotifier;
-  late GoRouter _router;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _appStateNotifier = AppStateNotifier.instance;
-    _router = createRouter(_appStateNotifier);
-  }
-
-  void setLocale(String language) {
-    setState(() => _locale = createLocale(language));
-  }
-
-  void setThemeMode(ThemeMode mode) => setState(() {
-        _themeMode = mode;
-      });
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'M-Food',
-      localizationsDelegates: [
-        FFLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      locale: _locale,
-      supportedLocales: const [Locale('en', '')],
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scrollbarTheme: ScrollbarThemeData(),
-      ),
-      themeMode: _themeMode,
-      routerConfig: _router,
-    );
-  }
-}
-
-class NavBarPage extends StatefulWidget {
-  NavBarPage({Key? key, this.initialPage, this.page}) : super(key: key);
-
-  final String? initialPage;
-  final Widget? page;
-
-  @override
-  _NavBarPageState createState() => _NavBarPageState();
-}
-
-/// This is the private State class that goes with NavBarPage.
-class _NavBarPageState extends State<NavBarPage> {
-  String _currentPageName = 'A01_01_Home';
-  late Widget? _currentPage;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentPageName = widget.initialPage ?? _currentPageName;
-    _currentPage = widget.page;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final tabs = {
-      'A01_01_Home': A0101HomeWidget(),
-      'A02_01_Favorite': A0201FavoriteWidget(),
-      'A03_01_Chat': A0301ChatWidget(),
-      'A04_01_ListOrder': A0401ListOrderWidget(),
-      'A06_01_Setting': A0601SettingWidget(),
-    };
-    final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
-
-    final MediaQueryData queryData = MediaQuery.of(context);
-
-    return Scaffold(
-      body: MediaQuery(
-          data: queryData
-              .removeViewInsets(removeBottom: true)
-              .removeViewPadding(removeBottom: true),
-          child: _currentPage ?? tabs[_currentPageName]!),
-      extendBody: true,
-      bottomNavigationBar: FloatingNavbar(
-        currentIndex: currentIndex,
-        onTap: (i) => setState(() {
-          _currentPage = null;
-          _currentPageName = tabs.keys.toList()[i];
-        }),
-        backgroundColor: FlutterFlowTheme.of(context).alternate,
-        selectedItemColor: FlutterFlowTheme.of(context).primaryBackground,
-        unselectedItemColor: FlutterFlowTheme.of(context).secondaryBackground,
-        selectedBackgroundColor: Color(0x00000000),
-        borderRadius: 0.0,
-        itemBorderRadius: 8.0,
-        margin: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-        width: double.infinity,
-        elevation: 0.0,
-        items: [
-          FloatingNavbarItem(
-            customWidget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  currentIndex == 0 ? Icons.home_sharp : Icons.home_sharp,
-                  color: currentIndex == 0
-                      ? FlutterFlowTheme.of(context).primaryBackground
-                      : FlutterFlowTheme.of(context).secondaryBackground,
-                  size: currentIndex == 0 ? 32.0 : 30.0,
-                ),
-                Text(
-                  'หน้าหลัก',
-                  overflow: TextOverflow.ellipsis,
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Kanit',
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          FloatingNavbarItem(
-            customWidget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  currentIndex == 1
-                      ? Icons.favorite_sharp
-                      : Icons.favorite_sharp,
-                  color: currentIndex == 1
-                      ? FlutterFlowTheme.of(context).primaryBackground
-                      : FlutterFlowTheme.of(context).secondaryBackground,
-                  size: currentIndex == 1 ? 32.0 : 30.0,
-                ),
-                Text(
-                  'สั่งประจำ',
-                  overflow: TextOverflow.ellipsis,
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Kanit',
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          FloatingNavbarItem(
-            customWidget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  currentIndex == 2 ? Icons.email_sharp : Icons.email_sharp,
-                  color: currentIndex == 2
-                      ? FlutterFlowTheme.of(context).primaryBackground
-                      : FlutterFlowTheme.of(context).secondaryBackground,
-                  size: currentIndex == 2 ? 32.0 : 30.0,
-                ),
-                Text(
-                  'แช็ทคุยกับเรา',
-                  overflow: TextOverflow.ellipsis,
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Kanit',
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          FloatingNavbarItem(
-            customWidget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  currentIndex == 3
-                      ? Icons.shopping_basket_sharp
-                      : Icons.shopping_basket_sharp,
-                  color: currentIndex == 3
-                      ? FlutterFlowTheme.of(context).primaryBackground
-                      : FlutterFlowTheme.of(context).secondaryBackground,
-                  size: currentIndex == 3 ? 32.0 : 30.0,
-                ),
-                Text(
-                  'รายการสั่งชื้อ',
-                  overflow: TextOverflow.ellipsis,
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Kanit',
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          FloatingNavbarItem(
-            customWidget: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  currentIndex == 4
-                      ? Icons.settings_sharp
-                      : Icons.settings_sharp,
-                  color: currentIndex == 4
-                      ? FlutterFlowTheme.of(context).primaryBackground
-                      : FlutterFlowTheme.of(context).secondaryBackground,
-                  size: currentIndex == 4 ? 32.0 : 30.0,
-                ),
-                Text(
-                  'การตั้งค่า',
-                  overflow: TextOverflow.ellipsis,
-                  style: FlutterFlowTheme.of(context).bodySmall.override(
-                        fontFamily: 'Kanit',
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
+  runApp(MyApp(navigatorKey: navigatorKey));
 }
