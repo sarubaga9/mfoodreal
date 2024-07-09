@@ -19,8 +19,10 @@ import 'package:m_food/controller/user_controller.dart';
 
 class A160401SearchHistory extends StatefulWidget {
   final List<Map<String, dynamic>>? listOrders;
+  final bool? checkTeam;
   const A160401SearchHistory({
     this.listOrders,
+    @required this.checkTeam,
     super.key,
   });
 
@@ -44,6 +46,9 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
   List<dynamic> orderIDHistoryList = [];
   List<dynamic> orderCustomerIDHistoryList = [];
   List<dynamic> orderTimeHistoryList = [];
+
+  List<Map<String, dynamic>?>? orderListStatename = [];
+  List<Map<String, dynamic>?>? sectionID2List = [];
 
   bool isLoading = false;
 
@@ -189,6 +194,91 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
       // }
 
       mapDataOrdersData = widget.listOrders;
+
+      //==============================================================
+      CollectionReference sectionID2ListColection =
+          FirebaseFirestore.instance.collection('Section');
+
+      QuerySnapshot sectionID2ListSubCollections =
+          await sectionID2ListColection.get();
+
+      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      sectionID2ListSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        sectionID2List!.add(data);
+        // print('------------');
+        // print(data);
+        // print('------------');
+      });
+
+      print('3');
+
+      //==============================================================
+
+      //==============================================================
+      CollectionReference orderColection = FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders');
+      // FirebaseFirestore.instance.collection('OrdersTest');
+
+      QuerySnapshot orderSubCollections = await orderColection
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+          .get();
+
+      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        orderListStatename!.add(data);
+        // print('------------');
+        // print(data);
+        // print('------------');
+      });
+
+      print('33');
+
+      orderListStatename = (orderListStatename ?? [])
+          .where((map) => map != null)
+          .cast<Map<String, dynamic>>()
+          .toList();
+
+      // orderListStatename!.removeWhere(
+      //     (element) => element!['CustomerDocId'] != widget.customerID);
+
+      // print('------------');
+
+      // for (var element in orderListStatename!) {
+      //   print(element!['StateName']);
+      // }
+      // print(orderListStatename!.length);
+      // print('------------');
+
+      for (int i = 0; i < mapDataOrdersData!.length; i++) {
+        bool check = orderListStatename!.any((element) =>
+            element!['OrdersDateID'] == mapDataOrdersData![i]!['OrdersDateID']);
+
+        print(i);
+        if (check) {
+          print(check);
+          Map<String, dynamic>? dataMatch = orderListStatename!.firstWhere(
+              (element) =>
+                  element!['OrdersDateID'] ==
+                  mapDataOrdersData![i]!['OrdersDateID']);
+
+          Map<String, dynamic>? dataSectionMatch = sectionID2List!.firstWhere(
+              (element) => element!['ID'] == dataMatch!['SectionID2']);
+
+          mapDataOrdersData![i]!['ชำระเงินแล้ว'] = dataMatch!['ชำระเงินแล้ว'];
+          mapDataOrdersData![i]!['SectionID2'] = dataSectionMatch!['Name'];
+
+          print(mapDataOrdersData![i]!['SectionID2']);
+        } else {
+          print(check);
+          print(mapDataOrdersData![i]!['SectionID2']);
+          mapDataOrdersData![i]!['SectionID2'] = 'รอดำเนินการ';
+          // mapDataOrdersData![i]!['SectionID2'] = null;
+        }
+      }
 
       // mapDataOrdersData = (mapDataOrdersData ?? [])
       //     .where((map) => map != null)
@@ -345,7 +435,7 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
   @override
   Widget build(BuildContext context) {
     print('==============================');
-    print('This is A0902 customer history open list');
+    print('This is A160401 search history');
     // print(widget.customerID);
     print('==============================');
 
@@ -651,7 +741,9 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(3.0, 0.0, 0.0, 0.0),
                                         child: Text(
-                                          'ข้อมูลการค้นหา',
+                                          widget.checkTeam!
+                                              ? 'ข้อมูลการค้นหาออเดอร์ที่เปิดแทน'
+                                              : 'ข้อมูลการค้นหา',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyLarge
                                               .override(
@@ -853,7 +945,9 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ClientIdจากMfoodAPI']}',
+
+                                                                    // '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             14,
@@ -867,7 +961,9 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ประเภทลูกค้า'] == 'Company' ? mapDataOrdersData![index]!['CustomerDoc']['ชื่อบริษัท'] : mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล'] == ' ' ? '${mapDataOrdersData![index]!['CustomerDoc']['ชื่อ']} ${mapDataOrdersData![index]!['CustomerDoc']['นามสกุล']}' : mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+
+                                                                    // '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -928,19 +1024,54 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
                                                                           context,
                                                                           CupertinoPageRoute(
                                                                             builder: (context) =>
-                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]['CustomerDoc']['CustomerID'], orderDataMap: mapDataOrdersData![index]),
+                                                                                A1603OrderDetail(
+                                                                              customerID: mapDataOrdersData![index]['CustomerDoc']['CustomerID'],
+                                                                              orderDataMap: mapDataOrdersData![index],
+                                                                              checkTeam: widget.checkTeam,
+                                                                            ),
                                                                           ));
                                                                     },
                                                                     child: Text(
-                                                                      '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
+                                                                      mapDataOrdersData![index]!['ชำระเงินแล้ว'] !=
+                                                                              null
+                                                                          ? mapDataOrdersData![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersData![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                              ? mapDataOrdersData![index]!['ชำระเงินแล้ว']
+                                                                              : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
+                                                                                  ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : mapDataOrdersData![index]!['SectionID2']
+                                                                                  : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
+                                                                                          ? 'รอดำเนินการ'
+                                                                                          : 'รอดำเนินการ'
+                                                                          : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
+                                                                              ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                  ? 'รอดำเนินการ'
+                                                                                  : mapDataOrdersData![index]!['SectionID2']
+                                                                              : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                  ? 'รอดำเนินการ'
+                                                                                  : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : 'รอดำเนินการ',
+
+                                                                      // '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
                                                                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                           fontSize: 14,
                                                                           fontFamily: 'Kanit',
-                                                                          color: mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ'
-                                                                              ? Colors.green.shade900
-                                                                              : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ยกทั้งตระกร้า' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'รอตัดสต็อก' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == null
-                                                                                  ? Colors.yellow.shade900
-                                                                                  : FlutterFlowTheme.of(context).primaryText,
+                                                                          color: mapDataOrdersData![index]!['ชำระเงินแล้ว'] != null
+                                                                              ? mapDataOrdersData![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersData![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                                  ? Colors.green.shade700
+                                                                                  : Colors.yellow.shade900
+                                                                              : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
+                                                                                  ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                      ? Colors.yellow.shade700
+                                                                                      : Colors.yellow.shade900
+                                                                                  : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                      ? Colors.yellow.shade700
+                                                                                      : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
+                                                                                          ? Colors.yellow.shade700
+                                                                                          : Colors.yellow.shade900,
                                                                           fontWeight: FontWeight.w400),
                                                                     ),
                                                                   ),

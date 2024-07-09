@@ -50,6 +50,9 @@ class _ListOpenSaleWidgetState extends State<ListOpenSaleWidget> {
               .collection(AppSettings.customerType == CustomerType.Test
                   ? 'CustomerTest'
                   : 'Customer')
+              .where('สถานะ', isEqualTo: true)
+              .where('IS_ACTIVE', isEqualTo: true)
+              .where('รหัสพนักงานขาย', isEqualTo: userData!['EmployeeID'])
               .get();
 
       for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
@@ -58,22 +61,22 @@ class _ListOpenSaleWidgetState extends State<ListOpenSaleWidget> {
         customerDataList.add(customerData);
       }
 
-      customerDataList
-          .removeWhere((customerData) => customerData['สถานะ'] == false);
 
-      customerDataList
-          .removeWhere((customerData) => customerData['IS_ACTIVE'] == false);
+      //============================== เปลี่ยนเป็น where ตั้งแต่ firestore =======================================
+      // customerDataList
+      //     .removeWhere((customerData) => customerData['สถานะ'] == false);
 
-      print('A0901 ต้องเปิดคอมเม้นนี้ เพื่อกรองข้อมูลตามจริง');
-      //==================================================
-      // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
-      customerDataList.removeWhere((customerData) =>
-          userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
-      //==================================================
+      // customerDataList
+      //     .removeWhere((customerData) => customerData['IS_ACTIVE'] == false);
 
-      print(userData!['EmployeeID']);
-
-
+      // print('A0901 ต้องเปิดคอมเม้นนี้ เพื่อกรองข้อมูลตามจริง');
+      // //==================================================
+      // // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
+      // customerDataList.removeWhere((customerData) =>
+      //     userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
+      // //==================================================
+      //====================================================================================================
+      
       // print(customerDataList.length);
       // print(customerDataList.length);
       // print(customerDataList.length);

@@ -6,6 +6,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:m_food/a01_home/a01_05_dashboard/a0105_dashboard_widget.dart';
 import 'package:m_food/controller/product_controller.dart';
 import 'package:m_food/controller/product_group_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
@@ -125,35 +126,38 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
         entry['แท๊ก'] = name;
 
-        bool isStringFound = false;
+        // bool isStringFound = false;
 
         // print(userData!);
         // print(userData!);
         // print(userData!);
         // print(entry['PRODUCT_ID']);
 
-        if (userData!.isEmpty) {
-          entry['Favorite'] = false;
-        } else {
-          for (int i = 0; i < userData!['สินค้าถูกใจ'].length; i++) {
-            if (userData!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
-              isStringFound = true;
-            }
-          }
+        // if (userData!.isEmpty) {
+        //   entry['Favorite'] = false;
+        // } else {
+        //   for (int i = 0; i < userData!['สินค้าถูกใจ'].length; i++) {
+        //     if (userData!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
+        //       isStringFound = true;
+        //     }
+        //   }
 
-          if (isStringFound) {
-            entry['Favorite'] = true;
-          } else {
-            entry['Favorite'] = false;
-          }
-        }
+        //   if (isStringFound) {
+        //     entry['Favorite'] = true;
+        //   } else {
+        //     entry['Favorite'] = false;
+        //   }
+        // }
 
         print(entry['รูปภาพ']);
 
         // print(entry);
 
-        resultList.add(entry);
-        resultListAll.add(entry);
+        if (entry['RESULT'] == false) {
+        } else {
+          resultList.add(entry);
+          resultListAll.add(entry);
+        }
       });
     }
 
@@ -212,7 +216,11 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
     secondList = resultProductGroupList.sublist(firstListLength);
 
     // print(firstList.length);
-    // print(resultList.length);
+    print(resultList.length);
+    print(resultList.length);
+    print(resultList.length);
+    print(resultList.length);
+    print(resultList.length);
 
     // for (var element in resultList) {
     //   print(element['รูปภาพ']);
@@ -342,6 +350,8 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
               if (text == 'สินค้าที่เคยสั่ง') {
                 print(userData!['สินค้าที่เคยสั่ง_วันที่'][i]);
                 returnType = false;
+              } else if (text == 'สินค้าถูกใจ') {
+                returnType = true;
               } else {
                 returnType = false;
               }

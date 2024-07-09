@@ -66,19 +66,35 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
       print('customerid');
       print(widget.customerID);
 
-      // ตรวจสอบว่าเอกสาร '124' มี subcollection 'นพกำพห' หรือไม่
       if (customerDoc.exists) {
         customerDataWithID = customerDoc.data() as Map<String, dynamic>?;
+
+        // // Get current date
+        // DateTime now = DateTime.now();
+
+        // // Calculate the date 4 months ago
+        // DateTime fourMonthsAgo = DateTime(now.year, now.month - 4, now.day);
+
+        // // Convert to Timestamp for Firestore
+        // Timestamp fourMonthsAgoTimestamp = Timestamp.fromDate(fourMonthsAgo);
+
+        // CollectionReference subCollectionRef = FirebaseFirestore.instance
+        //     .collection(AppSettings.customerType == CustomerType.Test
+        //         ? 'CustomerTest/${widget.customerID}/Orders'
+        //         : 'Customer/${widget.customerID}/Orders');
+
+        // QuerySnapshot subCollectionSnapshot = await subCollectionRef
+        //     .where('OrdersUpdateTime',
+        //         isGreaterThanOrEqualTo: fourMonthsAgoTimestamp)
+        //     .get();
 
         CollectionReference subCollectionRef = FirebaseFirestore.instance
             .collection(AppSettings.customerType == CustomerType.Test
                 ? 'CustomerTest/${widget.customerID}/Orders'
                 : 'Customer/${widget.customerID}/Orders');
 
-        // ดึงข้อมูลจาก subcollection 'นพกำพห'
         QuerySnapshot subCollectionSnapshot = await subCollectionRef.get();
 
-        // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
         subCollectionSnapshot.docs.forEach((doc) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           mapDataOrdersData!.add(data);
@@ -114,14 +130,14 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
       print('3');
 
       //==============================================================
-      CollectionReference orderColection =
-          FirebaseFirestore.instance.collection('Orders');
+      CollectionReference orderColection = FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders');
+      // FirebaseFirestore.instance.collection('OrdersTest');
 
-                //==============================================================
-      //CollectionReference orderColection =
-          //FirebaseFirestore.instance.collection('OrdersTest');
-
-      QuerySnapshot orderSubCollections = await orderColection.get();
+      QuerySnapshot orderSubCollections =
+          await orderColection.where('CustomerDocId', isEqualTo: widget.customerID).get();
 
       // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
       orderSubCollections.docs.forEach((doc) {
@@ -142,13 +158,13 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
       orderListStatename!.removeWhere(
           (element) => element!['CustomerDocId'] != widget.customerID);
 
-      print('------------');
+      // print('------------');
 
-      for (var element in orderListStatename!) {
-        print(element!['StateName']);
-      }
-      print(orderListStatename!.length);
-      print('------------');
+      // for (var element in orderListStatename!) {
+      //   print(element!['StateName']);
+      // }
+      // print(orderListStatename!.length);
+      // print('------------');
 
       //==============================================================
 
@@ -176,7 +192,8 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
         } else {
           print(check);
           print(mapDataOrdersData![i]!['SectionID2']);
-          mapDataOrdersData![i]!['SectionID2'] = null;
+          mapDataOrdersData![i]!['SectionID2'] = 'รอดำเนินการ';
+          // mapDataOrdersData![i]!['SectionID2'] = null;
         }
       }
 
@@ -1106,7 +1123,7 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
                                                                                                               Text(
                                                                                                                 i == 0
                                                                                                                     ? mapDataOne![j]!['ชำระเงินแล้ว'] != null
-                                                                                                                        ? mapDataOne![j]!['ชำระเงินแล้ว'] != ''
+                                                                                                                        ? mapDataOne![j]!['ชำระเงินแล้ว'] != '' && mapDataOne![j]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
                                                                                                                             ? mapDataOne![j]!['ชำระเงินแล้ว']
                                                                                                                             : mapDataOne![j]!['SectionID2'] != null && mapDataOne![j]!['SectionID2'] != ''
                                                                                                                                 ? mapDataOne![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
@@ -1114,17 +1131,21 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
                                                                                                                                     : mapDataOne![j]!['SectionID2']
                                                                                                                                 : mapDataOne![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                     ? 'รอดำเนินการ'
-                                                                                                                                    : 'ชำระเงินแล้ว'
+                                                                                                                                    : mapDataOne![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                        ? 'รอดำเนินการ'
+                                                                                                                                        : 'รอดำเนินการ'
                                                                                                                         : mapDataOne![j]!['SectionID2'] != null && mapDataOne![j]!['SectionID2'] != ''
                                                                                                                             ? mapDataOne![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
                                                                                                                                 ? 'รอดำเนินการ'
                                                                                                                                 : mapDataOne![j]!['SectionID2']
                                                                                                                             : mapDataOne![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                 ? 'รอดำเนินการ'
-                                                                                                                                : 'ชำระเงินแล้ว'
+                                                                                                                                : mapDataOne![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                    ? 'รอดำเนินการ'
+                                                                                                                                    : 'รอดำเนินการ'
                                                                                                                     : i == 1
                                                                                                                         ? mapDataTwo![j]!['ชำระเงินแล้ว'] != null
-                                                                                                                            ? mapDataTwo![j]!['ชำระเงินแล้ว'] != ''
+                                                                                                                            ? mapDataTwo![j]!['ชำระเงินแล้ว'] != '' && mapDataTwo![j]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
                                                                                                                                 ? mapDataTwo![j]!['ชำระเงินแล้ว']
                                                                                                                                 : mapDataTwo![j]!['SectionID2'] != null && mapDataTwo![j]!['SectionID2'] != ''
                                                                                                                                     ? mapDataTwo![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
@@ -1132,17 +1153,21 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
                                                                                                                                         : mapDataTwo![j]!['SectionID2']
                                                                                                                                     : mapDataTwo![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                         ? 'รอดำเนินการ'
-                                                                                                                                        : 'ชำระเงินแล้ว'
+                                                                                                                                        : mapDataTwo![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                            ? 'รอดำเนินการ'
+                                                                                                                                            : 'รอดำเนินการ'
                                                                                                                             : mapDataTwo![j]!['SectionID2'] != null && mapDataTwo![j]!['SectionID2'] != ''
                                                                                                                                 ? mapDataTwo![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
                                                                                                                                     ? 'รอดำเนินการ'
                                                                                                                                     : mapDataTwo![j]!['SectionID2']
                                                                                                                                 : mapDataTwo![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                     ? 'รอดำเนินการ'
-                                                                                                                                    : 'ชำระเงินแล้ว'
+                                                                                                                                    : mapDataTwo![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                        ? 'รอดำเนินการ'
+                                                                                                                                        : 'รอดำเนินการ'
                                                                                                                         // ? mapDataTwo[j]!['สถานะเช็คสต็อก'] ?? ''
                                                                                                                         : mapDataThree![j]!['ชำระเงินแล้ว'] != null
-                                                                                                                            ? mapDataThree![j]!['ชำระเงินแล้ว'] != ''
+                                                                                                                            ? mapDataThree![j]!['ชำระเงินแล้ว'] != '' && mapDataThree![j]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
                                                                                                                                 ? mapDataThree![j]!['ชำระเงินแล้ว']
                                                                                                                                 : mapDataThree![j]!['SectionID2'] != null && mapDataThree![j]!['SectionID2'] != ''
                                                                                                                                     ? mapDataThree![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
@@ -1150,53 +1175,63 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
                                                                                                                                         : mapDataThree![j]!['SectionID2']
                                                                                                                                     : mapDataThree![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                         ? 'รอดำเนินการ'
-                                                                                                                                        : 'ชำระเงินแล้ว'
+                                                                                                                                        : mapDataThree![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                            ? 'รอดำเนินการ'
+                                                                                                                                            : 'รอดำเนินการ'
                                                                                                                             : mapDataThree![j]!['SectionID2'] != null && mapDataThree![j]!['SectionID2'] != ''
                                                                                                                                 ? mapDataThree![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
                                                                                                                                     ? 'รอดำเนินการ'
                                                                                                                                     : mapDataThree![j]!['SectionID2']
                                                                                                                                 : mapDataThree![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                     ? 'รอดำเนินการ'
-                                                                                                                                    : 'ชำระเงินแล้ว',
+                                                                                                                                    : mapDataThree![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                        ? 'รอดำเนินการ'
+                                                                                                                                        : 'รอดำเนินการ',
                                                                                                                 // : mapDataThree[j]!['สถานะเช็คสต็อก'] ?? '',
                                                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                                                       fontFamily: 'Kanit',
                                                                                                                       color: i == 0
                                                                                                                           ? mapDataOne![j]!['ชำระเงินแล้ว'] != null
-                                                                                                                              ? mapDataOne![j]!['ชำระเงินแล้ว'] == ''
-                                                                                                                                  ? Colors.yellow.shade700
-                                                                                                                                  : Colors.green.shade900
+                                                                                                                              ? mapDataOne![j]!['ชำระเงินแล้ว'] != '' && mapDataOne![j]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                                                                                  ? Colors.green.shade700
+                                                                                                                                  : Colors.yellow.shade900
                                                                                                                               : mapDataOne![j]!['SectionID2'] != null && mapDataOne![j]!['SectionID2'] != ''
                                                                                                                                   ? mapDataOne![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
                                                                                                                                       ? Colors.yellow.shade700
                                                                                                                                       : Colors.yellow.shade900
                                                                                                                                   : mapDataOne![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                       ? Colors.yellow.shade700
-                                                                                                                                      : Colors.green.shade900
+                                                                                                                                      : mapDataOne![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                          ? Colors.yellow.shade700
+                                                                                                                                          : Colors.yellow.shade900
                                                                                                                           : i == 1
                                                                                                                               ? mapDataTwo![j]!['ชำระเงินแล้ว'] != null
-                                                                                                                                  ? mapDataTwo![j]!['ชำระเงินแล้ว'] == ''
-                                                                                                                                      ? Colors.yellow.shade700
-                                                                                                                                      : Colors.green.shade900
+                                                                                                                                  ? mapDataTwo![j]!['ชำระเงินแล้ว'] != '' && mapDataTwo![j]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                                                                                      ? Colors.green.shade700
+                                                                                                                                      : Colors.yellow.shade900
                                                                                                                                   : mapDataTwo![j]!['SectionID2'] != null && mapDataTwo![j]!['SectionID2'] != ''
                                                                                                                                       ? mapDataTwo![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
                                                                                                                                           ? Colors.yellow.shade700
                                                                                                                                           : Colors.yellow.shade900
                                                                                                                                       : mapDataTwo![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                           ? Colors.yellow.shade700
-                                                                                                                                          : Colors.green.shade900
+                                                                                                                                          : mapDataTwo![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                              ? Colors.yellow.shade700
+                                                                                                                                              : Colors.yellow.shade900
                                                                                                                               // ? mapDataTwo[j]!['สถานะเช็คสต็อก'] ?? ''
                                                                                                                               : mapDataThree![j]!['ชำระเงินแล้ว'] != null
-                                                                                                                                  ? mapDataThree![j]!['ชำระเงินแล้ว'] == ''
-                                                                                                                                      ? Colors.yellow.shade700
-                                                                                                                                      : Colors.green.shade900
+                                                                                                                                  ? mapDataThree![j]!['ชำระเงินแล้ว'] != '' && mapDataThree![j]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                                                                                      ? Colors.green.shade700
+                                                                                                                                      : Colors.yellow.shade900
                                                                                                                                   : mapDataThree![j]!['SectionID2'] != null && mapDataThree![j]!['SectionID2'] != ''
                                                                                                                                       ? mapDataThree![j]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
                                                                                                                                           ? Colors.yellow.shade700
                                                                                                                                           : Colors.yellow.shade900
                                                                                                                                       : mapDataThree![j]!['สถานะเช็คสต็อก'] != 'ปกติ'
                                                                                                                                           ? Colors.yellow.shade700
-                                                                                                                                          : Colors.green.shade900,
+                                                                                                                                          : mapDataThree![j]!['สถานะอนุมัติขาย'] != true
+                                                                                                                                              ? Colors.yellow.shade700
+                                                                                                                                              : Colors.yellow.shade900,
                                                                                                                     ),
                                                                                                               ),
                                                                                                             ],

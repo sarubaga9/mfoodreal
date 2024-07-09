@@ -289,7 +289,10 @@ class _CheckInCompleteWidgetState extends State<CheckInCompleteWidget> {
       }
 
       await FirebaseFirestore.instance
-          .collection('เข้าเยี่ยมลูกค้า')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'เข้าเยี่ยมลูกค้าTest'
+              : 'เข้าเยี่ยมลูกค้า')
+          // .collection('เข้าเยี่ยมลูกค้า')
           .doc(widget.entry!.value['VisitID'])
           .update({
         'สถานะ': true,

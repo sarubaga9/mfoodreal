@@ -56,6 +56,14 @@ class _A1303VisitFormState extends State<A1303VisitForm> {
     }
 
     print('test');
+    print('test');
+    print('test');
+    print('test');
+    print('test');
+    print(widget.entry);
+    print(widget.entry);
+    print(widget.entry);
+    print(widget.entry);
     print(widget.entry);
     return Scaffold(
       key: scaffoldKey,

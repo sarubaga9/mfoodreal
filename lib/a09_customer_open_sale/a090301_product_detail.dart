@@ -98,6 +98,8 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
 
   List<TextEditingController> inModalDialog = [];
 
+  List<dynamic> listFavToback = [];
+
   @override
   void initState() {
     loadData();
@@ -246,7 +248,6 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
 
           print('================= 3 ===================');
 
-
           if (sellPriceResponse['PROMOTION_INFO'].runtimeType.toString() ==
               '_Map<String, dynamic>') {
             print('true is Map');
@@ -373,8 +374,14 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
         // print(userData!['สินค้าชื่นชอบ']);
         // print(entry['PRODUCT_ID']);
 
-        for (int i = 0; i < userData!['สินค้าถูกใจ'].length; i++) {
-          if (userData!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
+        // for (int i = 0; i < userData!['สินค้าถูกใจ'].length; i++) {
+        //   if (userData!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
+        //     isStringFound = true;
+        //   }
+        // }
+
+        for (int i = 0; i < customerDataFetch!['สินค้าถูกใจ'].length; i++) {
+          if (customerDataFetch!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
             isStringFound = true;
           }
         }
@@ -714,7 +721,11 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                           // Navigator.pop(context);
                                           Navigator.pop(context, {
                                             'orderLast': orderLast,
-                                            'groupName': ''
+                                            'groupName': '',
+
+                                            'favListID': listFavToback,
+
+                                            // 'productList': productList,
                                           });
                                           // Navigator.pop(context, orderLast);
                                         },
@@ -1015,6 +1026,10 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                           'orderLast': orderLast,
                                           'groupName': firstList[index]
                                               ['GROUP_DESC'],
+
+                                          'favListID': listFavToback,
+
+                                          // 'productList': productList,
                                         });
                                         // changeGroupProductList(
                                         //     firstList[index]['ชื่อกลุ่ม']);
@@ -1091,6 +1106,7 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                           'orderLast': orderLast,
                                           'groupName': secondList[index]
                                               ['GROUP_DESC'],
+                                          'favListID': listFavToback,
                                         });
                                         // changeGroupProductList(
                                         //     secondList[index]['ชื่อกลุ่ม']);
@@ -1575,9 +1591,14 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                           'Favorite'] =
                                                                       false;
 
+                                                                  // List<dynamic>
+                                                                  //     listFav =
+                                                                  //     userData![
+                                                                  //         'สินค้าถูกใจ'];
+
                                                                   List<dynamic>
                                                                       listFav =
-                                                                      userData![
+                                                                      customerDataFetch![
                                                                           'สินค้าถูกใจ'];
                                                                   listFav.removeWhere((element) =>
                                                                       element ==
@@ -1585,16 +1606,25 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                           'PRODUCT_ID']);
                                                                   await FirebaseFirestore
                                                                       .instance
-                                                                      .collection(
-                                                                          'User')
-                                                                      .doc(userData![
-                                                                          'UserID'])
+                                                                      .collection(AppSettings.customerType ==
+                                                                              CustomerType
+                                                                                  .Test
+                                                                          ? 'CustomerTest'
+                                                                          : 'Customer')
+                                                                      // .collection(
+                                                                      //     'User')
+                                                                      // .doc(userData![
+                                                                      //     'UserID'])
+                                                                      .doc(customerDataFetch[
+                                                                          'CustomerID'])
                                                                       .update(
                                                                     {
                                                                       'สินค้าถูกใจ':
                                                                           listFav,
                                                                     },
                                                                   ).then((value) {
+                                                                    listFavToback =
+                                                                        listFav;
                                                                     if (mounted) {
                                                                       setState(
                                                                           () {});
@@ -1604,25 +1634,44 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                   productDetail![
                                                                           'Favorite'] =
                                                                       true;
+                                                                  // List<dynamic>
+                                                                  //     listFav =
+                                                                  //     userData![
+                                                                  //         'สินค้าถูกใจ'];
+
                                                                   List<dynamic>
                                                                       listFav =
-                                                                      userData![
+                                                                      customerDataFetch![
                                                                           'สินค้าถูกใจ'];
                                                                   listFav.add(
                                                                       productDetail![
                                                                           'PRODUCT_ID']);
                                                                   await FirebaseFirestore
                                                                       .instance
-                                                                      .collection(
-                                                                          'User')
-                                                                      .doc(userData![
-                                                                          'UserID'])
+                                                                      // .collection(
+                                                                      //     'User')
+                                                                      // .doc(userData![
+                                                                      //     'UserID'])
+                                                                      .collection(AppSettings.customerType ==
+                                                                              CustomerType
+                                                                                  .Test
+                                                                          ? 'CustomerTest'
+                                                                          : 'Customer')
+
+                                                                      // .collection(
+                                                                      //     'User')
+                                                                      // .doc(userData![
+                                                                      //     'UserID'])
+                                                                      .doc(customerDataFetch[
+                                                                          'CustomerID'])
                                                                       .update(
                                                                     {
                                                                       'สินค้าถูกใจ':
                                                                           listFav,
                                                                     },
                                                                   ).then((value) {
+                                                                    listFavToback =
+                                                                        listFav;
                                                                     if (mounted) {
                                                                       setState(
                                                                           () {});
@@ -3251,21 +3300,30 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                           productList[i]['Favorite'] =
                                                                               false;
 
+                                                                          // List<dynamic>
+                                                                          //     listFav =
+                                                                          //     userData!['สินค้าถูกใจ'];
                                                                           List<dynamic>
                                                                               listFav =
-                                                                              userData!['สินค้าถูกใจ'];
+                                                                              customerDataFetch!['สินค้าถูกใจ'];
                                                                           listFav.removeWhere((element) =>
                                                                               element ==
                                                                               productList[i]['PRODUCT_ID']);
                                                                           await FirebaseFirestore
                                                                               .instance
-                                                                              .collection('User')
-                                                                              .doc(userData!['UserID'])
+                                                                              .collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer')
+                                                                              // .collection(
+                                                                              //     'User')
+                                                                              // .doc(userData![
+                                                                              //     'UserID'])
+                                                                              .doc(customerDataFetch['CustomerID'])
                                                                               .update(
                                                                             {
                                                                               'สินค้าถูกใจ': listFav,
                                                                             },
                                                                           ).then((value) {
+                                                                            listFavToback =
+                                                                                listFav;
                                                                             if (mounted) {
                                                                               setState(() {});
                                                                             }
@@ -3273,21 +3331,31 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                         } else {
                                                                           productList[i]['Favorite'] =
                                                                               true;
+                                                                          // List<dynamic>
+                                                                          //     listFav =
+                                                                          //     userData!['สินค้าถูกใจ'];
                                                                           List<dynamic>
                                                                               listFav =
-                                                                              userData!['สินค้าถูกใจ'];
+                                                                              customerDataFetch!['สินค้าถูกใจ'];
                                                                           listFav.add(productList[i]
                                                                               [
                                                                               'PRODUCT_ID']);
                                                                           await FirebaseFirestore
                                                                               .instance
-                                                                              .collection('User')
-                                                                              .doc(userData!['UserID'])
+                                                                              .collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer')
+
+                                                                              // .collection(
+                                                                              //     'User')
+                                                                              // .doc(userData![
+                                                                              //     'UserID'])
+                                                                              .doc(customerDataFetch['CustomerID'])
                                                                               .update(
                                                                             {
                                                                               'สินค้าถูกใจ': listFav,
                                                                             },
                                                                           ).then((value) {
+                                                                            listFavToback =
+                                                                                listFav;
                                                                             if (mounted) {
                                                                               setState(() {});
                                                                             }

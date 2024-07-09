@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:m_food/a09_customer_open_sale/a0902_customer_history_list.dart';
 import 'package:m_food/a09_customer_open_sale/widget/list_open_sale_widget.dart';
 import 'package:m_food/a16_wait_order/widget/customer_list.dart';
+import 'package:m_food/main.dart';
 import 'package:m_food/widgets/circular_loading_home.dart';
 import 'package:m_food/widgets/menu_sidebar_widget.dart';
 
@@ -14,6 +15,7 @@ import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 
 class A1601CustomerWaitOrderMenu extends StatefulWidget {
+  final List<Map<String, dynamic>?>? dataOrderListTeam;
   final List<Map<String, dynamic>?>? dataOrderList;
 
   final String? status;
@@ -21,6 +23,7 @@ class A1601CustomerWaitOrderMenu extends StatefulWidget {
     super.key,
     this.status,
     @required this.dataOrderList,
+    @required this.dataOrderListTeam,
   });
 
   @override
@@ -55,8 +58,11 @@ class _A1601CustomerWaitOrderMenuState
       //     FirebaseFirestore.instance.collection('OrdersTest');
 
       QuerySnapshot orderSubCollections = await FirebaseFirestore.instance
-          .collection('Orders')
-          .where('UserDocId', isEqualTo: userData!['UserID'])
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          // .collection('OrdersTest')
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
           .get();
 
       // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
@@ -451,8 +457,10 @@ class _A1601CustomerWaitOrderMenuState
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 10.0, 0.0, 0.0),
                                 child: CustomerList(
-                                    status: widget.status,
-                                    dataOrderList: orderList),
+                                  status: widget.status,
+                                  dataOrderList: orderList,
+                                  dataOrderListTeam: [],
+                                ),
                               ),
                             ),
                           ],

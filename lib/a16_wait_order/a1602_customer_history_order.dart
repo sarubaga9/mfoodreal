@@ -984,7 +984,11 @@ class _A1602CustomerHistoryOrderState extends State<A1602CustomerHistoryOrder> {
                                                                                 Navigator.push(
                                                                                     context,
                                                                                     CupertinoPageRoute(
-                                                                                      builder: (context) => A1603OrderDetail(customerID: widget.customerID, orderDataMap: mapDataOrdersData![j]),
+                                                                                      builder: (context) => A1603OrderDetail(
+                                                                                        customerID: widget.customerID,
+                                                                                        orderDataMap: mapDataOrdersData![j],
+                                                                                        checkTeam: false,
+                                                                                      ),
                                                                                     ));
                                                                               },
                                                                               child: Row(

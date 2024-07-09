@@ -84,9 +84,10 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
   TextEditingController saka = TextEditingController();
   TextEditingController sakaID = TextEditingController();
   TextEditingController houseNumber = TextEditingController();
-
+  TextEditingController? soi = TextEditingController();
   TextEditingController? moo = TextEditingController();
   TextEditingController? nameMoo = TextEditingController();
+  TextEditingController? talad = TextEditingController();
   TextEditingController? raod = TextEditingController();
   TextEditingController? province = TextEditingController();
   TextEditingController? district = TextEditingController();
@@ -207,6 +208,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
 
   List<FocusNode?>? textFieldFocusHouseNumber = [FocusNode()];
   List<FocusNode?>? textFieldFocusHouseMoo = [FocusNode()];
+  List<FocusNode?>? textFieldFocusHouseSoi = [FocusNode()];
+  List<FocusNode?>? textFieldFocusHouseTalad = [FocusNode()];
   List<FocusNode?>? textFieldFocusVillageName = [FocusNode()];
   // List<String?>? textProvince = [];
   // List<String?>? textDistrict = [];
@@ -338,8 +341,10 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
   //================================= ตัวแปร controller หลังบัตรประชาชน ในส่วนใหม่ 20 02 2567 ====================================
 
   TextEditingController? homeAddress = TextEditingController();
+  TextEditingController? soiAddress = TextEditingController();
   TextEditingController? mooAddress = TextEditingController();
   TextEditingController? nameMooAddress = TextEditingController();
+  TextEditingController? nameTaladAddress = TextEditingController();
   TextEditingController? roadAddress = TextEditingController();
   TextEditingController? proviceAddress = TextEditingController();
   TextEditingController? districAddressController = TextEditingController();
@@ -1877,6 +1882,12 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
         dropdown5.add(docData['ACC_DESC']);
       }
     }
+    if (dropdown5.isNotEmpty) {
+      _model.dropDownValueController15 ??=
+          FormFieldController<String>(dropdown5[0]);
+      _model.dropDownValue15 = dropdown5[0];
+    }
+
     //======================================================================
     QuerySnapshot querySnapshotGroup1 = await FirebaseFirestore.instance
         .collection('รหัสกลุ่มลูกค้าที่1')
@@ -1955,7 +1966,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
       final Map<String, dynamic> docData =
           querySnapshotTable.docs[index].data() as Map<String, dynamic>;
 
-      if (docData['PLIST_DESC2'] != '') {
+      if (docData['PLIST_DESC2'] != '' && docData['RESULT'] == true) {
         priceTable['key${index}'] = docData;
         priceTableName.add(docData['PLIST_DESC2']);
       }
@@ -2054,6 +2065,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
         'ชื่อสาขา': '', //new
         'HouseNumber': '',
         'Moo': '',
+        'Soi': '',
+        'Talad': '',
         'VillageName': '',
         'Road': '', //new
         'Province': '',
@@ -2085,6 +2098,11 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
         homeAddress = TextEditingController(text: widget.value!['บ้านเลขที่']);
         mooAddress = TextEditingController(
             text: widget.value!['หมู่'] == null ? '' : widget.value!['หมู่']);
+        soiAddress = TextEditingController(
+            text: widget.value!['ซอย'] == null ? '' : widget.value!['ซอย']);
+        nameTaladAddress = TextEditingController(
+            text: widget.value!['ตลาด'] == null ? '' : widget.value!['ตลาด']);
+
         nameMooAddress = TextEditingController(text: widget.value!['หมู่บ้าน']);
         roadAddress = TextEditingController(text: widget.value!['ถนน']);
         codeAddress =
@@ -2674,6 +2692,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
 
           'บ้านเลขที่': homeAddress.text,
           'หมู่': mooAddress.text,
+          'ซอย': soiAddress.text,
+          'ตลาด': nameTaladAddress.text,
           'หมู่บ้าน': nameMooAddress.text,
           'ถนน': roadAddress.text,
           'จังหวัด': proviceAddress.text,
@@ -2748,6 +2768,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
             'ไฟล์': fileUrlPDPA,
             'ลายเซ็น': signatureUrlPDPA,
           },
+          'สินค้าถูกใจ': [],
         }).then((value) async {
           var permissionRef = await FirebaseFirestore.instance
               .collection('Permission')
@@ -2887,6 +2908,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
 
           'บ้านเลขที่': homeAddress.text,
           'หมู่': mooAddress.text,
+          'ซอย': soiAddress.text,
+          'ตลาด': nameTaladAddress.text,
           'หมู่บ้าน': nameMooAddress.text,
           'ถนน': roadAddress.text,
           'จังหวัด': proviceAddress.text,
@@ -2957,6 +2980,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
             'ไฟล์': fileUrlPDPA,
             'ลายเซ็น': signatureUrlPDPA,
           },
+          'สินค้าถูกใจ': [],
         }).then((value) {
           if (mounted) {
             setState(() {
@@ -3188,12 +3212,20 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                           SizedBox(
                             height: 10,
                           ),
+                          soiFirst(context),
+                          SizedBox(
+                            height: 10,
+                          ),
                           mooFirst(context),
                           SizedBox(
                             height: 10,
                           ),
 
                           nameMooFirst(context),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          nameTaladFirst(context),
                           SizedBox(
                             height: 10,
                           ),
@@ -3256,7 +3288,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                                     checkNumberID = !checkNumberID;
                                     if (checkNumberID) {
                                       textNumberID =
-                                          '${homeAddress.text} ${mooAddress.text == '' ? '' : 'หมู่'} ${mooAddress.text} ${nameMooAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
+                                          '${homeAddress.text} ${mooAddress.text == '' ? '' : 'หมู่'} ${mooAddress.text} ${soiAddress.text} ${nameMooAddress.text} ${nameTaladAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
                                       textNumberID =
                                           textNumberID.trimLeft().trimRight();
                                       refreshAddressForDropdown(setState, -1);
@@ -3357,6 +3389,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                                       houseNumber.text = homeAddress.text;
                                       moo.text = mooAddress.text;
                                       nameMoo.text = nameMooAddress.text;
+                                      soi.text = soiAddress.text;
+                                      talad.text = nameTaladAddress.text;
                                       raod.text = roadAddress.text;
                                       province.text = proviceAddress.text;
                                       district.text =
@@ -3369,6 +3403,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                                       resultList[0]['HouseNumber'] =
                                           houseNumber.text;
                                       resultList[0]['Moo'] = moo.text;
+                                      resultList[0]['Soi'] = soi.text;
+                                      resultList[0]['Talad'] = talad.text;
                                       resultList[0]['VillageName'] =
                                           nameMoo.text;
                                       resultList[0]['Road'] = raod.text;
@@ -3396,6 +3432,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
 
                                       houseNumber.text = '';
                                       moo.text = '';
+                                      soi.text = '';
+                                      talad.text = '';
                                       nameMoo.text = '';
                                       raod.text = '';
                                       province!.clear();
@@ -3430,6 +3468,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
 
                                       resultList[0]['HouseNumber'] = '';
                                       resultList[0]['Moo'] = '';
+                                      resultList[0]['Soi'] = '';
+                                      resultList[0]['Talad'] = '';
                                       resultList[0]['VillageName'] = '';
                                       resultList[0]['Road'] = '';
                                       resultList[0]['Province'] = '';
@@ -7568,6 +7608,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
             'ชื่อสาขา': '', //new
             'HouseNumber': '',
             'Moo': '',
+            'Soi': '',
+            'Talad': '',
             'VillageName': '',
             'Road': '', //new
             'Province': '',
@@ -7600,6 +7642,9 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
           // print(resultList.length);
           textFieldFocusHouseNumber!.add(FocusNode());
           textFieldFocusHouseMoo!.add(FocusNode());
+          textFieldFocusHouseSoi!.add(FocusNode());
+          textFieldFocusHouseTalad!.add(FocusNode());
+
           textFieldFocusVillageName!.add(FocusNode());
           textFieldFocusPostalCode!.add(FocusNode());
           textFieldFocusLatitude!.add(FocusNode());
@@ -7685,6 +7730,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
 
                                       textFieldFocusHouseNumber!.removeLast();
                                       textFieldFocusHouseMoo!.removeLast();
+                                      textFieldFocusHouseSoi!.removeLast();
+                                      textFieldFocusHouseTalad!.removeLast();
                                       textFieldFocusVillageName!.removeLast();
                                       textFieldFocusPostalCode!.removeLast();
                                       textFieldFocusLatitude!.removeLast();
@@ -8037,6 +8084,85 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                     // validator:
                     //     _model.textController15Validator.asValidator(context),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+
+                  //======================= ซอย ================================
+                  TextFormField(
+                    // controller: _model.textController15,
+                    readOnly: check
+                        ? index == 0
+                            ? true
+                            : false
+                        : false,
+                    controller: check
+                        ? index == 0
+                            ? soi
+                            : null
+                        : null,
+                    onChanged: (value) {
+                      resultList[index]['Soi'] = value;
+                      print(index);
+                      print(resultList[index]['Soi']);
+
+                      refreshAddressForDropdown(setState, index);
+
+                      toSetState();
+                    },
+                    focusNode: textFieldFocusHouseSoi![index],
+                    autofocus: false,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      filled: check
+                          ? index == 0
+                              ? true
+                              : false
+                          : false, // ทำให้มีสีพื้นหลัง
+                      fillColor: check
+                          ? index == 0
+                              ? Colors.grey.shade300
+                              : null
+                          : null, // สีพื้นหลัง
+                      isDense: true,
+                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                      labelText: 'กรุณาพิมพ์ซอย',
+                      hintText: 'กรุณาพิมพ์หมู่ซอย',
+                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).alternate,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).primary,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    style: FlutterFlowTheme.of(context).bodyMedium,
+                    textAlign: TextAlign.start,
+                    // validator:
+                    //     _model.textController15Validator.asValidator(context),
+                  ),
 
                   //========================== ชื่อหมู่บ้าน=============================================
                   Padding(
@@ -8117,6 +8243,84 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                     ),
                   ),
 
+                  //======================= ชื่อตลาด ================================
+                  TextFormField(
+                    // controller: _model.textController15,
+                    readOnly: check
+                        ? index == 0
+                            ? true
+                            : false
+                        : false,
+                    controller: check
+                        ? index == 0
+                            ? talad
+                            : null
+                        : null,
+                    onChanged: (value) {
+                      resultList[index]['Talad'] = value;
+                      print(index);
+                      print(resultList[index]['Talad']);
+
+                      refreshAddressForDropdown(setState, index);
+
+                      toSetState();
+                    },
+                    focusNode: textFieldFocusHouseTalad![index],
+                    autofocus: false,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      filled: check
+                          ? index == 0
+                              ? true
+                              : false
+                          : false, // ทำให้มีสีพื้นหลัง
+                      fillColor: check
+                          ? index == 0
+                              ? Colors.grey.shade300
+                              : null
+                          : null, // สีพื้นหลัง
+                      isDense: true,
+                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                      labelText: 'กรุณาพิมพ์ชื่อตลาด',
+                      hintText: 'กรุณาพิมพ์ชื่อตลาด',
+                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).alternate,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).primary,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    style: FlutterFlowTheme.of(context).bodyMedium,
+                    textAlign: TextAlign.start,
+                    // validator:
+                    //     _model.textController15Validator.asValidator(context),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   //======================= ถนน ================================
                   TextFormField(
                     // controller: _model.textController15,
@@ -10132,6 +10336,8 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                             resultList[total3 - 1]['HouseNumber'].isEmpty &&
                             // resultList[total3 - 1]['Moo'] == null ||
                             resultList[total3 - 1]['Moo'].isEmpty &&
+                            resultList[total3 - 1]['Soi'].isEmpty &&
+                            resultList[total3 - 1]['Talad'].isEmpty &&
                             // resultList[total3 - 1]['VillageName'] == null ||
                             resultList[total3 - 1]['VillageName'].isEmpty &&
                             // resultList[total3 - 1]['Road'] == null ||
@@ -10375,7 +10581,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
         // addressAllForDropdown.add(texttt.trimLeft());
 
         String texttt =
-            '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['Moo'] == '' ? '' : 'หมู่'} ${resultList[i]['Moo']} ${resultList[i]['VillageName']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
+            '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['Moo'] == '' ? '' : 'หมู่'} ${resultList[i]['Moo']} ${resultList[i]['Soi']} ${resultList[i]['VillageName']} ${resultList[i]['Talad']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
 
         //     String resultString = texttt.substring(
         //         texttt.indexOf('${resultList[i]['รหัสสาขา']}') +
@@ -12887,6 +13093,63 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
     );
   }
 
+  Padding soiFirst(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+      child: TextFormField(
+        controller: soiAddress,
+        onChanged: (value) {
+          checkNumberID = false;
+          refreshAddressForDropdown(setState, -1);
+
+          // if (checkNumberID) {
+          //   refreshAddressForDropdown(setState, -1);
+          // }
+        },
+        autofocus: false,
+        obscureText: false,
+        decoration: InputDecoration(
+          labelText: 'ซอย',
+          isDense: true,
+          labelStyle: FlutterFlowTheme.of(context).labelMedium,
+          hintText: 'ซอย',
+          hintStyle: FlutterFlowTheme.of(context).labelMedium,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).alternate,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        style: FlutterFlowTheme.of(context).bodyMedium,
+        textAlign: TextAlign.start,
+        // validator: _model.textController1Validator.asValidator(context),
+      ),
+    );
+  }
+
   Padding mooFirst(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
@@ -12907,6 +13170,63 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
           isDense: true,
           labelStyle: FlutterFlowTheme.of(context).labelMedium,
           hintText: 'หมู่',
+          hintStyle: FlutterFlowTheme.of(context).labelMedium,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).alternate,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        style: FlutterFlowTheme.of(context).bodyMedium,
+        textAlign: TextAlign.start,
+        // validator: _model.textController1Validator.asValidator(context),
+      ),
+    );
+  }
+
+  Padding nameTaladFirst(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+      child: TextFormField(
+        controller: nameTaladAddress,
+        onChanged: (value) {
+          checkNumberID = false;
+          refreshAddressForDropdown(setState, -1);
+
+          // if (checkNumberID) {
+          //   refreshAddressForDropdown(setState, -1);
+          // }
+        },
+        autofocus: false,
+        obscureText: false,
+        decoration: InputDecoration(
+          labelText: 'ชื่อตลาด',
+          isDense: true,
+          labelStyle: FlutterFlowTheme.of(context).labelMedium,
+          hintText: 'ชื่อตลาด',
           hintStyle: FlutterFlowTheme.of(context).labelMedium,
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(

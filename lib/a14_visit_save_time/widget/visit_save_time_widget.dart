@@ -6,6 +6,7 @@ import 'package:m_food/a13_visit_customer_plan/a1303_visit_form.dart';
 import 'package:m_food/a14_visit_save_time/a1402_check_in.dart';
 import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
+import 'package:m_food/main.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -93,7 +94,7 @@ class _VisitSaveTimeWidgetState extends State<VisitSaveTimeWidget> {
     String day = dateTime.day.toString();
     String month = monthNames[dateTime.month - 1];
     String year =
-        (dateTime.year+543).toString(); // เพิ่ม 543 ในปีเพื่อแปลงเป็น พ.ศ.
+        (dateTime.year + 543).toString(); // เพิ่ม 543 ในปีเพื่อแปลงเป็น พ.ศ.
 
     return '$day $month $year';
   }
@@ -159,7 +160,10 @@ class _VisitSaveTimeWidgetState extends State<VisitSaveTimeWidget> {
             //============ รายละเอียดนัดเยี่ยม ======================
             StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection('เข้าเยี่ยมลูกค้า')
+                    .collection(AppSettings.customerType == CustomerType.Test
+                        ? 'เข้าเยี่ยมลูกค้าTest'
+                        : 'เข้าเยี่ยมลูกค้า')
+                    // .collection('เข้าเยี่ยมลูกค้า')
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

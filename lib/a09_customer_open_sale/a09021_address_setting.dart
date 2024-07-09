@@ -1709,12 +1709,18 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                                 .data() as Map<String, dynamic>;
 
                                         tableData.add(docData);
+                                        print(tableData.last);
                                       }
                                       try {
+                                        String firstChar =
+                                            orderLast!['ตารางราคา']
+                                                .toString()[0];
                                         tableDesc =
                                             tableData.firstWhere((element) {
-                                          return element['PLIST_DESC2'] ==
-                                              orderLast!['ตารางราคา'];
+                                          // return element['PLIST_DESC2'] ==
+                                          //     orderLast!['ตารางราคา'];
+                                          return element['PLIST_DESC1'] ==
+                                              firstChar;
                                         });
 
                                         print('พบ ');

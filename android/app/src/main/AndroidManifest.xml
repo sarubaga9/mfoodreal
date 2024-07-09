@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
+        android:largeHeap="true"
         android:label="M-Food"
         tools:replace="android:label"
         android:icon="@mipmap/ic_launcher"

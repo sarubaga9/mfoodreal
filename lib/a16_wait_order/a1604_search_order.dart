@@ -23,10 +23,13 @@ class A1604SearchOrder extends StatefulWidget {
   final List<Map<String, dynamic>>? dataOrderList;
 
   final String? status;
+
+  final bool? checkTeam;
   const A1604SearchOrder({
     super.key,
     this.status,
     @required this.dataOrderList,
+    @required this.checkTeam,
   });
 
   @override
@@ -186,7 +189,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     print(id);
 
     Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['OrdersDateID'] == id,
+      (element) => element['SALE_ORDER_ID_REF'] == id,
       orElse: () => {},
     );
     print(id);
@@ -206,8 +209,10 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-                customerID: mapData['CustomerDoc']['CustomerID'],
-                orderDataMap: mapData),
+              customerID: mapData['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData,
+              checkTeam: widget.checkTeam,
+            ),
           ));
     }
   }
@@ -236,8 +241,10 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-                customerID: mapData['CustomerDoc']['CustomerID'],
-                orderDataMap: mapData),
+              customerID: mapData['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData,
+              checkTeam: widget.checkTeam,
+            ),
           ));
     }
   }
@@ -266,8 +273,10 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-                customerID: mapData['CustomerDoc']['CustomerID'],
-                orderDataMap: mapData),
+              customerID: mapData['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData,
+              checkTeam: widget.checkTeam,
+            ),
           ));
     }
   }
@@ -355,7 +364,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     } else if (customerID == '' &&
@@ -387,7 +397,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     } else if (customerID != '' &&
@@ -417,7 +428,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     } else if (customerID != '' &&
@@ -447,7 +459,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     } else if (customerID == '' &&
@@ -479,7 +492,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     } else if (customerID == '' &&
@@ -519,7 +533,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     } else if (customerID != '' &&
@@ -553,7 +568,8 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(listOrders: mapData),
+              builder: (context) => A160401SearchHistory(
+                  checkTeam: widget.checkTeam, listOrders: mapData),
             ));
       }
     }
@@ -574,6 +590,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     //       context,
     //       CupertinoPageRoute(
     //         builder: (context) => A1603OrderDetail(
+    // checkTeam: widget.checkTeam,
     //             customerID: mapData['CustomerID'], orderDataMap: mapData),
     //       ));
     // }
@@ -909,9 +926,38 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                           ),
                         ],
                       ),
+
                       SizedBox(
                         height: 50,
                       ),
+
+                      widget.checkTeam!
+                          ? Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    'ค้นหาข้อมูลที่เปิดออเดอร์แทน',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodySmall
+                                        .override(
+                                            fontSize: 16,
+                                            fontFamily: 'Kanit',
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox(),
+                      widget.checkTeam!
+                          ? SizedBox(
+                              height: 10,
+                            )
+                          : SizedBox(),
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(
                             10.0, 10.0, 10.0, 0.0),

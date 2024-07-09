@@ -261,12 +261,15 @@ class _MyAppState extends State<MyApp> {
         isLoading = true;
       });
 
-      String versionNow = '1.4';
+      String versionNow = '1.11';
 
       print(versionNow);
 
       await FirebaseFirestore.instance
-          .collection('VersionReal')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'Version'
+              : 'VersionReal')
+          // .collection('Version')
           .doc('A')
           .get()
           .then((DocumentSnapshot<Map<String, dynamic>> value) async {
@@ -299,7 +302,10 @@ class _MyAppState extends State<MyApp> {
       });
 
       await FirebaseFirestore.instance
-          .collection('Product')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'ProductTest'
+              : 'Product')
+          // .collection('ProductTest')
           .get()
           .then((QuerySnapshot<Map<String, dynamic>>? querySnapshot) async {
         await getProductController.updateProcutData(querySnapshot);
@@ -509,7 +515,10 @@ class _MyAppState extends State<MyApp> {
         print('ข้อความนี้มีเป็นตัวเลขทั้งหมด');
         // print(message);
         await FirebaseFirestore.instance
-            .collection('User')
+            // .collection('User')
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'UserTest'
+                : 'User')
             .doc(message)
             .get()
             .then((DocumentSnapshot<Map<String, dynamic>> value) async {
@@ -542,7 +551,10 @@ class _MyAppState extends State<MyApp> {
         print('2');
         print(message);
         await FirebaseFirestore.instance
-            .collection('User')
+            // .collection('User')
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'UserTest'
+                : 'User')
             .where('Username', isEqualTo: message)
             .get()
             .then(

@@ -168,17 +168,18 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
     print(orderLast!['ตารางราคา']);
     print(orderLast!['ตารางราคา']);
 
-    if (orderLast!['ตารางราคา'] == 'ไม่มีข้อมูล') {
+    String firstChar = orderLast!['ตารางราคา'].toString()[0];
+
+    // if (orderLast!['ตารางราคา'] == 'ไม่มีข้อมูล') {
+    if (firstChar == 'ไม่มีข้อมูล') {
       print('null');
     } else {
       print('no null');
       try {
         tableDesc = tableData.firstWhere((element) {
-          print(element!['PLIST_DESC2']);
-
-          print(orderLast!['ตารางราคา']);
-
-          return element['PLIST_DESC2'] == orderLast!['ตารางราคา'];
+          //แก้ไขเปลี่ยนตารางลูกค้าให็เป็นสตริงตัวเดียว แล้ว ค้นหาใน DESC1 แทน
+          // return element['PLIST_DESC2'] == orderLast!['ตารางราคา'];
+          return element['PLIST_DESC1'] == firstChar;
         });
 
         print('พบ ');
@@ -244,15 +245,21 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
             // print("UNIT: ${sellPrice['UNIT']}");
             // print(i);
             // print(sellPrices[i]['PRODUCT_ID']);
-            // print("-------------------");
+            print("-------------------");
 
-            if (sellPrices[i]['PRODUCT_ID'] == '0291056100062') {
-              // print(sellPrices[i]['PRODUCT_ID']);
-
-              // print(sellPrices[i]['NAMES']);
-              // print(sellPrices[i]['UNIT']);
-              // print(sellPrices[i]['PRICE']);
-              // print(sellPrices[i]);
+            if (sellPrices[i]['PRODUCT_ID'] == '0141369980500') {
+              print(sellPrices[i]['PRODUCT_ID']);
+              print(sellPrices[i]['NAMES']);
+              print(sellPrices[i]['UNIT']);
+              print(sellPrices[i]['PRICE']);
+              print(sellPrices[i]);
+            }
+            if (sellPrices[i]['PRODUCT_ID'] == '0141369990500') {
+              print(sellPrices[i]['PRODUCT_ID']);
+              print(sellPrices[i]['NAMES']);
+              print(sellPrices[i]['UNIT']);
+              print(sellPrices[i]['PRICE']);
+              print(sellPrices[i]);
             }
           }
           // int count2 = sellPrices
@@ -271,7 +278,7 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
       }
     }
 
-    print('object');
+    // print('object');
 
     // print(tagProductList);
 
@@ -281,6 +288,9 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
     // print(orderLast!['ListCustomerAddressID']);
 
     // ดึงข้อมูลจาก collection 'Customer'
+
+    print(widget.customerID);
+
     DocumentSnapshot customerDoc = await FirebaseFirestore.instance
         .collection(AppSettings.customerType == CustomerType.Test
             ? 'CustomerTest'
@@ -370,7 +380,12 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
 
         // print('check sellPrices');
 
-        // print(matchingMaps);
+        // if (entry['PRODUCT_ID'] == '0030006840420') {
+        if (entry['PRODUCT_ID'] == '0030006840420') {
+          print(matchingMaps);
+          print(entry['PRODUCT_ID']);
+          print(entry['UNIT']);
+        }
 
         List<String> priceApi = [];
         List<String> unitApi = [];
@@ -379,6 +394,26 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
           priceApi.add(element['PRICE']);
           unitApi.add(element['UNIT']);
         }
+
+        // for (var element in matchingMaps) {
+        //   bool check = false;
+        //   if (element['UNIT'] == entry!['UNIT']) {
+        //     check = true;
+        //     if (entry['PRODUCT_ID'] == '0141369980500') {
+        //       print(check);
+        //       print('check products true');
+        //     }
+        //     priceApi.add(element['PRICE']);
+        //     unitApi.add(element['UNIT']);
+        //   } else {
+        //     if (entry['PRODUCT_ID'] == '0141369980500') {
+        //       print(check);
+        //       print('check products false');
+        //     }
+        //     priceApi.add(element['PRICE']);
+        //     unitApi.add(element['UNIT']);
+        //   }
+        // }
 
         // print(unitApi);
         entry['ราคา'] = priceApi;
@@ -389,6 +424,8 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
         } else {
           entry['สถานะพร้อมขาย'] = true;
         }
+
+        // print('12345231344134343234234234234');
         // print(entry['ราคา']);
 
         // print(entry['ยูนิต']);
@@ -398,20 +435,38 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
         // print(userData!['สินค้าชื่นชอบ']);
         // print(entry['PRODUCT_ID']);
 
-        for (int i = 0; i < userData!['สินค้าถูกใจ'].length; i++) {
-          if (userData!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
+        //edit Favorite 24 06 2567
+        // for (int i = 0; i < userData!['สินค้าถูกใจ'].length; i++) {
+        //   if (userData!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
+        //     isStringFound = true;
+        //   }
+        // }
+
+        //edit 0907567
+        if (customerDataFetch!['สินค้าถูกใจ'] == null) {
+          customerDataFetch!['สินค้าถูกใจ'] = [];
+        }
+
+        for (int i = 0; i < customerDataFetch!['สินค้าถูกใจ'].length; i++) {
+          if (customerDataFetch!['สินค้าถูกใจ'][i] == entry['PRODUCT_ID']) {
             isStringFound = true;
           }
         }
+
         if (isStringFound) {
           entry['Favorite'] = true;
         } else {
           entry['Favorite'] = false;
         }
 
-        resultList.add(entry);
-        productList.add(entry);
-        productCount.add(0);
+        if (entry['RESULT'] == false) {
+        } else {
+          resultList.add(entry);
+          productList.add(entry);
+          productCount.add(0);
+        }
+
+        // print(resultList.length);
         inModalDialog.add(TextEditingController(text: ''));
       });
 
@@ -472,7 +527,7 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
         // print(element);
       }
 
-      print('========= โซนดึงสินค้ารายการเก่า ============');
+      // print('========= โซนดึงสินค้ารายการเก่า ============');
 
       if (orderLast!['ProductList'] == []) {
       } else {
@@ -481,13 +536,13 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
         nonNullableList = dynamicList!.cast<Map<String, dynamic>>();
 
         for (int i = 0; i < nonNullableList!.length; i++) {
-          print(nonNullableList![i]['ProductID']);
-          print(nonNullableList![i]['ProductID']);
-          print(nonNullableList![i]['ProductID']);
+          // print(nonNullableList![i]['ProductID']);
+          // print(nonNullableList![i]['ProductID']);
+          // print(nonNullableList![i]['ProductID']);
 
-          print(nonNullableList![i]['ยูนิต']);
-          print(nonNullableList![i]['ยูนิต']);
-          print(nonNullableList![i]['ยูนิต']);
+          // print(nonNullableList![i]['ยูนิต']);
+          // print(nonNullableList![i]['ยูนิต']);
+          // print(nonNullableList![i]['ยูนิต']);
 
           Map<String, dynamic> dataMap = sellPrices.firstWhere((element) =>
               element['PRODUCT_ID'] == nonNullableList![i]['ProductID'] &&
@@ -514,24 +569,24 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
           //   }
           // }
 
-          print('======== โหลดราคาสินค้าที่ผู้กับประวัติ ===========');
+          // print('======== โหลดราคาสินค้าที่ผู้กับประวัติ ===========');
 
           if (dataMap.isNotEmpty) {
-            print(dataMap['PRICE'].runtimeType);
-            print(dataMap['PRICE'].runtimeType);
-            print(dataMap['PRICE'].runtimeType);
+            // print(dataMap['PRICE'].runtimeType);
+            // print(dataMap['PRICE'].runtimeType);
+            // print(dataMap['PRICE'].runtimeType);
 
             String totalPriceAsString =
                 double.parse(dataMap['PRICE'].toString()).toStringAsFixed(2);
             nonNullableList![i]['ราคา'] = totalPriceAsString;
           }
-          print(nonNullableList![i]['ราคา']);
-          print(nonNullableList![i]['ราคา']);
-          print(nonNullableList![i]['ราคา']);
+          // print(nonNullableList![i]['ราคา']);
+          // print(nonNullableList![i]['ราคา']);
+          // print(nonNullableList![i]['ราคา']);
         }
         orderLast!['ProductList'] = nonNullableList;
 
-        print(orderLast!['ProductList']);
+        // print(orderLast!['ProductList']);
       }
 
       // print('/////////////////////////////////////////////////////');
@@ -617,6 +672,8 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
     }
   }
 
+  Future<void> refreshProductListFav() async {}
+
   String formatThaiDate(Timestamp timestamp) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
       timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000).round(),
@@ -650,10 +707,10 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
     print(nameGroup);
 
     bool isStringFound = tagProductList.any((map) => map['Name'] == nameGroup);
+    productList.clear();
 
     if (isStringFound) {
       print('พบสตริงที่ค้นหาในฟิลด์แท๊ก \'Name\' $nameGroup');
-      productList.clear();
 
       // List<Map<String, dynamic>> checkProduct = resultList;
       List<Map<String, dynamic>> checkProduct = List.from(resultList);
@@ -759,22 +816,33 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
       checkProduct.removeWhere((map) {
         bool returnType = true;
         for (int i = 0; i < userData![text].length; i++) {
-          if (userData![text][i] == map['PRODUCT_ID']) {
-            if (text == 'สินค้าที่เคยสั่ง') {
-              // print(userData![text]);
+          if (text == 'สินค้าที่เคยสั่ง') {
+            if (userData![text][i] == map['PRODUCT_ID']) {
+              if (text == 'สินค้าที่เคยสั่ง') {
+                // print(userData![text]);
 
-              // print(listHistoryStringDate);
-              bool result = isMoreThanThreeMonthsAgo(listHistoryStringDate[i]!);
-              if (result) {
-                print('เกิน 3 เดือน');
-                // เกิน 3 เดือน
+                // print(listHistoryStringDate);
+                bool result =
+                    isMoreThanThreeMonthsAgo(listHistoryStringDate[i]!);
+                if (result) {
+                  print('เกิน 3 เดือน');
+                  // เกิน 3 เดือน
+                } else {
+                  print('ไม่เกิน 3 เดือน');
+
+                  // ไม่เกิน 3 เดือน
+                  returnType = false;
+                }
               } else {
-                print('ไม่เกิน 3 เดือน');
-
-                // ไม่เกิน 3 เดือน
                 returnType = false;
               }
-            } else {
+            }
+          }
+        }
+
+        if (text == 'สินค้าถูกใจ') {
+          for (int i = 0; i < customerDataFetch![text].length; i++) {
+            if (customerDataFetch![text][i] == map['PRODUCT_ID']) {
               returnType = false;
             }
           }
@@ -1888,6 +1956,56 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
                                                               result is Map<
                                                                   String,
                                                                   dynamic>) {
+                                                            List<dynamic>
+                                                                favList =
+                                                                result[
+                                                                    'favListID'];
+
+                                                            customerDataFetch![
+                                                                    'สินค้าถูกใจ'] =
+                                                                favList;
+
+                                                            print(favList);
+                                                            print(favList);
+                                                            print(favList);
+                                                            print(favList);
+                                                            print(favList);
+                                                            for (int i = 0;
+                                                                i <
+                                                                    resultList
+                                                                        .length;
+                                                                i++) {
+                                                              for (int j = 0;
+                                                                  j <
+                                                                      favList
+                                                                          .length;
+                                                                  j++) {
+                                                                if (resultList[
+                                                                            i][
+                                                                        'PRODUCT_ID'] ==
+                                                                    favList[
+                                                                        j]) {
+                                                                  resultList[i][
+                                                                          'Favorite'] =
+                                                                      true;
+
+                                                                  print(
+                                                                      'อยู่ใน if');
+
+                                                                  print(resultList[
+                                                                          i][
+                                                                      'PRODUCT_ID']);
+
+                                                                  print(resultList[
+                                                                              i]
+                                                                          [
+                                                                          'Favorite'] =
+                                                                      true);
+                                                                }
+                                                              }
+                                                            }
+                                                            // resultList = result[
+                                                            //     'productList'];
                                                             Map<String, dynamic>
                                                                 orderList =
                                                                 result[
@@ -1914,6 +2032,57 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
                                                                 setState(() {});
                                                               }
                                                             } else {
+                                                              // resultList = result[
+                                                              //     'productList'];
+
+                                                              List<dynamic>
+                                                                  favList =
+                                                                  result[
+                                                                      'favListID'];
+
+                                                              customerDataFetch![
+                                                                      'สินค้าถูกใจ'] =
+                                                                  favList;
+                                                              print(favList);
+                                                              print(favList);
+                                                              print(favList);
+                                                              print(favList);
+                                                              print(favList);
+                                                              for (int i = 0;
+                                                                  i <
+                                                                      resultList
+                                                                          .length;
+                                                                  i++) {
+                                                                for (int j = 0;
+                                                                    j <
+                                                                        favList
+                                                                            .length;
+                                                                    j++) {
+                                                                  if (resultList[
+                                                                              i]
+                                                                          [
+                                                                          'PRODUCT_ID'] ==
+                                                                      favList[
+                                                                          j]) {
+                                                                    resultList[i]
+                                                                            [
+                                                                            'Favorite'] =
+                                                                        true;
+
+                                                                    print(
+                                                                        'อยู่ใน else');
+
+                                                                    print(resultList[
+                                                                            i][
+                                                                        'PRODUCT_ID']);
+
+                                                                    print(resultList[i]
+                                                                            [
+                                                                            'Favorite'] =
+                                                                        true);
+                                                                  }
+                                                                }
+                                                              }
                                                               changeGroupProductList(
                                                                   additionalString);
 
@@ -2052,23 +2221,38 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
                                                           productList[i]
                                                                   ['Favorite'] =
                                                               false;
+                                                          //Edit Favorite 24 06 2567
 
+                                                          // List<dynamic>
+                                                          //     listFav =
+                                                          //     userData![
+                                                          //         'สินค้าถูกใจ'];
                                                           List<dynamic>
                                                               listFav =
-                                                              userData![
+                                                              customerDataFetch![
                                                                   'สินค้าถูกใจ'];
+
                                                           listFav.removeWhere(
                                                               (element) =>
                                                                   element ==
                                                                   productList[i]
                                                                       [
                                                                       'PRODUCT_ID']);
+
                                                           await FirebaseFirestore
                                                               .instance
-                                                              .collection(
-                                                                  'User')
-                                                              .doc(userData![
-                                                                  'UserID'])
+                                                              .collection(AppSettings
+                                                                          .customerType ==
+                                                                      CustomerType
+                                                                          .Test
+                                                                  ? 'CustomerTest'
+                                                                  : 'Customer')
+                                                              // .collection(
+                                                              //     'User')
+                                                              // .doc(userData![
+                                                              //     'UserID'])
+                                                              .doc(customerDataFetch[
+                                                                  'CustomerID'])
                                                               .update(
                                                             {
                                                               'สินค้าถูกใจ':
@@ -2089,19 +2273,33 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
                                                           productList[i]
                                                                   ['Favorite'] =
                                                               true;
+                                                          // List<dynamic>
+                                                          //     listFav =
+                                                          //     userData![
+                                                          //         'สินค้าถูกใจ'];
+
                                                           List<dynamic>
                                                               listFav =
-                                                              userData![
+                                                              customerDataFetch![
                                                                   'สินค้าถูกใจ'];
                                                           listFav.add(
                                                               productList[i][
                                                                   'PRODUCT_ID']);
                                                           await FirebaseFirestore
                                                               .instance
-                                                              .collection(
-                                                                  'User')
-                                                              .doc(userData![
-                                                                  'UserID'])
+                                                              .collection(AppSettings
+                                                                          .customerType ==
+                                                                      CustomerType
+                                                                          .Test
+                                                                  ? 'CustomerTest'
+                                                                  : 'Customer')
+
+                                                              // .collection(
+                                                              //     'User')
+                                                              // .doc(userData![
+                                                              //     'UserID'])
+                                                              .doc(customerDataFetch[
+                                                                  'CustomerID'])
                                                               .update(
                                                             {
                                                               'สินค้าถูกใจ':

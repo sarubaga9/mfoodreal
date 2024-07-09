@@ -21,14 +21,14 @@ import 'package:provider/provider.dart';
 import 'a0105_dashboard_model.dart';
 export 'a0105_dashboard_model.dart';
 
-class A0105DashboardWidget extends StatefulWidget {
-  const A0105DashboardWidget({Key? key}) : super(key: key);
+class A0105DashboardWidget1 extends StatefulWidget {
+  const A0105DashboardWidget1({Key? key}) : super(key: key);
 
   @override
-  _A0105DashboardWidgetState createState() => _A0105DashboardWidgetState();
+  _A0105DashboardWidget1State createState() => _A0105DashboardWidget1State();
 }
 
-class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
+class _A0105DashboardWidget1State extends State<A0105DashboardWidget1> {
   bool isLoadingLogout = false;
   bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -344,7 +344,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                         //     context,
                                         //     CupertinoPageRoute(
                                         //       builder: (context) =>
-                                        //           A0105DashboardWidget(),
+                                        //           A0105DashboardWidget1(),
                                         //     )).then((value) {
                                         //   Navigator.pop(context);
                                         //   if (mounted) {
@@ -611,7 +611,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                       //                             //     context,
                       //                             //     CupertinoPageRoute(
                       //                             //       builder: (context) =>
-                      //                             //           A0105DashboardWidget(),
+                      //                             //           A0105DashboardWidget1(),
                       //                             //     )).then((value) {
                       //                             //   if (mounted) {
                       //                             //     setState(() {});

@@ -78,6 +78,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
   TextEditingController houseNumber = TextEditingController();
 
   TextEditingController? moo = TextEditingController();
+  TextEditingController? soi = TextEditingController();
+  TextEditingController? talad = TextEditingController();
   TextEditingController? nameMoo = TextEditingController();
   TextEditingController? raod = TextEditingController();
   TextEditingController? province = TextEditingController();
@@ -207,6 +209,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
   List<FocusNode?>? textFieldFocusHouseNumber = [];
   List<FocusNode?>? textFieldFocusHouseMoo = [];
+  List<FocusNode?>? textFieldFocusHouseSoi = [];
+  List<FocusNode?>? textFieldFocusHouseTalad = [];
 
   List<FocusNode?>? textFieldFocusVillageName = [];
   // List<String?>? textProvince = [];
@@ -334,6 +338,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
   TextEditingController? homeAddress = TextEditingController();
   TextEditingController? mooAddress = TextEditingController();
+  TextEditingController? soiAddress = TextEditingController();
+  TextEditingController? taladAddress = TextEditingController();
   TextEditingController? nameMooAddress = TextEditingController();
   TextEditingController? roadAddress = TextEditingController();
   TextEditingController? proviceAddress = TextEditingController();
@@ -608,7 +614,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       final Map<String, dynamic> docData =
           querySnapshotTable.docs[index].data() as Map<String, dynamic>;
 
-      if (docData['PLIST_DESC2'] != '') {
+      if (docData['PLIST_DESC2'] != '' && docData['RESULT'] == true) {
         priceTable['key${index}'] = docData;
         priceTableName.add(docData['PLIST_DESC2']);
       }
@@ -702,6 +708,16 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           text: widget.entryMap!['value']['หมู่'] == null
               ? ''
               : widget.entryMap!['value']['หมู่']);
+
+      soiAddress = TextEditingController(
+          text: widget.entryMap!['value']['ซอย'] == null
+              ? ''
+              : widget.entryMap!['value']['ซอย']);
+
+      taladAddress = TextEditingController(
+          text: widget.entryMap!['value']['ตลาด'] == null
+              ? ''
+              : widget.entryMap!['value']['ตลาด']);
       nameMooAddress =
           TextEditingController(text: widget.entryMap!['value']['หมู่บ้าน']);
       roadAddress =
@@ -837,6 +853,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           'ชื่อสาขา': '', //new
           'HouseNumber': '',
           'Moo': '',
+          'Soi': '',
+          'Talad': '',
           'VillageName': '',
           'Road': '', //new
           'Province': '',
@@ -910,6 +928,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         textFieldFocusPhone!.add(FocusNode());
         textFieldFocusHouseNumber!.add(FocusNode());
         textFieldFocusHouseMoo!.add(FocusNode());
+        textFieldFocusHouseSoi!.add(FocusNode());
+        textFieldFocusHouseTalad!.add(FocusNode());
 
         textFieldFocusVillageName!.add(FocusNode());
         textFieldFocusPostalCode!.add(FocusNode());
@@ -929,7 +949,16 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           listBillTaxIndex.add(widget.entryMap!['value']['ListCustomerAddress']
               [i]['indexที่อยู่จัดส่งและออกใบกำกับภาษี']);
 
-          // print('---------------------------------------------------------');
+          print('---------------------------------------------------------');
+          print(widget.entryMap!['value']['ListCustomerAddress'].length);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
           //========================================================
           if (widget.entryMap!['value']['ListCustomerAddress'][i]['Latitude'] ==
                   null ||
@@ -977,9 +1006,11 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           }
 
           if (widget.entryMap!['value']['รูปร้านค้า'].length != 0) {
+            print('---------- เข้า if ----------------');
             if (widget.entryMap!['value']['ListCustomerAddress'].length >
                 widget.entryMap!['value']['รูปร้านค้า'].length) {
               if ((i + 1) > widget.entryMap!['value']['รูปร้านค้า'].length) {
+                print('resultList.add({11111    ');
                 resultList.add({
                   'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                       ['ID'], //new
@@ -996,6 +1027,20 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       ? ''
                       : widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['Moo'],
+
+                  'Soi': widget.entryMap!['value']['ListCustomerAddress'][i]
+                              ['Soi'] ==
+                          null
+                      ? ''
+                      : widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Soi'],
+
+                  'Talad': widget.entryMap!['value']['ListCustomerAddress'][i]
+                              ['Talad'] ==
+                          null
+                      ? ''
+                      : widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Talad'],
 
                   'VillageName': widget.entryMap!['value']
                               ['ListCustomerAddress'][i]['VillageName'] ==
@@ -1107,6 +1152,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                 print('3');
               } else {
                 if (widget.entryMap!['value']['รูปร้านค้า'][i] == '') {
+                  print('resultList.add({22222    ');
+
                   resultList.add({
                     'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['ID'], //new
@@ -1123,6 +1170,20 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         ? ''
                         : widget.entryMap!['value']['ListCustomerAddress'][i]
                             ['Moo'],
+
+                    'Soi': widget.entryMap!['value']['ListCustomerAddress'][i]
+                                ['Soi'] ==
+                            null
+                        ? ''
+                        : widget.entryMap!['value']['ListCustomerAddress'][i]
+                            ['Soi'],
+
+                    'Talad': widget.entryMap!['value']['ListCustomerAddress'][i]
+                                ['Talad'] ==
+                            null
+                        ? ''
+                        : widget.entryMap!['value']['ListCustomerAddress'][i]
+                            ['Talad'],
 
                     'VillageName': widget.entryMap!['value']
                                 ['ListCustomerAddress'][i]['VillageName'] ==
@@ -1243,6 +1304,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       text: widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['โทรศัพท์']));
                 } else {
+                  print('resultList.add({33333    ');
+
                   resultList.add({
                     'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['ID'], //new
@@ -1259,6 +1322,20 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         ? ''
                         : widget.entryMap!['value']['ListCustomerAddress'][i]
                             ['Moo'],
+
+                    'Soi': widget.entryMap!['value']['ListCustomerAddress'][i]
+                                ['Soi'] ==
+                            null
+                        ? ''
+                        : widget.entryMap!['value']['ListCustomerAddress'][i]
+                            ['Soi'],
+
+                    'Talad': widget.entryMap!['value']['ListCustomerAddress'][i]
+                                ['Talad'] ==
+                            null
+                        ? ''
+                        : widget.entryMap!['value']['ListCustomerAddress'][i]
+                            ['Talad'],
 
                     'VillageName': widget.entryMap!['value']
                                 ['ListCustomerAddress'][i]['VillageName'] ==
@@ -1358,6 +1435,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
               }
             } else {
               if (widget.entryMap!['value']['รูปร้านค้า'][i] == '') {
+                print('resultList.add({44444    ');
+
                 resultList.add({
                   'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                       ['ID'], //new
@@ -1374,6 +1453,20 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       ? ''
                       : widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['Moo'],
+
+                  'Soi': widget.entryMap!['value']['ListCustomerAddress'][i]
+                              ['Soi'] ==
+                          null
+                      ? ''
+                      : widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Soi'],
+
+                  'Talad': widget.entryMap!['value']['ListCustomerAddress'][i]
+                              ['Talad'] ==
+                          null
+                      ? ''
+                      : widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Talad'],
 
                   'VillageName': widget.entryMap!['value']
                               ['ListCustomerAddress'][i]['VillageName'] ==
@@ -1460,6 +1553,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                     text: widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์']));
               } else {
+                print('resultList.add({55555    ');
+
                 resultList.add({
                   'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                       ['ID'], //new
@@ -1476,6 +1571,20 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       ? ''
                       : widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['Moo'],
+
+                  'Soi': widget.entryMap!['value']['ListCustomerAddress'][i]
+                              ['Soi'] ==
+                          null
+                      ? ''
+                      : widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Soi'],
+
+                  'Talad': widget.entryMap!['value']['ListCustomerAddress'][i]
+                              ['Talad'] ==
+                          null
+                      ? ''
+                      : widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Talad'],
 
                   'VillageName': widget.entryMap!['value']
                               ['ListCustomerAddress'][i]['VillageName'] ==
@@ -1572,6 +1681,18 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
               }
             }
           } else {
+            print('---------- เข้า else ----------------');
+
+            print('resultList.add({66666    ');
+
+            print(resultList.length);
+
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]
+                ['HouseNumber']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]['Moo']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+
             resultList.add({
               'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                   ['ID'], //new
@@ -1587,6 +1708,19 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       null
                   ? ''
                   : widget.entryMap!['value']['ListCustomerAddress'][i]['Moo'],
+
+              'Soi': widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Soi'] ==
+                      null
+                  ? ''
+                  : widget.entryMap!['value']['ListCustomerAddress'][i]['Soi'],
+
+              'Talad': widget.entryMap!['value']['ListCustomerAddress'][i]
+                          ['Talad'] ==
+                      null
+                  ? ''
+                  : widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['Talad'],
 
               'VillageName': widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['VillageName'] ==
@@ -1693,6 +1827,11 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             }
             print('9');
           }
+          print('---------------check resultList.length -----------');
+          print(resultList.length);
+          print(resultList.length);
+          print(resultList.length);
+          print('---------------check resultList.length -----------');
 
           List<dynamic>? childs;
           if (resultList[i]['Province'] == '') {
@@ -1827,6 +1966,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           textFieldFocusPhone!.add(FocusNode());
           textFieldFocusHouseNumber!.add(FocusNode());
           textFieldFocusHouseMoo!.add(FocusNode());
+          textFieldFocusHouseSoi!.add(FocusNode());
+          textFieldFocusHouseTalad!.add(FocusNode());
 
           textFieldFocusVillageName!.add(FocusNode());
           textFieldFocusPostalCode!.add(FocusNode());
@@ -2503,7 +2644,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         });
 
         String texttt =
-            '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['Moo'] == '' || resultList[i]['Moo'] == null ? '' : 'หมู่'} ${resultList[i]['Moo'] == null ? '' : resultList[i]['Moo']} ${resultList[i]['VillageName']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
+            '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['Moo'] == '' || resultList[i]['Moo'] == null ? '' : 'หมู่'} ${resultList[i]['Moo'] == null ? '' : resultList[i]['Moo']} ${resultList[i]['Soi'] == null ? '' : resultList[i]['Soi']} ${resultList[i]['VillageName']} ${resultList[i]['Talad'] == null ? '' : resultList[i]['Talad']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
 
         if (texttt.trimLeft().trimRight().isEmpty) {
         } else {
@@ -2516,7 +2657,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       if (widget.entryMap!['value']['ใช้ที่อยู่ออกใบภาษี']) {
         checkNumberID = widget.entryMap!['value']['ใช้ที่อยู่ออกใบภาษี'];
         textNumberID =
-            '${homeAddress.text} ${mooAddress.text == '' || mooAddress == null ? '' : 'หมู่'} ${mooAddress.text} ${nameMooAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
+            '${homeAddress.text} ${mooAddress.text == '' || mooAddress == null ? '' : 'หมู่'} ${mooAddress.text} ${soiAddress.text} ${nameMooAddress.text} ${taladAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
 
         textNumberID = textNumberID.trimLeft().trimRight();
         if (checkNumberID) {
@@ -2555,6 +2696,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       if (checkIDforAddress) {
         houseNumber.text = homeAddress.text;
         moo.text = mooAddress.text;
+        soi.text = soiAddress.text;
+        talad.text = taladAddress.text;
         nameMoo.text = nameMooAddress.text;
         raod.text = roadAddress.text;
         province.text = proviceAddress.text;
@@ -2576,6 +2719,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
         houseNumber.text = resultList[0]['HouseNumber'];
         moo.text = resultList[0]['Moo'];
+        soi.text = resultList[0]['Soi'];
+        talad.text = resultList[0]['Talad'];
         nameMoo.text = resultList[0]['VillageName'];
         raod.text = resultList[0]['Road'];
         // province.text = resultList[0]['Province'];
@@ -2583,6 +2728,15 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         // subDistrict.text = resultList[0]['SubDistrict'];
         postalCodeController![0].text = resultList[0]['PostalCode'];
       }
+
+      print('---------------check resultList.length -----------');
+      print(resultList.length);
+      print(resultList.length);
+      print(resultList.length);
+      for (var element in resultList) {
+        print(element);
+      }
+      print('---------------check resultList.length -----------');
     } catch (e) {
       print(e);
     } finally {
@@ -3740,6 +3894,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
           'บ้านเลขที่': homeAddress.text,
           'หมู่': mooAddress.text,
+          'ซอย': soiAddress.text,
+          'ตลาด': taladAddress.text,
           'หมู่บ้าน': nameMooAddress.text,
           'ถนน': roadAddress.text,
           'จังหวัด': proviceAddress.text,
@@ -3822,6 +3978,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           'ปีจัดตั้ง': _model.textController4Company.text,
           'เลขประจำตัวผู้เสียภาษี': _model.textController41Company.text,
           'ทุนจดทะเบียน': _model.textController5Company.text,
+          'สินค้าถูกใจ': [],
 
           // 'UserId': widget.entryMap!['value']['UserId'],
         }).then((value) async {
@@ -3969,6 +4126,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
           'บ้านเลขที่': homeAddress.text,
           'หมู่': mooAddress.text,
+          'ซอย': soiAddress.text,
+          'ตลาด': taladAddress.text,
           'หมู่บ้าน': nameMooAddress.text,
           'ถนน': roadAddress.text,
           'จังหวัด': proviceAddress.text,
@@ -4053,6 +4212,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           'ปีจัดตั้ง': _model.textController4Company.text,
           'เลขประจำตัวผู้เสียภาษี': _model.textController41Company.text,
           'ทุนจดทะเบียน': _model.textController5Company.text,
+          'สินค้าถูกใจ': [],
 
           // 'UserId': widget.entryMap!['value']['UserId'],
         }).then((value) {
@@ -4277,7 +4437,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         });
 
         String texttt =
-            '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['Moo'] == '' || resultList[i]['Moo'] == null ? '' : 'หมู่'} ${resultList[i]['Moo'] == null ? '' : resultList[i]['Moo']} ${resultList[i]['VillageName']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
+            '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['Moo'] == '' || resultList[i]['Moo'] == null ? '' : 'หมู่'} ${resultList[i]['Moo'] == null ? '' : resultList[i]['Moo']} ${resultList[i]['Soi'] == null ? '' : resultList[i]['Soi']} ${resultList[i]['VillageName']} ${resultList[i]['Talad'] == null ? '' : resultList[i]['Talad']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
 
         String resultString = texttt
             .replaceFirst('${resultList[i]['ID']}', '')
@@ -4721,10 +4881,25 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             SizedBox(
                               height: 10,
                             ),
+                            IgnorePointer(
+                              ignoring: !checkStatusToEdit,
+                              child: soiFirst(context),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
 
                             IgnorePointer(
                               ignoring: !checkStatusToEdit,
                               child: nameMooFirst(context),
+                            ),
+
+                            SizedBox(
+                              height: 10,
+                            ),
+                            IgnorePointer(
+                              ignoring: !checkStatusToEdit,
+                              child: taladFirst(context),
                             ),
                             SizedBox(
                               height: 10,
@@ -4803,7 +4978,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                                       checkNumberID = !checkNumberID;
                                       if (checkNumberID) {
                                         textNumberID =
-                                            '${homeAddress.text} ${mooAddress.text == '' || mooAddress == null ? '' : 'หมู่'} ${mooAddress.text} ${nameMooAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
+                                            '${homeAddress.text} ${mooAddress.text == '' || mooAddress == null ? '' : 'หมู่'} ${mooAddress.text} ${soiAddress.text} ${nameMooAddress.text} ${taladAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
 
                                         textNumberID =
                                             textNumberID.trimLeft().trimRight();
@@ -4909,6 +5084,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                                         if (checkIDforAddress) {
                                           houseNumber.text = homeAddress.text;
                                           moo.text = mooAddress.text;
+                                          soi.text = soiAddress.text;
+                                          talad.text = taladAddress.text;
                                           nameMoo.text = nameMooAddress.text;
                                           raod.text = roadAddress.text;
                                           province.text = proviceAddress.text;
@@ -4936,6 +5113,10 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                                               homeAddress.text;
                                           resultList[0]['Moo'] =
                                               mooAddress.text;
+                                          resultList[0]['Soi'] =
+                                              soiAddress.text;
+                                          resultList[0]['Talad'] =
+                                              taladAddress.text;
                                           resultList[0]['VillageName'] =
                                               nameMooAddress.text;
                                           resultList[0]['Road'] =
@@ -4968,6 +5149,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
                                           houseNumber.text = '';
                                           moo.text = '';
+                                          soi.text = '';
+                                          talad.text = '';
                                           nameMoo.text = '';
                                           raod.text = '';
                                           province!.clear();
@@ -5006,6 +5189,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
                                           resultList[0]['HouseNumber'] = '';
                                           resultList[0]['Moo'] = '';
+                                          resultList[0]['Soi'] = '';
+                                          resultList[0]['Talad'] = '';
                                           resultList[0]['VillageName'] = '';
                                           resultList[0]['Road'] = '';
                                           resultList[0]['Province'] = '';
@@ -11075,6 +11260,11 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
   // }
 
   StatefulBuilder addressShopEdit() {
+    print(' --------------- addressShopEdit ------------------ ');
+    for (var element in resultList) {
+      print(element);
+    }
+
     return StatefulBuilder(builder: (context, setState) {
       if (resultList.length == total3) {
       } else {
@@ -11082,12 +11272,16 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           print('add Address in addressShopEdit');
           print(resultList.length);
           print(total3);
+          print('resultList.add({77777    ');
+
           resultList.add({
             'ID': DateTime.now().toString(),
             'รหัสสาขา': '', //new
             'ชื่อสาขา': '', //new
             'HouseNumber': '',
             'Moo': '',
+            'Soi': '',
+            'Talad': '',
             'VillageName': '',
             'Road': '', //new
             'Province': '',
@@ -11142,6 +11336,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           textFieldFocusNameContract!.add(FocusNode());
           textFieldFocusHouseNumber!.add(FocusNode());
           textFieldFocusHouseMoo!.add(FocusNode());
+          textFieldFocusHouseSoi!.add(FocusNode());
+          textFieldFocusHouseTalad!.add(FocusNode());
 
           textFieldFocusVillageName!.add(FocusNode());
           textFieldFocusPostalCode!.add(FocusNode());
@@ -11180,6 +11376,11 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       print(phoneList!.length);
       print(phoneList);
       print(textFieldControllerPhoneAddress);
+
+      print(' --------------- StatefulBuilder  ------------------ ');
+      for (var element in resultList) {
+        print(element);
+      }
       return Padding(
         padding: EdgeInsetsDirectional.fromSTEB(8.0, 5.0, 8.0, 5.0),
         child: Column(
@@ -11214,6 +11415,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                                       tambons!.removeLast();
                                       textFieldFocusHouseNumber!.removeLast();
                                       textFieldFocusHouseMoo!.removeLast();
+                                      textFieldFocusHouseSoi!.removeLast();
+                                      textFieldFocusHouseTalad!.removeLast();
 
                                       _mapController.removeLast();
                                       ;
@@ -11440,82 +11643,107 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                   const SizedBox(
                     height: 10,
                   ),
-                  TextFormField(
-                    // controller: _model.textController15,
-                    readOnly: checkIDforAddress
-                        ? index == 0
-                            ? true
-                            : false
-                        : false,
-                    controller: checkIDforAddress
-                        ? index == 0
-                            ? houseNumber
-                            : null
-                        : null,
+                  StatefulBuilder(builder: (context, setState) {
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
+                    print(resultList[index]['HouseNumber']);
 
-                    initialValue: !checkIDforAddress
-                        ? resultList[index]['HouseNumber']
-                        : null,
-                    onChanged: (value) {
-                      resultList[index]['HouseNumber'] = value;
+                    print(checkIDforAddress);
+                    print(checkIDforAddress);
+                    print(checkIDforAddress);
+                    print(checkIDforAddress);
 
-                      refreshAddressForDropdown(setState, index);
-
-                      toSetState();
-                    },
-                    focusNode: textFieldFocusHouseNumber![index],
-                    autofocus: false,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      filled: checkIDforAddress
+                    print(houseNumber.text);
+                    print(houseNumber.text);
+                    print(houseNumber.text);
+                    return TextFormField(
+                      // controller: _model.textController15,
+                      readOnly: checkIDforAddress
                           ? index == 0
                               ? true
                               : false
-                          : false, // ทำให้มีสีพื้นหลัง
-                      fillColor: checkIDforAddress
+                          : false,
+                      controller: checkIDforAddress
                           ? index == 0
-                              ? Colors.grey.shade300
+                              ? houseNumber
                               : null
-                          : null, // สีพื้นหลัง
-                      isDense: true,
-                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
-                      labelText: 'กรุณาพิมพ์ชื่อบ้านเลขที่',
-                      hintText: 'กรุณาพิมพ์ชื่อบ้านเลขที่',
-                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.of(context).alternate,
-                          width: 2.0,
+                          : null,
+
+                      initialValue: checkIDforAddress && index == 0
+                          ? null
+                          : resultList[index]['HouseNumber'],
+
+                      //  !checkIDforAddress
+                      //     ? resultList[index]['HouseNumber']
+                      //     : null,
+                      onChanged: (value) {
+                        resultList[index]['HouseNumber'] = value;
+
+                        refreshAddressForDropdown(setState, index);
+
+                        toSetState();
+                      },
+                      focusNode: textFieldFocusHouseNumber![index],
+                      autofocus: false,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        filled: checkIDforAddress
+                            ? index == 0
+                                ? true
+                                : false
+                            : false, // ทำให้มีสีพื้นหลัง
+                        fillColor: checkIDforAddress
+                            ? index == 0
+                                ? Colors.grey.shade300
+                                : null
+                            : null, // สีพื้นหลัง
+                        isDense: true,
+                        labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                        labelText: 'กรุณาพิมพ์ชื่อบ้านเลขที่',
+                        hintText: 'กรุณาพิมพ์ชื่อบ้านเลขที่',
+                        hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.of(context).alternate,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.of(context).primary,
-                          width: 2.0,
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.of(context).primary,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.of(context).error,
-                          width: 2.0,
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.of(context).error,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.of(context).error,
-                          width: 2.0,
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.of(context).error,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                    ),
-                    style: FlutterFlowTheme.of(context).bodyMedium,
-                    textAlign: TextAlign.start,
-                    validator:
-                        _model.textController15Validator.asValidator(context),
-                  ),
+                      style: FlutterFlowTheme.of(context).bodyMedium,
+                      textAlign: TextAlign.start,
+                      validator:
+                          _model.textController15Validator.asValidator(context),
+                    );
+                  }),
                   const SizedBox(
                     height: 10,
                   ),
@@ -11534,7 +11762,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         : null,
 
                     initialValue:
-                        !checkIDforAddress ? resultList[index]['Moo'] : null,
+                        checkIDforAddress && index == 0 ? null : resultList[index]['Moo'],
+                    // !checkIDforAddress ? resultList[index]['Moo'] : null,
                     // initialValue: resultList[index]['Moo'],
                     onChanged: (value) {
                       resultList[index]['Moo'] = value;
@@ -11599,6 +11828,91 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                     //     _model.textController15Validator.asValidator(context),
                   ),
                   const SizedBox(
+                    height: 10,
+                  ),
+                  //======================= ซอย ================================
+                  TextFormField(
+                    // controller: _model.textController15,
+                    readOnly: checkIDforAddress
+                        ? index == 0
+                            ? true
+                            : false
+                        : false,
+                    controller: checkIDforAddress
+                        ? index == 0
+                            ? soi
+                            : null
+                        : null,
+
+                    initialValue:
+                        checkIDforAddress && index == 0 ? null : resultList[index]['Soi'],
+
+                    // initialValue:
+                    // !checkIDforAddress ? resultList[index]['Soi'] : null,
+                    // initialValue: resultList[index]['Moo'],
+                    onChanged: (value) {
+                      resultList[index]['Soi'] = value;
+                      print(index);
+                      print(resultList[index]['Soi']);
+
+                      refreshAddressForDropdown(setState, index);
+
+                      toSetState();
+                    },
+                    focusNode: textFieldFocusHouseSoi![index],
+                    autofocus: false,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      filled: checkIDforAddress
+                          ? index == 0
+                              ? true
+                              : false
+                          : false, // ทำให้มีสีพื้นหลัง
+                      fillColor: checkIDforAddress
+                          ? index == 0
+                              ? Colors.grey.shade300
+                              : null
+                          : null, // สีพื้นหลัง
+                      isDense: true,
+                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                      labelText: 'กรุณาพิมพ์ซอย',
+                      hintText: 'กรุณาพิมพ์ซอย',
+                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).alternate,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).primary,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    style: FlutterFlowTheme.of(context).bodyMedium,
+                    textAlign: TextAlign.start,
+                    // validator:
+                    //     _model.textController15Validator.asValidator(context),
+                  ),
+                  const SizedBox(
                     height: 5,
                   ),
                   Padding(
@@ -11615,9 +11929,13 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                               : false
                           : false,
 
-                      initialValue: !checkIDforAddress
-                          ? resultList[index]['VillageName']
-                          : null,
+                      initialValue: checkIDforAddress && index == 0
+                          ? null
+                          : resultList[index]['VillageName'],
+
+                      // initialValue: !checkIDforAddress
+                      //     ? resultList[index]['VillageName']
+                      //     : null,
                       // initialValue: resultList[index]['VillageName'],
                       onChanged: (value) {
                         resultList[index]['VillageName'] = value;
@@ -11679,6 +11997,92 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                           _model.textController16Validator.asValidator(context),
                     ),
                   ), //=============================================================
+
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  //======================= ตลาด ================================
+                  TextFormField(
+                    // controller: _model.textController15,
+                    readOnly: checkIDforAddress
+                        ? index == 0
+                            ? true
+                            : false
+                        : false,
+                    controller: checkIDforAddress
+                        ? index == 0
+                            ? talad
+                            : null
+                        : null,
+
+                    initialValue:
+                        checkIDforAddress  && index == 0? null : resultList[index]['Talad'],
+                    // initialValue:
+                    //     !checkIDforAddress ? resultList[index]['Talad'] : null,
+                    // initialValue: resultList[index]['Moo'],
+                    onChanged: (value) {
+                      resultList[index]['Talad'] = value;
+                      print(index);
+                      print(resultList[index]['Talad']);
+
+                      refreshAddressForDropdown(setState, index);
+
+                      toSetState();
+                    },
+                    focusNode: textFieldFocusHouseTalad![index],
+                    autofocus: false,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      filled: checkIDforAddress
+                          ? index == 0
+                              ? true
+                              : false
+                          : false, // ทำให้มีสีพื้นหลัง
+                      fillColor: checkIDforAddress
+                          ? index == 0
+                              ? Colors.grey.shade300
+                              : null
+                          : null, // สีพื้นหลัง
+                      isDense: true,
+                      labelStyle: FlutterFlowTheme.of(context).labelMedium,
+                      labelText: 'กรุณาพิมพ์ชื่อตลาด',
+                      hintText: 'กรุณาพิมพ์ชื่อตลาด',
+                      hintStyle: FlutterFlowTheme.of(context).labelMedium,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).alternate,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).primary,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).error,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    style: FlutterFlowTheme.of(context).bodyMedium,
+                    textAlign: TextAlign.start,
+                    // validator:
+                    //     _model.textController15Validator.asValidator(context),
+                  ),
+
                   const SizedBox(
                     height: 5,
                   ),
@@ -11698,7 +12102,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         : false,
 
                     initialValue:
-                        !checkIDforAddress ? resultList[index]['Road'] : null,
+                        checkIDforAddress && index == 0 ? null : resultList[index]['Road'],
+                    // initialValue:
+                    //     !checkIDforAddress ? resultList[index]['Road'] : null,
                     // initialValue: resultList[index]['Road'],
                     onChanged: (value) {
                       resultList[index]['Road'] = value;
@@ -13530,6 +13936,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         print(resultList[total3 - 1]['ชื่อสาขา']);
                         print(resultList[total3 - 1]['HouseNumber']);
                         print(resultList[total3 - 1]['Moo']);
+                        print(resultList[total3 - 1]['Soi']);
+                        print(resultList[total3 - 1]['Talad']);
                         print(resultList[total3 - 1]['VillageName']);
                         print(resultList[total3 - 1]['Road']);
                         print(resultList[total3 - 1]['Province']);
@@ -13549,6 +13957,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                                 resultList[total3 - 1]['HouseNumber'] == null &&
                                 // resultList[total3 - 1]['HouseNumber'].isEmpty &&
                                 resultList[total3 - 1]['Moo'] == null &&
+                                resultList[total3 - 1]['Soi'] == null &&
+                                resultList[total3 - 1]['Talad'] == null &&
+
                                 // resultList[total3 - 1]['Moo'].isEmpty &&
                                 resultList[total3 - 1]['VillageName'] == null &&
                                 // resultList[total3 - 1]['VillageName'].isEmpty &&
@@ -13588,6 +13999,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                               resultList[total3 - 1]['HouseNumber'].isEmpty &&
                               // resultList[total3 - 1]['Moo'] == null ||
                               resultList[total3 - 1]['Moo'].isEmpty &&
+                              resultList[total3 - 1]['Soi'].isEmpty &&
+                              resultList[total3 - 1]['Talad'].isEmpty &&
                               // resultList[total3 - 1]['VillageName'] == null ||
                               resultList[total3 - 1]['VillageName'].isEmpty &&
                               // resultList[total3 - 1]['Road'] == null ||
@@ -16344,6 +16757,118 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           isDense: true,
           labelStyle: FlutterFlowTheme.of(context).labelMedium,
           hintText: 'หมู่',
+          hintStyle: FlutterFlowTheme.of(context).labelMedium,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).alternate,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        style: FlutterFlowTheme.of(context).bodyMedium,
+        textAlign: TextAlign.start,
+        // validator: _model.textController1Validator.asValidator(context),
+      ),
+    );
+  }
+
+  Padding soiFirst(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+      child: TextFormField(
+        onChanged: (value) {
+          setState(() {
+            checkIDforAddress = false;
+            checkNumberID = false;
+            refreshAddressForDropdown(setState, -1);
+          });
+        },
+        controller: soiAddress,
+        autofocus: false,
+        obscureText: false,
+        decoration: InputDecoration(
+          labelText: 'ซอย',
+          isDense: true,
+          labelStyle: FlutterFlowTheme.of(context).labelMedium,
+          hintText: 'ซอย',
+          hintStyle: FlutterFlowTheme.of(context).labelMedium,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).alternate,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        style: FlutterFlowTheme.of(context).bodyMedium,
+        textAlign: TextAlign.start,
+        // validator: _model.textController1Validator.asValidator(context),
+      ),
+    );
+  }
+
+  Padding taladFirst(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+      child: TextFormField(
+        onChanged: (value) {
+          setState(() {
+            checkIDforAddress = false;
+            checkNumberID = false;
+            refreshAddressForDropdown(setState, -1);
+          });
+        },
+        controller: taladAddress,
+        autofocus: false,
+        obscureText: false,
+        decoration: InputDecoration(
+          labelText: 'ชื่อตลาด',
+          isDense: true,
+          labelStyle: FlutterFlowTheme.of(context).labelMedium,
+          hintText: 'ชื่อตลาด',
           hintStyle: FlutterFlowTheme.of(context).labelMedium,
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(

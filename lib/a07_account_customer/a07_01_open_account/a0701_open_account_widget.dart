@@ -72,6 +72,9 @@ class _A0701OpenAccountWidgetState extends State<A0701OpenAccountWidget> {
           .collection(AppSettings.customerType == CustomerType.Test
               ? 'CustomerTest'
               : 'Customer')
+          .where('สถานะ', isEqualTo: true)
+          .where('IS_ACTIVE', isEqualTo: true)
+          .where('รหัสพนักงานขาย', isEqualTo: userData!['EmployeeID'])
           .get();
 
       for (int index = 0; index < querySnapshot.docs.length; index++) {

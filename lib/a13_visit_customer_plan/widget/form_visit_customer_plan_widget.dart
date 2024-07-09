@@ -561,7 +561,10 @@ class _FormVisitCustomerPlanWidgetState
       //================================= Set to Firebase ======================================
       // for (int i = 0; i < 7; i++) {
       await FirebaseFirestore.instance
-          .collection('เข้าเยี่ยมลูกค้า')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'เข้าเยี่ยมลูกค้าTest'
+              : 'เข้าเยี่ยมลูกค้า')
+          // .collection('เข้าเยี่ยมลูกค้า')
           .doc(widget.entry!.value['VisitID'])
           .update({
         'VisitID': widget.entry!.value['VisitID'],
@@ -633,7 +636,10 @@ class _FormVisitCustomerPlanWidgetState
       print('trysummit');
       print(selectedTime.hour);
       await FirebaseFirestore.instance
-          .collection('เข้าเยี่ยมลูกค้า')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'เข้าเยี่ยมลูกค้าTest'
+              : 'เข้าเยี่ยมลูกค้า')
+          // .collection('เข้าเยี่ยมลูกค้า')
           .doc(docID)
           .set({
         'VisitID': docID,

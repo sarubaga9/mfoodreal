@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:m_food/a01_home/a01_05_dashboard/a0105_dashboard_widget.dart';
+import 'package:m_food/a01_home/a01_05_dashboard/a0105_dashboard_widget_0707.dart';
 import 'package:m_food/a07_account_customer/a07_01_open_account/a070101_pdpa_account_widget.dart';
 import 'package:m_food/a09_customer_open_sale/a0901_customer_list.dart';
 import 'package:m_food/a09_customer_open_sale/a0902_customer_history_list.dart';
@@ -52,6 +52,9 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
   List<Map<String, dynamic>?>? orderList = [];
   List<Map<String, dynamic>>? orderListTosend = [];
 
+  List<Map<String, dynamic>?>? orderListTeam = [];
+  List<Map<String, dynamic>>? orderListTosendTeam = [];
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +83,10 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
       //     FirebaseFirestore.instance.collection('OrdersTest');
 
       QuerySnapshot orderSubCollections = await FirebaseFirestore.instance
-          .collection('Orders')
+          // .collection('OrdersTest')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
           .where('UserDocId', isEqualTo: widget.id)
           .get();
 
@@ -89,6 +95,24 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         orderList!.add(data);
         orderListTosend!.add(data);
+        // print('------------');
+        // print(data);
+        // print('------------');
+      });
+
+      QuerySnapshot orderSubCollectionsTeam = await FirebaseFirestore.instance
+          // .collection('OrdersTest')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('idผู้เปิดออเดอร์แทน', isEqualTo: widget.id)
+          .get();
+
+      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      orderSubCollectionsTeam.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        orderListTeam!.add(data);
+        orderListTosendTeam!.add(data);
         // print('------------');
         // print(data);
         // print('------------');
@@ -530,8 +554,10 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                 CupertinoPageRoute(
                                                   builder: (context) =>
                                                       A06001CustomerHistoryToday(
-                                                          dataOrderList:
-                                                              orderList),
+                                                    dataOrderList: orderList,
+                                                    dataOrderListTeam:
+                                                        orderListTeam,
+                                                  ),
                                                 ));
 
                                             setState(() {});
@@ -630,6 +656,8 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                                 widget.status,
                                                             dataOrderList:
                                                                 orderList,
+                                                            dataOrderListTeam:
+                                                                orderListTeam,
                                                           ),
                                                         ));
 
@@ -716,10 +744,12 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                         CupertinoPageRoute(
                                                           builder: (context) =>
                                                               A1604SearchOrder(
-                                                                  status: widget
-                                                                      .status,
-                                                                  dataOrderList:
-                                                                      orderListTosend),
+                                                            status:
+                                                                widget.status,
+                                                            dataOrderList:
+                                                                orderListTosend,
+                                                            checkTeam: false,
+                                                          ),
                                                         ));
 
                                                     setState(() {});
@@ -747,6 +777,98 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                       ),
                                                       Text(
                                                         'ค้นหารายการสั่งซื้อ',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Icon(
+                                                  Icons.chevron_right_sharp,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  size: 24.0,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  focusColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  onTap: () async {
+                                                    // context.pushNamed(
+                                                    //     'A07_06_UserLegalEntity');
+                                                    Navigator.push(
+                                                        context,
+                                                        CupertinoPageRoute(
+                                                          builder: (context) =>
+                                                              A1604SearchOrder(
+                                                            status:
+                                                                widget.status,
+                                                            dataOrderList:
+                                                                orderListTosendTeam,
+                                                            checkTeam: true,
+                                                          ),
+                                                        ));
+
+                                                    setState(() {});
+                                                  },
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    0.0,
+                                                                    0.0,
+                                                                    5.0,
+                                                                    0.0),
+                                                        child: Icon(
+                                                          FFIcons
+                                                              .kaccountSearchOutline,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .alternate,
+                                                          size: 30.0,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'ค้นหารายการสั่งซื้อที่เปิดออเดอร์แทน',
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)

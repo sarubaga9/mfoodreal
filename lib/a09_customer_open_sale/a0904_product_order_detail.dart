@@ -604,10 +604,10 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
           double.parse(orderList['ProductList'][i]['จำนวน'].toString());
 
       double totalPrice = price * total;
-      // print(totalPrice);
-      // print(totalPrice);
-      // print(totalPrice);
-      // print(totalPrice);
+      print(totalPrice);
+      print(totalPrice);
+      print(totalPrice);
+      print(totalPrice);
 
       DateTime dateTime = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
@@ -634,7 +634,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
 // </soap12:Envelope>
       };
 
-      // print(paramsDiscount['xml']);
+      print(paramsDiscount['xml']);
       // print('======================================= aaaaa');
 
       await callableDiscount.call(paramsDiscount).then((value) async {
@@ -3597,20 +3597,22 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Text(
-                                        orderList['สถานที่จัดส่ง'] == ''
-                                            ? 'คุณไม่ได้เลือก'
-                                            : orderList['สถานที่จัดส่ง'],
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyLarge
-                                            .override(
-                                              fontFamily: 'Kanit',
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                            ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.clip,
+                                      Expanded(
+                                        child: Text(
+                                          orderList['สถานที่จัดส่ง'] == ''
+                                              ? 'คุณไม่ได้เลือก'
+                                              : orderList['สถานที่จัดส่ง'],
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyLarge
+                                              .override(
+                                                fontFamily: 'Kanit',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                              ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.clip,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -3813,7 +3815,11 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                             onPressed: () async {
                               Map<String, dynamic> data = {};
                               await FirebaseFirestore.instance
-                                  .collection('ระยะเวลารับคำสั่งขาย')
+                                  .collection(AppSettings.customerType ==
+                                          CustomerType.Test
+                                      ? 'ระยะเวลารับคำสั่งขายTest'
+                                      : 'ระยะเวลารับคำสั่งขาย')
+                                  // .collection('ระยะเวลารับคำสั่งขายTest')
                                   .doc('1')
                                   .get()
                                   .then((DocumentSnapshot documentSnapshot) {
@@ -3848,19 +3854,43 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                 inputTime.minute,
                               );
 
+                              print(orderList['วันเวลาจัดส่ง']);
+                              print(orderList['วันเวลาจัดส่ง']);
+                              print(orderList['วันเวลาจัดส่ง']);
+
+                              String dateString = orderList['วันเวลาจัดส่ง'];
+                              List<String> dateParts = dateString.split('-');
+
+                              int day = int.parse(dateParts[0]);
+                              int month = int.parse(dateParts[1]);
+                              int year = int.parse(dateParts[2]);
+
+                              DateTime newDate = DateTime(
+                                  year, month, day, now.hour, now.minute);
+
+                              // return;
                               if (data['IS_ACTIVE'] == true) {
                                 // เปรียบเทียบเวลาปัจจุบันกับเวลาจากสตริง
-                                if (now.isAfter(inputDateTime)) {
-                                  print("เวลาปัจจุบันเกินจาก 16:00 แล้ว");
-                                  await QuickAlert.show(
-                                      context: context,
-                                      type: QuickAlertType.error,
-                                      title:
-                                          'คุณทำการเปิดออเดอร์เลยเวลาที่กำหนด',
-                                      text:
-                                          'เวลาการเปิดออเดอร์ ต้องไมเ่กิน ${data['EndTime']} น. ',
-                                      confirmBtnText: 'ตกลง');
-                                  return;
+                                if (newDate.year == inputDateTime.year &&
+                                    newDate.month == inputDateTime.month &&
+                                    newDate.day == inputDateTime.day) {
+                                  // if (now.isAfter(inputDateTime)) {
+                                  if ((newDate.hour > inputDateTime.hour ||
+                                      (newDate.hour == inputDateTime.hour &&
+                                          newDate.minute >
+                                              inputDateTime.minute))) {
+                                    print(
+                                        "เวลาปัจจุบันเกินจาก 16:00 แล้ว และเป็นวันเดียวกัน");
+                                    await QuickAlert.show(
+                                        context: context,
+                                        type: QuickAlertType.error,
+                                        title:
+                                            'คุณทำการเปิดออเดอร์เลยเวลาที่กำหนด',
+                                        text:
+                                            'เวลาการเปิดออเดอร์ ต้องไมเ่กิน ${data['EndTime']} น.\nหากต้องการสั่งสินค้า กรุณาเลือกวันและเวลาในการจัดส่ง หลังจากวันนี้ค่ะ',
+                                        confirmBtnText: 'ตกลง');
+                                    return;
+                                  }
                                 }
                               }
                               print("เวลาปัจจุบันยังไม่เกิน 16:00");
@@ -4271,7 +4301,12 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                     //   print(stock.toString());
                                     // }
 
-                                    stockAll.add(stock.toString());
+                                    if (stock < 0.00) {
+                                      stockAll.add('0');
+                                    } else {
+                                      stockAll.add(stock.toString());
+                                    }
+
                                     stockOrderAll.add(total.toString());
 
                                     if (total > stock) {
@@ -4302,7 +4337,13 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                   print(textController2.text);
                                   print(textController2.text);
 
-                                  // return;
+                                  // for(int i =0 ; i< orderList['ProductList'].length;i++){
+                                  //   print(orderList['ProductList'][i]['ชื่อสินค้า']);
+                                  //   print(orderList['ProductList'][i]['จำนวน']);
+                                  //   print(orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม']);
+                                  // }
+
+                                  //return;
 
                                   if (!statusOrderPass) {
                                     //======= นำสินค้าไปเทียบกับ balance ทุกตัว หากมีตัวใดตัวนึงเกิน balance ให้เข้าตัวเลือก 3 ข้อ======================
@@ -4377,7 +4418,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                             }
 
                                             return WillPopScope(
-                                              onWillPop: () async => false,
+                                              onWillPop: () async => true,
                                               child: isLoading2
                                                   ? Container(
                                                       width:
@@ -4517,6 +4558,17 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                           maxLines: 2,
                                                                                           overflow: TextOverflow.ellipsis,
                                                                                         ),
+                                                                                        orderList['ProductList'][i]['ประเภทสินค้าDesc'] != 'สินค้าที่ต้องสั่งจองล่วงหน้า (Pre-Order)'
+                                                                                            ? SizedBox()
+                                                                                            : Text(
+                                                                                                'สั่งขั้นต่ำ ${orderList['ProductList'][i]['ขั้นต่ำจำนวน'].toString()} ${orderList['ProductList'][i]['ขั้นต่ำหน่วย']}',
+                                                                                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                                      fontFamily: 'Kanit',
+                                                                                                      color: FlutterFlowTheme.of(context).secondaryText,
+                                                                                                      fontSize: 12.0,
+                                                                                                      fontWeight: FontWeight.w300,
+                                                                                                    ),
+                                                                                              ),
                                                                                         orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] == true
                                                                                             ? Text(
                                                                                                 'รายการนี้เป็นของแถม',
@@ -4654,10 +4706,11 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                               checkboxActiveList[i],
                                                                           onChanged: (i == 0 || i == 2) && productPreAll
                                                                               ? null
-                                                                              : (value) {
+                                                                              : (value) async {
                                                                                   checkboxActiveList[i] = value!;
 
                                                                                   if (i == 0) {
+                                                                                    //========================= เลือกรูปแบบที่ 1 ============================================
                                                                                     checkboxActiveList[1] = false;
                                                                                     checkboxActiveList[2] = false;
 
@@ -4665,6 +4718,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                     orderList['วันเวลาจัดส่ง_day'] = orderDateBeforeDay;
                                                                                     orderList['วันเวลาจัดส่ง_string'] = orderDateBeforeString;
                                                                                   } else if (i == 1) {
+                                                                                    //========================= เลือกรูปแบบที่ 2 ============================================
                                                                                     setState(
                                                                                       () {
                                                                                         loadState = true;
@@ -4678,6 +4732,13 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                     checkboxActiveList[0] = false;
 
                                                                                     checkboxActiveList[2] = false;
+
+                                                                                    List<String> parts = orderList['วันเวลาจัดส่ง'].toString().split('-');
+
+                                                                                    DateTime dateTimeConvert = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+
+                                                                                    DateTime now = DateTime.now();
+
                                                                                     // // print(orderList['สายส่ง_วันที่จัดส่ง']);
                                                                                     // // print(orderList['สายส่ง_วันที่จัดส่ง']);
                                                                                     // // print(orderList['สายส่ง_วันที่จัดส่ง']);
@@ -4686,190 +4747,196 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                     // // print(orderList['วันเวลาจัดส่ง_day']);
                                                                                     // // print(orderList['วันเวลาจัดส่ง_string']);
 
-                                                                                    // // ฟังก์ชันที่ใช้หาวันถัดไปที่เป็นจริงตาม A
+                                                                                    if (dateTimeConvert.year == now.year && dateTimeConvert.month == now.month && dateTimeConvert.day == now.day) {
+                                                                                      // ฟังก์ชันที่ใช้หาวันถัดไปที่เป็นจริงตาม A
 
-                                                                                    // //  I/flutter (31739): {ส่งทุกวัน: false, ส่งทุกวันอังคาร: true, ส่งทุกวันอาทิตย์: false, ส่งทุกวันจันทร์: true,
-                                                                                    // //ส่งทุกวันพฤหัสบดี: true, ส่งทุกวันศุกร์: true, ส่งทุกวันพุธ: true, ส่งทุกวันเสาร์: true}
-                                                                                    // DateTime? getNextTrueDay(String currentDay) {
-                                                                                    //   List<String> sortedKeys = [
-                                                                                    //     'ส่งทุกวัน',
-                                                                                    //     'ส่งทุกวันอาทิตย์',
-                                                                                    //     'ส่งทุกวันจันทร์',
-                                                                                    //     'ส่งทุกวันอังคาร',
-                                                                                    //     'ส่งทุกวันพุธ',
-                                                                                    //     'ส่งทุกวันพฤหัสบดี',
-                                                                                    //     'ส่งทุกวันศุกร์',
-                                                                                    //     'ส่งทุกวันเสาร์',
-                                                                                    //   ];
+                                                                                      //  I/flutter (31739): {ส่งทุกวัน: false, ส่งทุกวันอังคาร: true, ส่งทุกวันอาทิตย์: false, ส่งทุกวันจันทร์: true,
+                                                                                      //ส่งทุกวันพฤหัสบดี: true, ส่งทุกวันศุกร์: true, ส่งทุกวันพุธ: true, ส่งทุกวันเสาร์: true}
 
-                                                                                    //   Map<String, bool> sortedMap = {};
+                                                                                      DateTime? getNextTrueDay(String currentDay) {
+                                                                                        print('getNextTrueDay');
+                                                                                        print(orderList['สายส่ง_วันที่จัดส่ง']);
+                                                                                        print(orderList['สายส่ง_วันที่จัดส่ง']);
+                                                                                        print(orderList['สายส่ง_วันที่จัดส่ง']);
+                                                                                        print(orderList['สายส่ง_วันที่จัดส่ง']);
+                                                                                        print(orderList['สายส่ง_วันที่จัดส่ง']);
+                                                                                        // return;
+                                                                                        List<String> sortedKeys = [
+                                                                                          'ส่งทุกวัน',
+                                                                                          'ส่งทุกวันอาทิตย์',
+                                                                                          'ส่งทุกวันจันทร์',
+                                                                                          'ส่งทุกวันอังคาร',
+                                                                                          'ส่งทุกวันพุธ',
+                                                                                          'ส่งทุกวันพฤหัสบดี',
+                                                                                          'ส่งทุกวันศุกร์',
+                                                                                          'ส่งทุกวันเสาร์',
+                                                                                        ];
+                                                                                        Map<String, bool> sortedMap = {};
+                                                                                        sortedKeys.forEach((key) {
+                                                                                          if (orderList['สายส่ง_วันที่จัดส่ง'].containsKey(key)) {
+                                                                                            sortedMap[key] = orderList['สายส่ง_วันที่จัดส่ง'][key];
+                                                                                          }
+                                                                                        });
+                                                                                        // print(sortedMap);
+                                                                                        List<String> keys = [];
+                                                                                        List<bool> values = [];
+                                                                                        int rounds = 8;
+                                                                                        List<bool> resultList = [];
+                                                                                        List<String> resultListEnglish = [];
+                                                                                        sortedMap.forEach((key, value) {
+                                                                                          keys.add(key);
+                                                                                          values.add(value);
+                                                                                        });
+                                                                                        List<String> englishDays = [
+                                                                                          'Allday',
+                                                                                          'Sunday',
+                                                                                          'Monday',
+                                                                                          'Tuesday',
+                                                                                          'Wednesday',
+                                                                                          'Thursday',
+                                                                                          'Friday',
+                                                                                          'Saturday'
+                                                                                        ];
+                                                                                        // values[5] = false;
+                                                                                        // values[6] = false;
+                                                                                        // values[1] = false;
+                                                                                        String alldaykeys = keys[0];
+                                                                                        keys.removeAt(0);
+                                                                                        bool alldayvalues = values[0];
+                                                                                        values.removeAt(0);
+                                                                                        String alldayenglishday = englishDays[0];
+                                                                                        englishDays.removeAt(0);
+                                                                                        for (int i = 0; i < rounds; i++) {
+                                                                                          resultList.addAll(values);
+                                                                                          resultListEnglish.addAll(englishDays);
+                                                                                        }
+                                                                                        // print(keys);
+                                                                                        // print(values);
+                                                                                        // print(englishDays);
+                                                                                        // print(resultList);
+                                                                                        if (alldayvalues) {
+                                                                                          String dateString = orderList['วันเวลาจัดส่ง'].toString();
+                                                                                          // สร้างรูปแบบของวันที่
+                                                                                          DateFormat format = DateFormat('dd-MM-yyyy');
+                                                                                          // แปลงสตริงเป็นวัตถุ DateTime
+                                                                                          DateTime dateTime = format.parse(dateString);
+                                                                                          DateTime newDate = dateTime.add(Duration(days: 1));
+                                                                                          DateFormat format5 = DateFormat('dd-MM-yyyy');
+                                                                                          // แปลงวัตถุ DateTime เป็นสตริงที่ระบุรูปแบบ "dd-MM-yyyy"
+                                                                                          String dateStringUpdate = format5.format(newDate);
+                                                                                          //======== ใช้วันเดิมแล้ว ไม่ต้องเปลี่ยนวัน ==========
+                                                                                          orderList['วันเวลาจัดส่ง'] = dateStringUpdate;
 
-                                                                                    //   sortedKeys.forEach((key) {
-                                                                                    //     if (orderList['สายส่ง_วันที่จัดส่ง'].containsKey(key)) {
-                                                                                    //       sortedMap[key] = orderList['สายส่ง_วันที่จัดส่ง'][key];
-                                                                                    //     }
-                                                                                    //   });
+                                                                                          orderList['วันเวลาจัดส่ง_day'] = DateFormat('EEEE').format(newDate);
+                                                                                          orderList['วันเวลาจัดส่ง_string'] = newDate.toString();
 
-                                                                                    //   // print(sortedMap);
+                                                                                          print(orderList['วันเวลาจัดส่ง']);
+                                                                                          print(orderList['วันเวลาจัดส่ง_day']);
+                                                                                          print(orderList['วันเวลาจัดส่ง_string']);
+                                                                                          //======== ใช้วันเดิมแล้ว ไม่ต้องเปลี่ยนวัน ==========
 
-                                                                                    //   List<String> keys = [];
-                                                                                    //   List<bool> values = [];
+                                                                                          return newDate;
+                                                                                        } else {
+                                                                                          int totalDay = 0;
+                                                                                          int index = englishDays.indexOf(currentDay);
+                                                                                          int indexStop = 0;
+                                                                                          // print(index);
+                                                                                          for (int i = index + 1; i < resultList.length; i++) {
+                                                                                            // print(i);
+                                                                                            if (resultList[i]) {
+                                                                                              indexStop = i;
+                                                                                              // print(indexStop);
+                                                                                              totalDay = i - index;
+                                                                                              break;
+                                                                                            }
+                                                                                          }
+                                                                                          // print('ห่างกี่วัน');
+                                                                                          // print(totalDay);
+                                                                                          // print(totalDay);
+                                                                                          // print(totalDay);
+                                                                                          // print(totalDay);
+                                                                                          // print(orderList['วันเวลาจัดส่ง']);
+                                                                                          String dateString = orderList['วันเวลาจัดส่ง'].toString();
+                                                                                          // สร้างรูปแบบของวันที่
+                                                                                          DateFormat format = DateFormat('dd-MM-yyyy');
+                                                                                          // แปลงสตริงเป็นวัตถุ DateTime
+                                                                                          DateTime dateTime = format.parse(dateString);
+                                                                                          // print(dateTime);
+                                                                                          DateTime newDate = dateTime.add(Duration(days: totalDay));
+                                                                                          DateFormat format5 = DateFormat('dd-MM-yyyy');
+                                                                                          // แปลงวัตถุ DateTime เป็นสตริงที่ระบุรูปแบบ "dd-MM-yyyy"
+                                                                                          String dateStringUpdate = format5.format(newDate);
+                                                                                          //======== ใช้วันเดิมแล้ว ไม่ต้องเปลี่ยนวัน ==========
+                                                                                          orderList['วันเวลาจัดส่ง'] = dateStringUpdate;
+                                                                                          orderList['วันเวลาจัดส่ง_day'] = resultListEnglish[indexStop];
+                                                                                          orderList['วันเวลาจัดส่ง_string'] = newDate.toString();
+                                                                                          //======== ใช้วันเดิมแล้ว ไม่ต้องเปลี่ยนวัน ==========
+                                                                                          return newDate;
+                                                                                          // List<String> thaiDays = [
+                                                                                          //   'อาทิตย์',
+                                                                                          //   'จันทร์',
+                                                                                          //   'อังคาร',
+                                                                                          //   'พุธ',
+                                                                                          //   'พฤหัสบดี',
+                                                                                          //   'ศุกร์',
+                                                                                          //   'เสาร์',
+                                                                                          // ];
 
-                                                                                    //   int rounds = 8;
-                                                                                    //   List<bool> resultList = [];
-                                                                                    //   List<String> resultListEnglish = [];
+                                                                                          // Map<String, String> A = {
+                                                                                          //   'ส่งทุกวัน': orderList['สายส่ง_วันที่จัดส่ง']['ส่งทุกวัน'],
+                                                                                          // };
 
-                                                                                    //   sortedMap.forEach((key, value) {
-                                                                                    //     keys.add(key);
-                                                                                    //     values.add(value);
-                                                                                    //   });
+                                                                                          // thaiDays.forEach((day) {
+                                                                                          //   A['ส่งทุกวัน$day'] = 'true, $day';
+                                                                                          // });
 
-                                                                                    //   List<String> englishDays = [
-                                                                                    //     'Allday',
-                                                                                    //     'Sunday',
-                                                                                    //     'Monday',
-                                                                                    //     'Tuesday',
-                                                                                    //     'Wednesday',
-                                                                                    //     'Thursday',
-                                                                                    //     'Friday',
-                                                                                    //     'Saturday'
-                                                                                    //   ];
-                                                                                    //   // values[5] = false;
-                                                                                    //   // values[6] = false;
-                                                                                    //   // values[1] = false;
-                                                                                    //   String alldaykeys = keys[0];
-                                                                                    //   keys.removeAt(0);
-                                                                                    //   bool alldayvalues = values[0];
-                                                                                    //   values.removeAt(0);
-                                                                                    //   String alldayenglishday = englishDays[0];
-                                                                                    //   englishDays.removeAt(0);
+                                                                                          // print(A);
 
-                                                                                    //   for (int i = 0; i < rounds; i++) {
-                                                                                    //     resultList.addAll(values);
-                                                                                    //     resultListEnglish.addAll(englishDays);
-                                                                                    //   }
+                                                                                          // Map<String, bool> A = {
+                                                                                          //   'ส่งทุกวัน': false,
+                                                                                          //   'ส่งทุกวันอังคาร': true,
+                                                                                          //   'ส่งทุกวันอาทิตย์': false,
+                                                                                          //   'ส่งทุกวันจันทร์': true,
+                                                                                          //   'ส่งทุกวันพฤหัสบดี': true,
+                                                                                          //   'ส่งทุกวันศุกร์': true,
+                                                                                          //   'ส่งทุกวันพุธ': true,
+                                                                                          //   'ส่งทุกวันเสาร์': true,
+                                                                                          // };
 
-                                                                                    //   // print(keys);
-                                                                                    //   // print(values);
-                                                                                    //   // print(englishDays);
-                                                                                    //   // print(resultList);
+                                                                                          // List<String> daysOfWeek = [
+                                                                                          //   'Sunday',
+                                                                                          //   'Monday',
+                                                                                          //   'Tuesday',
+                                                                                          //   'Wednesday',
+                                                                                          //   'Thursday',
+                                                                                          //   'Friday',
+                                                                                          //   'Saturday'
+                                                                                          // ];
+                                                                                          // int currentDayIndex = daysOfWeek.indexOf(currentDay);
 
-                                                                                    //   if (alldayvalues) {
-                                                                                    //   } else {
-                                                                                    //     int totalDay = 0;
+                                                                                          // // วนลูปหาวันถัดไปที่เป็นจริงตาม A
+                                                                                          // for (int i = currentDayIndex + 1; i < currentDayIndex + 8; i++) {
+                                                                                          //   String nextDay = daysOfWeek[i % 7];
+                                                                                          //   if (A['ส่งทุกวัน$nextDay'] == true) {
+                                                                                          //     return DateTime.now().add(Duration(days: i - currentDayIndex));
+                                                                                          //   }
+                                                                                          // }
+                                                                                        }
+                                                                                      }
 
-                                                                                    //     int index = englishDays.indexOf(currentDay);
+                                                                                      DateTime nextTrueDay = getNextTrueDay(orderList['วันเวลาจัดส่ง_day'])!;
 
-                                                                                    //     int indexStop = 0;
-
-                                                                                    //     // print(index);
-
-                                                                                    //     for (int i = index + 1; i < resultList.length; i++) {
-                                                                                    //       // print(i);
-                                                                                    //       if (resultList[i]) {
-                                                                                    //         indexStop = i;
-                                                                                    //         // print(indexStop);
-
-                                                                                    //         totalDay = i - index;
-                                                                                    //         break;
-                                                                                    //       }
-                                                                                    //     }
-                                                                                    //     // print('ห่างกี่วัน');
-                                                                                    //     // print(totalDay);
-                                                                                    //     // print(totalDay);
-                                                                                    //     // print(totalDay);
-                                                                                    //     // print(totalDay);
-
-                                                                                    //     // print(orderList['วันเวลาจัดส่ง']);
-
-                                                                                    //     String dateString = orderList['วันเวลาจัดส่ง'].toString();
-
-                                                                                    //     // สร้างรูปแบบของวันที่
-                                                                                    //     DateFormat format = DateFormat('dd-MM-yyyy');
-
-                                                                                    //     // แปลงสตริงเป็นวัตถุ DateTime
-                                                                                    //     DateTime dateTime = format.parse(dateString);
-                                                                                    //     // print(dateTime);
-
-                                                                                    //     DateTime newDate = dateTime.add(Duration(days: totalDay));
-
-                                                                                    //     DateFormat format5 = DateFormat('dd-MM-yyyy');
-
-                                                                                    //     // แปลงวัตถุ DateTime เป็นสตริงที่ระบุรูปแบบ "dd-MM-yyyy"
-                                                                                    //     String dateStringUpdate = format5.format(newDate);
-
-                                                                                    //     //======== ใช้วันเดิมแล้ว ไม่ต้องเปลี่ยนวัน ==========
-                                                                                    //     // orderList['วันเวลาจัดส่ง'] = dateStringUpdate;
-                                                                                    //     // orderList['วันเวลาจัดส่ง_day'] = resultListEnglish[indexStop];
-                                                                                    //     // orderList['วันเวลาจัดส่ง_string'] = newDate.toString();
-                                                                                    //     //======== ใช้วันเดิมแล้ว ไม่ต้องเปลี่ยนวัน ==========
-
-                                                                                    //     return newDate;
-
-                                                                                    //     // List<String> thaiDays = [
-                                                                                    //     //   'อาทิตย์',
-                                                                                    //     //   'จันทร์',
-                                                                                    //     //   'อังคาร',
-                                                                                    //     //   'พุธ',
-                                                                                    //     //   'พฤหัสบดี',
-                                                                                    //     //   'ศุกร์',
-                                                                                    //     //   'เสาร์',
-                                                                                    //     // ];
-
-                                                                                    //     // Map<String, String> A = {
-                                                                                    //     //   'ส่งทุกวัน': orderList['สายส่ง_วันที่จัดส่ง']['ส่งทุกวัน'],
-                                                                                    //     // };
-
-                                                                                    //     // thaiDays.forEach((day) {
-                                                                                    //     //   A['ส่งทุกวัน$day'] = 'true, $day';
-                                                                                    //     // });
-
-                                                                                    //     // print(A);
-
-                                                                                    //     // Map<String, bool> A = {
-                                                                                    //     //   'ส่งทุกวัน': false,
-                                                                                    //     //   'ส่งทุกวันอังคาร': true,
-                                                                                    //     //   'ส่งทุกวันอาทิตย์': false,
-                                                                                    //     //   'ส่งทุกวันจันทร์': true,
-                                                                                    //     //   'ส่งทุกวันพฤหัสบดี': true,
-                                                                                    //     //   'ส่งทุกวันศุกร์': true,
-                                                                                    //     //   'ส่งทุกวันพุธ': true,
-                                                                                    //     //   'ส่งทุกวันเสาร์': true,
-                                                                                    //     // };
-
-                                                                                    //     // List<String> daysOfWeek = [
-                                                                                    //     //   'Sunday',
-                                                                                    //     //   'Monday',
-                                                                                    //     //   'Tuesday',
-                                                                                    //     //   'Wednesday',
-                                                                                    //     //   'Thursday',
-                                                                                    //     //   'Friday',
-                                                                                    //     //   'Saturday'
-                                                                                    //     // ];
-                                                                                    //     // int currentDayIndex = daysOfWeek.indexOf(currentDay);
-
-                                                                                    //     // // วนลูปหาวันถัดไปที่เป็นจริงตาม A
-                                                                                    //     // for (int i = currentDayIndex + 1; i < currentDayIndex + 8; i++) {
-                                                                                    //     //   String nextDay = daysOfWeek[i % 7];
-                                                                                    //     //   if (A['ส่งทุกวัน$nextDay'] == true) {
-                                                                                    //     //     return DateTime.now().add(Duration(days: i - currentDayIndex));
-                                                                                    //     //   }
-                                                                                    //     // }
-                                                                                    //   }
-
-                                                                                    //   return null; // หากไม่พบวันถัดไปที่เป็นจริงตาม A
-                                                                                    // }
-
-                                                                                    // DateTime nextTrueDay = getNextTrueDay(orderList['วันเวลาจัดส่ง_day'])!;
-
-                                                                                    // print(nextTrueDay); // พิมพ์วันถัดไปที่เป็นจริงตาม A
+                                                                                      print(nextTrueDay); // พิมพ์วันถัดไปที่เป็นจริงตาม A
+                                                                                    }
 
                                                                                     setState(
                                                                                       () {
                                                                                         loadState = false;
                                                                                       },
                                                                                     );
+                                                                                    return;
                                                                                   } else {
+                                                                                    //========================= เลือกรูปแบบที่ 3 ============================================
                                                                                     newOrder.clear();
                                                                                     orderLoss.clear();
                                                                                     orderList['วันเวลาจัดส่ง'] = orderDateBefore;
@@ -4914,33 +4981,55 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                           print('ตัวเลือก 3 Check 1.3');
 
                                                                                           double total = double.parse(stockAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
-                                                                                          double totalLoss = double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          double totalLoss = 0.00;
+                                                                                          if (total < 0.00) {
+                                                                                            totalLoss = double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          } else {
+                                                                                            totalLoss = total - double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          }
                                                                                           // double total = double.parse(orderList['ProductList'][j]['จำนวน'].toString()) * double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
                                                                                           print('===================================');
                                                                                           print(orderList['ProductList'][j]['จำนวน'].toString());
                                                                                           print(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
                                                                                           print(total);
                                                                                           print('===================================');
+                                                                                          String loss = totalLoss.toStringAsFixed(0);
+                                                                                          loss = loss.replaceAll('-', '');
 
                                                                                           orderList['ProductList'][j]['จำนวน'] = int.parse(total.toStringAsFixed(0).toString());
-                                                                                          orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ'] = int.parse(totalLoss.toStringAsFixed(0).toString());
+                                                                                          // orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ'] = int.parse(totalLoss.toStringAsFixed(0).toString());
+                                                                                          orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ'] = int.parse(loss.toString());
                                                                                           productCount[j] = int.parse(total.toStringAsFixed(0).toString());
                                                                                           // stockOrderAll[j] = total.toStringAsFixed(0).toString();
                                                                                           print('ตัวเลือก 3 Check 1.4');
                                                                                         } else {
-                                                                                          double totalLoss = double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          double total = double.parse(stockAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          double totalLoss = 0.00;
+                                                                                          if (total < 0.00) {
+                                                                                            totalLoss = double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          } else {
+                                                                                            totalLoss = total - double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
+                                                                                          }
+                                                                                          // double totalLoss = total - double.parse(stockOrderAll[j].toString()) / double.parse(orderList['ProductList'][j]['CONVERT_RATIO'].toString());
 
                                                                                           print('ตัวเลือก 3 Check 1.5');
+                                                                                          String loss = totalLoss.toStringAsFixed(0);
+                                                                                          loss = loss.replaceAll('-', '');
 
                                                                                           orderList['ProductList'][j]['จำนวน'] = int.parse(stockAllItem.toStringAsFixed(0).toString());
-                                                                                          orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ'] = int.parse(totalLoss.toStringAsFixed(0).toString());
+                                                                                          // orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ'] = int.parse(totalLoss.toStringAsFixed(0).toString().replaceAll('-', ''));
+                                                                                          orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ'] = int.parse(loss.toString());
 
                                                                                           productCount[j] = int.parse(stockAllItem.toStringAsFixed(0).toString());
                                                                                           // stockOrderAll[j] = orderList['ProductList'][j]['จำนวน'].toString();
                                                                                           print('ตัวเลือก 3 Check 1.6');
                                                                                         }
+
                                                                                         print('ตัวเลือก 3 Check 1.7');
+                                                                                        print(orderList['ProductList'][j]['จำนวน']);
+                                                                                        print(orderList['ProductList'][j]['จำนวนสินค้าที่ไม่พอ']);
                                                                                       }
+
                                                                                       print('ตัวเลือก 3 Check 1.8');
 
                                                                                       // print(orderList['ProductList'][j]);
@@ -4953,38 +5042,28 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                       // print('------------------------');
                                                                                       // print(orderList['ProductList'][j]['จำนวน']);
                                                                                     }
-
+                                                                                    // return;
                                                                                     print('ตัวเลือก 3 Check 2');
                                                                                     for (int j = 0; j < orderList['ProductList'].length; j++) {
-                                                                                      print('ตัวเลือก 3 Check 2.1');
-
-                                                                                      print(orderList['ProductList'][j]['จำนวน']);
-                                                                                      // print(orderList['ProductList'][j]['รายการนี้เกินสต๊อก']);
-                                                                                      // print(stockAll[j]);
-
-                                                                                      // print(stockOrderAll[j]);
-
-                                                                                      // stockOrderAll[j] = orderList['ProductList'][j]['จำนวน'].toStringAsFixed(0);
-
-                                                                                      newOrder.add({
-                                                                                        'DocID': orderList['ProductList'][j]['DocID'],
-                                                                                        'สถานะรายการนี้เป็นของแถม': orderList['ProductList'][j]['สถานะรายการนี้เป็นของแถม'],
-                                                                                        'มีของแถม': orderList['ProductList'][j]['มีของแถม'],
-                                                                                        'จำนวน': orderList['ProductList'][j]['จำนวน'],
-                                                                                        'จำนวนของแถม': orderList['ProductList'][j]['จำนวนของแถม'],
-                                                                                        'ไอดีของแถม': orderList['ProductList'][j]['ไอดีของแถม'],
-                                                                                        'ProductID': orderList['ProductList'][j]['ProductID'],
-                                                                                        'หน่วยของแถม': orderList['ProductList'][j]['หน่วยของแถม'],
-                                                                                        'ชื่อสินค้า': orderList['ProductList'][j]['ชื่อสินค้า'],
-                                                                                        'ชื่อของแถม': orderList['ProductList'][j]['ชื่อของแถม'],
-                                                                                        'คำอธิบายสินค้า': orderList['ProductList'][j]['คำอธิบายสินค้า'],
-                                                                                        'ยูนิต': orderList['ProductList'][j]['ยูนิต'],
-                                                                                        'ราคา': orderList['ProductList'][j]['ราคา'],
-                                                                                        'รายการนี้เกินสต๊อก': orderList['ProductList'][j]['รายการนี้เกินสต๊อก'],
-                                                                                        'ส่วนลดรายการ': orderList['ProductList'][j]['ส่วนลดรายการ'],
-                                                                                      });
-                                                                                      print('ตัวเลือก 3 Check 2.2');
-
+                                                                                      newOrder.add(orderList['ProductList'][j]);
+                                                                                      // newOrder.add({
+                                                                                      //   'DocID': orderList['ProductList'][j]['DocID'],
+                                                                                      //   'สถานะรายการนี้เป็นของแถม': orderList['ProductList'][j]['สถานะรายการนี้เป็นของแถม'],
+                                                                                      //   'มีของแถม': orderList['ProductList'][j]['มีของแถม'],
+                                                                                      //   'จำนวน': orderList['ProductList'][j]['จำนวน'],
+                                                                                      //   'จำนวนของแถม': orderList['ProductList'][j]['จำนวนของแถม'],
+                                                                                      //   'ไอดีของแถม': orderList['ProductList'][j]['ไอดีของแถม'],
+                                                                                      //   'ProductID': orderList['ProductList'][j]['ProductID'],
+                                                                                      //   'หน่วยของแถม': orderList['ProductList'][j]['หน่วยของแถม'],
+                                                                                      //   'ชื่อสินค้า': orderList['ProductList'][j]['ชื่อสินค้า'],
+                                                                                      //   'ชื่อของแถม': orderList['ProductList'][j]['ชื่อของแถม'],
+                                                                                      //   'คำอธิบายสินค้า': orderList['ProductList'][j]['คำอธิบายสินค้า'],
+                                                                                      //   'ยูนิต': orderList['ProductList'][j]['ยูนิต'],
+                                                                                      //   'ราคา': orderList['ProductList'][j]['ราคา'],
+                                                                                      //   'รายการนี้เกินสต๊อก': orderList['ProductList'][j]['รายการนี้เกินสต๊อก'],
+                                                                                      //   // 'ส่วนลดรายการ': orderList['ProductList'][j]['ส่วนลดรายการ'],
+                                                                                      //   'ส่วนลดรายการ': '0',
+                                                                                      // });
                                                                                       orderLoss.add({
                                                                                         'DocID': orderList['ProductList'][j]['DocID'],
                                                                                         'สถานะรายการนี้เป็นของแถม': orderList['ProductList'][j]['สถานะรายการนี้เป็นของแถม'],
@@ -5043,22 +5122,165 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                   newOrder.removeWhere((element) => element['จำนวน'] == 0);
                                                                                   newOrder.removeWhere((element) => element['สถานะรายการนี้เป็นของแถม'] == true);
 
-                                                                                  print('ตัวเลือก 3 Check 3.1');
+                                                                                  DocumentSnapshot customerDoc = await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).get();
 
-                                                                                  orderLoss.removeWhere((element) => element['จำนวน'] != 0);
+                                                                                  Map<String, dynamic> data = customerDoc.data() as Map<String, dynamic>;
 
+                                                                                  for (int i = 0; i < newOrder.length; i++) {
+                                                                                    Map<String, dynamic>? foundmapRatio = productCovertRatio.firstWhere(
+                                                                                      (element) => element!['PRODUCT_ID'] == newOrder[i]['ProductID'] && element['UNIT'] == newOrder[i]['ยูนิต'],
+                                                                                      orElse: () => {},
+                                                                                    );
+                                                                                    if (foundmapRatio!['CONVERT_RATIO'] == null) {
+                                                                                      checkConvertRatio = true;
+                                                                                    }
+                                                                                    newOrder[i]['CONVERT_RATIO'] = foundmapRatio!['CONVERT_RATIO'] ?? '0';
+                                                                                    // ================================= เช็คโปร ============================
+                                                                                    double price = double.parse(newOrder[i]['ราคา'].toString());
+                                                                                    double total = double.parse(newOrder[i]['จำนวน'].toString());
+                                                                                    double totalPrice = price * total;
+                                                                                    DateTime dateTime = DateTime.now();
+                                                                                    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+                                                                                    HttpsCallable callableDiscount = FirebaseFunctions.instance.httpsCallable('getApiMfood');
+                                                                                    print(newOrder[i]);
+                                                                                    print('สินค้าที่ส่งไปเช็คโปรโมชั่น');
+                                                                                    var paramsDiscount = <String, dynamic>{
+                                                                                      "url": "http://mobile.mfood.co.th:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+                                                                                      "xml":
+                                                                                          //pro type discount
+                                                                                          '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${newOrder[i]['ProductID']}</ITEMCODE><UM>${newOrder[i]['ยูนิต']}</UM><QTY>${newOrder[i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                                                                                    };
+                                                                                    print(paramsDiscount['xml']);
+                                                                                    await callableDiscount.call(paramsDiscount).then((value) async {
+                                                                                      print('ข้อมูลที่ส่งกลับจาก cloud function ${value.data}');
+                                                                                      if (value.data['status'] == 'success') {}
+                                                                                      Xml2Json xml2json = Xml2Json();
+                                                                                      xml2json.parse(value.data.toString());
+                                                                                      jsonStringDiscount = xml2json.toOpenRally();
+                                                                                      Map<String, dynamic> data = json.decode(jsonStringDiscount);
+                                                                                      if (data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']['SALES_ITEM_PROMOTIONResult'] == 'true') {
+                                                                                        newOrder[i]['ส่วนลดรายการ'] = '0.0';
+                                                                                        newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                        newOrder[i]['ไอดีของแถม'] = '';
+                                                                                        newOrder[i]['ชื่อของแถม'] = '';
+                                                                                        newOrder[i]['จำนวนของแถม'] = '0';
+                                                                                        newOrder[i]['หน่วยของแถม'] = '';
+                                                                                        newOrder[i]['มีของแถม'] = false;
+                                                                                      } else {
+                                                                                        if (data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST'].runtimeType == List<dynamic>) {
+                                                                                          for (int j = 0; j < data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST'].length; j++) {
+                                                                                            Map<String, dynamic> sellPriceResponse = data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST'][j];
+                                                                                            if (sellPriceResponse['PRODUCT_TYPE'] == 'ITEM DISCOUNT') {
+                                                                                              double discount = double.parse(sellPriceResponse['DISCOUNT_UNIT']);
+                                                                                              String totalPriceDiscount = discount.toStringAsFixed(2);
+                                                                                              newOrder[i]['ส่วนลดรายการ'] = totalPriceDiscount;
+                                                                                              newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                            } else if (sellPriceResponse['PRODUCT_TYPE'] == 'FREE') {
+                                                                                              newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                              newOrder[i]['ไอดีของแถม'] = sellPriceResponse['FREE_ID'];
+                                                                                              Map<String, dynamic> dataMap = resultList.firstWhere((product) => product['PRODUCT_ID'] == newOrder[i]['ไอดีของแถม']);
+                                                                                              newOrder[i]['ชื่อของแถม'] = dataMap['NAMES'];
+                                                                                              double discount = double.parse(sellPriceResponse['FREE_QTY']);
+                                                                                              String totalPriceDiscount = discount.toStringAsFixed(0);
+                                                                                              newOrder[i]['จำนวนของแถม'] = totalPriceDiscount;
+                                                                                              newOrder[i]['หน่วยของแถม'] = sellPriceResponse['PRODUCT_UNIT'];
+                                                                                              newOrder[i]['มีของแถม'] = true;
+                                                                                            } else {
+                                                                                              newOrder[i]['ส่วนลดรายการ'] = '0.0';
+                                                                                              newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                              newOrder[i]['ไอดีของแถม'] = '';
+                                                                                              newOrder[i]['ชื่อของแถม'] = '';
+                                                                                              newOrder[i]['จำนวนของแถม'] = '0';
+                                                                                              newOrder[i]['หน่วยของแถม'] = '';
+                                                                                              newOrder[i]['มีของแถม'] = false;
+                                                                                            }
+                                                                                          }
+                                                                                        } else {
+                                                                                          Map<String, dynamic> sellPriceResponse = data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST'];
+                                                                                          if (sellPriceResponse['PRODUCT_TYPE'] == 'ITEM DISCOUNT') {
+                                                                                            double discount = double.parse(sellPriceResponse['DISCOUNT_UNIT']);
+                                                                                            String totalPriceDiscount = discount.toStringAsFixed(2);
+                                                                                            newOrder[i]['ส่วนลดรายการ'] = totalPriceDiscount;
+                                                                                            newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                            newOrder[i]['ไอดีของแถม'] = '';
+                                                                                            newOrder[i]['ชื่อของแถม'] = '';
+                                                                                            newOrder[i]['จำนวนของแถม'] = '0';
+                                                                                            newOrder[i]['หน่วยของแถม'] = '';
+                                                                                            newOrder[i]['มีของแถม'] = false;
+                                                                                          } else if (sellPriceResponse['PRODUCT_TYPE'] == 'FREE') {
+                                                                                            newOrder[i]['ส่วนลดรายการ'] = '0.0';
+                                                                                            newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                            newOrder[i]['ไอดีของแถม'] = sellPriceResponse['FREE_ID'];
+                                                                                            Map<String, dynamic> dataMap = resultList.firstWhere((product) => product['PRODUCT_ID'] == newOrder[i]['ไอดีของแถม']);
+                                                                                            newOrder[i]['ชื่อของแถม'] = dataMap['NAMES'];
+                                                                                            double discount = double.parse(sellPriceResponse['FREE_QTY']);
+                                                                                            String totalPriceDiscount = discount.toStringAsFixed(0);
+                                                                                            newOrder[i]['จำนวนของแถม'] = totalPriceDiscount;
+                                                                                            newOrder[i]['หน่วยของแถม'] = sellPriceResponse['PRODUCT_UNIT'];
+                                                                                            newOrder[i]['มีของแถม'] = true;
+                                                                                          } else {
+                                                                                            newOrder[i]['ส่วนลดรายการ'] = '0.0';
+                                                                                            newOrder[i]['สถานะรายการนี้เป็นของแถม'] = false;
+                                                                                            newOrder[i]['ไอดีของแถม'] = '';
+                                                                                            newOrder[i]['ชื่อของแถม'] = '';
+                                                                                            newOrder[i]['จำนวนของแถม'] = '0';
+                                                                                            newOrder[i]['หน่วยของแถม'] = '';
+                                                                                            newOrder[i]['มีของแถม'] = false;
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                      double totalPriceDiscountDouble = 0.0;
+                                                                                      totalPriceDiscountDouble = totalPriceDiscountDouble + double.parse(newOrder[i]['ส่วนลดรายการ'].toString());
+                                                                                      String totalPriceDiscountDoubleString = totalPriceDiscountDouble.toStringAsFixed(2);
+                                                                                      String totalPriceDiscount = '';
+                                                                                      totalPriceDiscount = totalPriceDiscountDoubleString;
+                                                                                      orderList['ยอดรวมส่วนลดทั้งหมด'] = totalPriceDiscount;
+                                                                                    }).whenComplete(() async {});
+                                                                                    print(newOrder[i]);
+                                                                                    print('====================== รายการใหม่ =======================');
+                                                                                  }
+                                                                                  for (int i = 0; i < newOrder.length; i++) {
+                                                                                    if (newOrder[i]['มีของแถม'] == true) {
+                                                                                      Map<String, dynamic> dataMap1 = newOrder[i];
+                                                                                      Map<String, dynamic>? foundMap = resultList.firstWhere((element) => element['PRODUCT_ID'] == dataMap1['ไอดีของแถม']);
+                                                                                      Map<String, dynamic> dataMapBonus = {};
+                                                                                      dataMapBonus['DocID'] = foundMap['DocId'];
+                                                                                      dataMapBonus['สถานะรายการนี้เป็นของแถม'] = true;
+                                                                                      dataMapBonus['มีของแถม'] = false;
+                                                                                      dataMapBonus['จำนวน'] = int.parse(dataMap1['จำนวนของแถม']);
+                                                                                      dataMapBonus['จำนวนของแถม'] = '';
+                                                                                      dataMapBonus['ไอดีของแถม'] = '';
+                                                                                      dataMapBonus['ProductID'] = foundMap['PRODUCT_ID'];
+                                                                                      dataMapBonus['หน่วยของแถม'] = '';
+                                                                                      dataMapBonus['ชื่อสินค้า'] = foundMap['NAMES'];
+                                                                                      dataMapBonus['ชื่อของแถม'] = '';
+                                                                                      dataMapBonus['คำอธิบายสินค้า'] = foundMap['รายละเอียด'] == '' ? '' : foundMap['รายละเอียด'];
+                                                                                      dataMapBonus['ยูนิต'] = dataMap1['หน่วยของแถม'];
+                                                                                      dataMapBonus['ราคา'] = '0';
+                                                                                      dataMapBonus['ส่วนลดรายการ'] = '0.0';
+                                                                                      newOrder.add(dataMapBonus);
+                                                                                      productCount.add(int.parse(dataMap1['จำนวนของแถม']));
+                                                                                    }
+                                                                                  }
+                                                                                  print('ตัวเลือก 3 Check 3.1 ====================================================');
                                                                                   for (int i = 0; i < orderLoss.length; i++) {
                                                                                     orderLoss[i]['จำนวน'] = orderLoss[i]['จำนวนสินค้าที่ไม่พอ'];
                                                                                     print('จำนวนสินค้าที่ไม่พอ');
                                                                                     print(orderLoss[i]['จำนวน']);
                                                                                   }
+                                                                                  orderLoss.removeWhere((element) => element['จำนวนสินค้าที่ไม่พอ'] == 0);
                                                                                   print('ตัวเลือก 3 Check 3.2');
+                                                                                  print(newOrder.length);
+                                                                                  print(newOrder.length);
+                                                                                  print(newOrder.length);
+                                                                                  print(newOrder.length);
+                                                                                  print(newOrder.length);
 
-                                                                                  print(newOrder.length);
-                                                                                  print(newOrder.length);
-                                                                                  print(newOrder.length);
-                                                                                  print(newOrder.length);
-                                                                                  print(newOrder.length);
+                                                                                  // for (int i = 0; i < orderList['ProductList'].length; i++) {
+                                                                                  //   print(orderList['ProductList'][i]['ชื่อสินค้า']);
+                                                                                  //   print(orderList['ProductList'][i]['จำนวน']);
+                                                                                  //   print(orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม']);
+                                                                                  // }
 
                                                                                   setState(
                                                                                     () {
@@ -5371,7 +5593,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                           }).whenComplete(() async {
                                                                                             HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('apiConfirmOrder');
                                                                                             var params = <String, dynamic>{
-                                                                                              "MODE": "REAL",
+                                                                                              "MODE": AppSettings.customerType == CustomerType.Test ? "TEST" : "REAL",
                                                                                               "CustomerDocId": widget.customerID,
                                                                                               "OrdersDateID": orderID,
                                                                                               "UserDocId": userData!['EmployeeID'],
@@ -5723,7 +5945,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                               }).whenComplete(() async {
                                                                                                 HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('apiConfirmOrder');
                                                                                                 var params = <String, dynamic>{
-                                                                                                  "MODE": "REAL",
+                                                                                                  "MODE": AppSettings.customerType == CustomerType.Test ? "TEST" : "REAL",
                                                                                                   "CustomerDocId": widget.customerID,
                                                                                                   "OrdersDateID": orderID,
                                                                                                   "UserDocId": userData!['EmployeeID'],
@@ -6267,7 +6489,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                               }).whenComplete(() async {
                                                                                                 HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('apiConfirmOrder');
                                                                                                 var params = <String, dynamic>{
-                                                                                                  "MODE": "REAL",
+                                                                                                  "MODE": AppSettings.customerType == CustomerType.Test ? "TEST" : "REAL",
                                                                                                   "CustomerDocId": widget.customerID,
                                                                                                   "OrdersDateID": orderID,
                                                                                                   "UserDocId": userData!['EmployeeID'],
@@ -6366,9 +6588,16 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                       );
                                     });
                                   } else {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                                    // setState(() {
+                                    //   isLoading = true;
+                                    // });
+
+                                    // for(int i =0 ; i< orderList['ProductList'].length;i++){
+                                    //   print(orderList['ProductList'][i]['ชื่อสินค้า']);
+                                    //   print(orderList['ProductList'][i]['จำนวน']);
+                                    //   print(orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม']);
+                                    // }
+
                                     String orderID = DateTime.now().toString();
 
                                     //====================== อัพเดทสินค้าที่เคยสั่งของพนักงานคนนั้น ==========================
@@ -6458,6 +6687,20 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                     }
                                     print('listProductReal');
                                     print(listProductReal);
+
+                                    print('ผ่านทุกเงื่อนไข');
+                                    print(listProductReal.length);
+                                    print(orderList['ProductList'].length);
+
+                                    for (var element
+                                        in orderList['ProductList']) {
+                                      print(element);
+                                    }
+
+                                    for (var element in listProductReal) {
+                                      print(element);
+                                    }
+                                    // return;
 
                                     await FirebaseFirestore.instance
                                         .collection('User')
@@ -6631,7 +6874,10 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                           .instance
                                           .httpsCallable('apiConfirmOrder');
                                       var params = <String, dynamic>{
-                                        "MODE": "REAL",
+                                        "MODE": AppSettings.customerType ==
+                                                CustomerType.Test
+                                            ? "TEST"
+                                            : "REAL",
                                         "CustomerDocId": widget.customerID,
                                         "OrdersDateID": orderID,
                                         "UserDocId": userData!['EmployeeID'],

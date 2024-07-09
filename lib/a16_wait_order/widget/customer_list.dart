@@ -21,11 +21,13 @@ class CustomerList extends StatefulWidget {
   final String? status;
 
   final List<Map<String, dynamic>?>? dataOrderList;
+  final List<Map<String, dynamic>?>? dataOrderListTeam;
 
   CustomerList({
     super.key,
     this.status,
     @required this.dataOrderList,
+    @required this.dataOrderListTeam,
   });
 
   @override
@@ -45,10 +47,15 @@ class _CustomerListState extends State<CustomerList> {
   final userController = Get.find<UserController>();
   RxMap<String, dynamic>? userData;
   List<Map<String, dynamic>?>? mapDataOrdersDataList = [];
+  List<Map<String, dynamic>?>? mapDataOrdersDataListTeam = [];
 
   List<Map<String, dynamic>>? mapDataOrdersDataFirst = [];
   List<Map<String, dynamic>>? mapDataOrdersDataSecond = [];
   List<Map<String, dynamic>>? mapDataOrdersDataThird = [];
+
+  List<Map<String, dynamic>>? mapDataOrdersDataFirstTeam = [];
+  List<Map<String, dynamic>>? mapDataOrdersDataSecondTeam = [];
+  List<Map<String, dynamic>>? mapDataOrdersDataThirdTeam = [];
 
   String first = '';
   String second = '';
@@ -65,11 +72,23 @@ class _CustomerListState extends State<CustomerList> {
   String totalTwo = '';
   String totalThree = '';
 
+  double totalfirstTeam = 0.0;
+  double totalsecondTeam = 0.0;
+  double totalthirdTeam = 0.0;
+
+  String totalOneTeam = '';
+  String totalTwoTeam = '';
+  String totalThreeTeam = '';
+
   DateTime? selectedDate = DateTime.now();
 
   List<Map<String, dynamic>>? sendMapOne = [];
   List<Map<String, dynamic>>? sendMapTwo = [];
   List<Map<String, dynamic>>? sendMapThree = [];
+
+  List<Map<String, dynamic>>? sendMapOneTeam = [];
+  List<Map<String, dynamic>>? sendMapTwoTeam = [];
+  List<Map<String, dynamic>>? sendMapThreeTeam = [];
 
   @override
   void initState() {
@@ -217,6 +236,8 @@ class _CustomerListState extends State<CustomerList> {
       userData = userController.userData;
 
       mapDataOrdersDataList = widget.dataOrderList;
+      //==================================================================
+      mapDataOrdersDataListTeam = widget.dataOrderListTeam;
 
       // QuerySnapshot<Map<String, dynamic>> querySnapshot =
       //     await FirebaseFirestore.instance
@@ -297,6 +318,34 @@ class _CustomerListState extends State<CustomerList> {
 
       print('55555');
 
+      if (mapDataOrdersDataListTeam!.length == 0) {
+        // mapDataOrdersData!.add({});
+        print('if');
+      } else {
+        print('else');
+        mapDataOrdersDataListTeam!.forEach((doc) {
+          Map<String, dynamic> data = doc as Map<String, dynamic>;
+
+          if (data['OrdersDateID'] == null) {
+            // mapDataOrdersData!.add({});
+          } else {
+            DateTime dateTime = DateTime.parse(data['OrdersDateID']);
+            String monthName = DateFormat('MMMM').format(dateTime);
+            // print(monthName);
+            if (monthName == first) {
+              mapDataOrdersDataFirstTeam!.add(data);
+              // print('add frist');
+            } else if (monthName == second) {
+              mapDataOrdersDataSecondTeam!.add(data);
+              // print('add second');
+            } else if (monthName == third) {
+              mapDataOrdersDataThirdTeam!.add(data);
+              // print('add third');
+            } else {}
+          }
+        });
+      }
+
       // }
 
       print(mapDataOrdersDataFirst!.length);
@@ -312,11 +361,28 @@ class _CustomerListState extends State<CustomerList> {
         totalthird = totalthird + element!['มูลค่าสินค้ารวม'];
       }
 
+      print(mapDataOrdersDataFirstTeam!.length);
+      for (var element in mapDataOrdersDataFirstTeam!) {
+        totalfirstTeam = totalfirstTeam + element!['มูลค่าสินค้ารวม'];
+      }
+      print(mapDataOrdersDataSecondTeam!.length);
+      for (var element in mapDataOrdersDataSecondTeam!) {
+        totalsecondTeam = totalsecondTeam + element!['มูลค่าสินค้ารวม'];
+      }
+      print(mapDataOrdersDataThirdTeam!.length);
+      for (var element in mapDataOrdersDataThirdTeam!) {
+        totalthirdTeam = totalthirdTeam + element!['มูลค่าสินค้ารวม'];
+      }
+
       NumberFormat formatter = NumberFormat('#,###');
 
       totalOne = formatter.format(totalfirst);
       totalTwo = formatter.format(totalsecond);
       totalThree = formatter.format(totalthird);
+
+      totalOneTeam = formatter.format(totalfirstTeam);
+      totalTwoTeam = formatter.format(totalsecondTeam);
+      totalThreeTeam = formatter.format(totalthirdTeam);
       print('หลังโหลด');
       if (mounted) {
         setState(() {
@@ -617,6 +683,27 @@ class _CustomerListState extends State<CustomerList> {
                                                         return true;
                                                       }
                                                     });
+
+                                                    print(
+                                                        mapDataOrdersDataThirdTeam!
+                                                            .length);
+                                                    sendMapThreeTeam = List.from(
+                                                        mapDataOrdersDataThirdTeam!);
+
+                                                    sendMapThreeTeam!
+                                                        .removeWhere((element) {
+                                                      DateTime orderDateTeam =
+                                                          DateTime.parse(element![
+                                                              'OrdersDateID']);
+                                                      if (orderDateTeam.day
+                                                              .toString() ==
+                                                          (DateFormat('d').format(
+                                                              selectedDate!))) {
+                                                        return false;
+                                                      } else {
+                                                        return true;
+                                                      }
+                                                    });
                                                     print(
                                                         mapDataOrdersDataThird!
                                                             .length);
@@ -627,6 +714,8 @@ class _CustomerListState extends State<CustomerList> {
                                                         CupertinoPageRoute(
                                                           builder: (context) =>
                                                               A160101CustomerChooseDay(
+                                                                  listOrdersTeam:
+                                                                      sendMapThreeTeam,
                                                                   listOrders:
                                                                       sendMapThree!,
                                                                   date: selectedDate
@@ -655,6 +744,23 @@ class _CustomerListState extends State<CustomerList> {
                                                         return true;
                                                       }
                                                     });
+
+                                                    sendMapTwoTeam = List.from(
+                                                        mapDataOrdersDataSecondTeam!);
+                                                    sendMapTwoTeam!
+                                                        .removeWhere((element) {
+                                                      DateTime orderDateTeam =
+                                                          DateTime.parse(element![
+                                                              'OrdersDateID']);
+                                                      if (orderDateTeam.day
+                                                              .toString() ==
+                                                          (DateFormat('d').format(
+                                                              selectedDate!))) {
+                                                        return false;
+                                                      } else {
+                                                        return true;
+                                                      }
+                                                    });
                                                     print(
                                                         mapDataOrdersDataSecond!
                                                             .length);
@@ -665,6 +771,8 @@ class _CustomerListState extends State<CustomerList> {
                                                         CupertinoPageRoute(
                                                           builder: (context) =>
                                                               A160101CustomerChooseDay(
+                                                                  listOrdersTeam:
+                                                                      sendMapTwoTeam,
                                                                   listOrders:
                                                                       sendMapTwo!,
                                                                   date: selectedDate
@@ -693,6 +801,23 @@ class _CustomerListState extends State<CustomerList> {
                                                         return true;
                                                       }
                                                     });
+
+                                                    sendMapOneTeam = List.from(
+                                                        mapDataOrdersDataFirstTeam!);
+                                                    sendMapOneTeam!
+                                                        .removeWhere((element) {
+                                                      DateTime orderDateTeam =
+                                                          DateTime.parse(element![
+                                                              'OrdersDateID']);
+                                                      if (orderDateTeam.day
+                                                              .toString() ==
+                                                          (DateFormat('d').format(
+                                                              selectedDate!))) {
+                                                        return false;
+                                                      } else {
+                                                        return true;
+                                                      }
+                                                    });
                                                     print(
                                                         mapDataOrdersDataFirst!
                                                             .length);
@@ -702,6 +827,8 @@ class _CustomerListState extends State<CustomerList> {
                                                         CupertinoPageRoute(
                                                           builder: (context) =>
                                                               A160101CustomerChooseDay(
+                                                                  listOrdersTeam:
+                                                                      sendMapOneTeam,
                                                                   listOrders:
                                                                       sendMapOne!,
                                                                   date: selectedDate

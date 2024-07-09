@@ -22,9 +22,15 @@ import 'package:m_food/controller/user_controller.dart';
 
 class A1603OrderDetail extends StatefulWidget {
   final String? customerID;
+  final bool? checkTeam;
 
   final Map<String, dynamic>? orderDataMap;
-  const A1603OrderDetail({super.key, this.orderDataMap, this.customerID});
+  const A1603OrderDetail({
+    super.key,
+    this.orderDataMap,
+    this.customerID,
+    @required this.checkTeam,
+  });
 
   @override
   _A1603OrderDetailState createState() => _A1603OrderDetailState();
@@ -100,12 +106,14 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
       // print('Key: $key, Value: $value');
       if (key == 'ProductList') {
         for (var element in value) {
+          print(element);
           Map<String, dynamic> productMatch = resultList.firstWhere(
-              (elementProduct) => elementProduct['DocId'] == element['DocID']);
+              (elementProduct) =>
+                  elementProduct['PRODUCT_ID'] == element['ProductID']);
           // print('-888-');
 
           // print(productMatch);
-          // print(productMatch['รูปภาพ']);
+          print(productMatch['รูปภาพ']);
 
           // print('-999-');
           if (productMatch['รูปภาพ'] == null) {
@@ -120,7 +128,7 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
               productImage.add('');
             }
           } else {
-            productImage.add('');
+            productImage.add(productMatch['รูปภาพ'][0]);
           }
         }
       }
@@ -133,7 +141,8 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
       // print('Key: $key, Value: $value');
       if (key == 'ProductList') {
         for (var element in value) {
-          productCount.add(element['จำนวน']);
+          String value = element['จำนวน'].toStringAsFixed(0);
+          productCount.add(int.parse(value));
           print(element['ราคาพิเศษ']);
         }
       }
@@ -368,7 +377,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'รายละเอียดออเดอร์',
+                                  widget.checkTeam!
+                                      ? 'รายละเอียดออเดอร์ที่เปิดแทน'
+                                      : 'รายละเอียดออเดอร์',
                                   style: FlutterFlowTheme.of(context)
                                       .titleMedium
                                       .override(
@@ -1503,6 +1514,29 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                                 ),
                                                               ],
                                                             ),
+                                                            orderList['ProductList']
+                                                                            [i][
+                                                                        'ส่วนลดรายการ'] ==
+                                                                    '0.0'
+                                                                ? SizedBox()
+                                                                : Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    children: [
+                                                                      Text(
+                                                                        'ส่วนลดรายการ ${orderList['ProductList'][i]['ส่วนลดรายการ']} บาท ',
+
+                                                                        // 'ราคารวม  ${(orderList['ProductList'][i]['ราคา'] * productCount[i])} บาท',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyLarge
+                                                                            .override(
+                                                                              fontFamily: 'Kanit',
+                                                                              color: Colors.red,
+                                                                            ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                           ],
                                                         ),
                                                       ),
@@ -1675,215 +1709,40 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                         ),
                                       ],
                                     ),
-                                  Container(
-                                    width:
-                                        MediaQuery.sizeOf(context).width * 0.8,
-                                    decoration: const BoxDecoration(),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          width:
-                                              MediaQuery.sizeOf(context).width *
-                                                  0.6,
-                                          decoration: const BoxDecoration(),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'ยอดรวมส่วนลดรายการทั้งหมด',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'ส่วนลดท้ายบิล/Discount',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'มูลค่าสินค้าที่ยกเว้นภาษีมูลค่าเพิ่ม/Value of non VAT (N)',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'มูลค่าสินค้าที่รวมภาษีมูลค่าเพิ่ม/Value including VAT (V)',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'มูลค่าสินค้าที่เสียภาษีมูลค่าเพิ่ม/Value excluding VAT',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'ภาษีมูลค่าเพิ่ม/VAT',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        'มูลค่าสินค้ารวม/Grand Total',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyLarge
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Kanit',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryText,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                // color: Colors.red,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.175,
-                                                child: Column(
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                                    child: Container(
+                                      width: MediaQuery.sizeOf(context).width *
+                                          0.8,
+                                      decoration: const BoxDecoration(),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            width: MediaQuery.sizeOf(context)
+                                                    .width *
+                                                0.6,
+                                            decoration: const BoxDecoration(),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
                                                   mainAxisSize:
                                                       MainAxisSize.max,
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${orderList['ยอดรวมส่วนลดทั้งหมด'] ?? '0'} บาท',
+                                                          'ยอดรวมส่วนลดรายการทั้งหมด',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -1903,14 +1762,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${orderList['ยอดรวมส่วนลดท้ายบิล'] ?? '0'} บาท',
+                                                          'ส่วนลดท้ายบิล/Discount',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -1930,14 +1784,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้าที่ยกเว้นภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                          'มูลค่าสินค้าที่ยกเว้นภาษีมูลค่าเพิ่ม/Value of non VAT (N)',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -1957,14 +1806,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้าที่รวมภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                          'มูลค่าสินค้าที่รวมภาษีมูลค่าเพิ่ม/Value including VAT (V)',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -1984,14 +1828,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้าที่เสียภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                          'มูลค่าสินค้าที่เสียภาษีมูลค่าเพิ่ม/Value excluding VAT',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -2011,14 +1850,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${NumberFormat('#,##0.00').format(orderList['ภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                          'ภาษีมูลค่าเพิ่ม/VAT',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -2038,14 +1872,9 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Text(
-                                                          orderList['สถานะเช็คสต็อก'] ==
-                                                                  'ยกทั้งตระกร้า'
-                                                              ? '-'
-                                                              : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้ารวม']).toString()} บาท',
+                                                          'มูลค่าสินค้ารวม/Grand Total',
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyLarge
@@ -2064,158 +1893,369 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                                     ),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
+                                                Container(
+                                                  // color: Colors.red,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.175,
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${orderList['ยอดรวมส่วนลดทั้งหมด'] ?? '0'} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${orderList['ยอดรวมส่วนลดท้ายบิล'] ?? '0'} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้าที่ยกเว้นภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้าที่รวมภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้าที่เสียภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${NumberFormat('#,##0.00').format(orderList['ภาษีมูลค่าเพิ่ม']).toString()} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            orderList['สถานะเช็คสต็อก'] ==
+                                                                    'ยกทั้งตระกร้า'
+                                                                ? '-'
+                                                                : '${NumberFormat('#,##0.00').format(orderList['มูลค่าสินค้ารวม']).toString()} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        )
-                                      ],
+                                          SizedBox(
+                                            width: 10,
+                                          )
+                                        ],
+                                      ),
+                                      // child: Row(
+                                      //   mainAxisSize: MainAxisSize.max,
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.spaceBetween,
+                                      //   children: [
+                                      //     Column(
+                                      //       mainAxisSize: MainAxisSize.max,
+                                      //       crossAxisAlignment:
+                                      //           CrossAxisAlignment.end,
+                                      //       children: [
+                                      //         Row(
+                                      //           mainAxisSize: MainAxisSize.max,
+                                      //           children: [
+                                      //             Text(
+                                      //               'รวม',
+                                      //               style: FlutterFlowTheme.of(
+                                      //                       context)
+                                      //                   .bodyLarge
+                                      //                   .override(
+                                      //                     fontFamily: 'Kanit',
+                                      //                     color:
+                                      //                         FlutterFlowTheme.of(
+                                      //                                 context)
+                                      //                             .primaryText,
+                                      //                     fontWeight:
+                                      //                         FontWeight.normal,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //         Row(
+                                      //           mainAxisSize: MainAxisSize.max,
+                                      //           children: [
+                                      //             Text(
+                                      //               'VAT 7%',
+                                      //               style: FlutterFlowTheme.of(
+                                      //                       context)
+                                      //                   .bodyLarge
+                                      //                   .override(
+                                      //                     fontFamily: 'Kanit',
+                                      //                     color:
+                                      //                         FlutterFlowTheme.of(
+                                      //                                 context)
+                                      //                             .primaryText,
+                                      //                     fontWeight:
+                                      //                         FontWeight.normal,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //         Row(
+                                      //           mainAxisSize: MainAxisSize.max,
+                                      //           children: [
+                                      //             Text(
+                                      //               'รวมทั้งสิ้น',
+                                      //               style: FlutterFlowTheme.of(
+                                      //                       context)
+                                      //                   .bodyLarge
+                                      //                   .override(
+                                      //                     fontFamily: 'Kanit',
+                                      //                     color:
+                                      //                         FlutterFlowTheme.of(
+                                      //                                 context)
+                                      //                             .primaryText,
+                                      //                     fontWeight:
+                                      //                         FontWeight.normal,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //     Column(
+                                      //       mainAxisSize: MainAxisSize.max,
+                                      //       crossAxisAlignment:
+                                      //           CrossAxisAlignment.end,
+                                      //       children: [
+                                      //         Row(
+                                      //           mainAxisSize: MainAxisSize.max,
+                                      //           mainAxisAlignment:
+                                      //               MainAxisAlignment.end,
+                                      //           children: [
+                                      //             Text(
+                                      //               '${NumberFormat('#,##0').format(orderList['ยอดรวม']).toString()} บาท',
+                                      //               style: FlutterFlowTheme.of(
+                                      //                       context)
+                                      //                   .bodyLarge
+                                      //                   .override(
+                                      //                     fontFamily: 'Kanit',
+                                      //                     color:
+                                      //                         FlutterFlowTheme.of(
+                                      //                                 context)
+                                      //                             .primaryText,
+                                      //                     fontWeight:
+                                      //                         FontWeight.normal,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //         Row(
+                                      //           mainAxisSize: MainAxisSize.max,
+                                      //           children: [
+                                      //             Text(
+                                      //               '${NumberFormat('#,##0').format((orderList['ยอดรวม'] * 0.07)).toString()} บาท',
+                                      //               style: FlutterFlowTheme.of(
+                                      //                       context)
+                                      //                   .bodyLarge
+                                      //                   .override(
+                                      //                     fontFamily: 'Kanit',
+                                      //                     color:
+                                      //                         FlutterFlowTheme.of(
+                                      //                                 context)
+                                      //                             .primaryText,
+                                      //                     fontWeight:
+                                      //                         FontWeight.normal,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //         Row(
+                                      //           mainAxisSize: MainAxisSize.max,
+                                      //           children: [
+                                      //             Text(
+                                      //               '${NumberFormat('#,##0').format((orderList['ยอดรวม'] * 1.07)).toString()} บาท',
+                                      //               style: FlutterFlowTheme.of(
+                                      //                       context)
+                                      //                   .bodyLarge
+                                      //                   .override(
+                                      //                     fontFamily: 'Kanit',
+                                      //                     color:
+                                      //                         FlutterFlowTheme.of(
+                                      //                                 context)
+                                      //                             .primaryText,
+                                      //                     fontWeight:
+                                      //                         FontWeight.normal,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //   ],
+                                      // ),
                                     ),
-                                    // child: Row(
-                                    //   mainAxisSize: MainAxisSize.max,
-                                    //   mainAxisAlignment:
-                                    //       MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     Column(
-                                    //       mainAxisSize: MainAxisSize.max,
-                                    //       crossAxisAlignment:
-                                    //           CrossAxisAlignment.end,
-                                    //       children: [
-                                    //         Row(
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           children: [
-                                    //             Text(
-                                    //               'รวม',
-                                    //               style: FlutterFlowTheme.of(
-                                    //                       context)
-                                    //                   .bodyLarge
-                                    //                   .override(
-                                    //                     fontFamily: 'Kanit',
-                                    //                     color:
-                                    //                         FlutterFlowTheme.of(
-                                    //                                 context)
-                                    //                             .primaryText,
-                                    //                     fontWeight:
-                                    //                         FontWeight.normal,
-                                    //                   ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //         Row(
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           children: [
-                                    //             Text(
-                                    //               'VAT 7%',
-                                    //               style: FlutterFlowTheme.of(
-                                    //                       context)
-                                    //                   .bodyLarge
-                                    //                   .override(
-                                    //                     fontFamily: 'Kanit',
-                                    //                     color:
-                                    //                         FlutterFlowTheme.of(
-                                    //                                 context)
-                                    //                             .primaryText,
-                                    //                     fontWeight:
-                                    //                         FontWeight.normal,
-                                    //                   ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //         Row(
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           children: [
-                                    //             Text(
-                                    //               'รวมทั้งสิ้น',
-                                    //               style: FlutterFlowTheme.of(
-                                    //                       context)
-                                    //                   .bodyLarge
-                                    //                   .override(
-                                    //                     fontFamily: 'Kanit',
-                                    //                     color:
-                                    //                         FlutterFlowTheme.of(
-                                    //                                 context)
-                                    //                             .primaryText,
-                                    //                     fontWeight:
-                                    //                         FontWeight.normal,
-                                    //                   ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //     Column(
-                                    //       mainAxisSize: MainAxisSize.max,
-                                    //       crossAxisAlignment:
-                                    //           CrossAxisAlignment.end,
-                                    //       children: [
-                                    //         Row(
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           mainAxisAlignment:
-                                    //               MainAxisAlignment.end,
-                                    //           children: [
-                                    //             Text(
-                                    //               '${NumberFormat('#,##0').format(orderList['ยอดรวม']).toString()} บาท',
-                                    //               style: FlutterFlowTheme.of(
-                                    //                       context)
-                                    //                   .bodyLarge
-                                    //                   .override(
-                                    //                     fontFamily: 'Kanit',
-                                    //                     color:
-                                    //                         FlutterFlowTheme.of(
-                                    //                                 context)
-                                    //                             .primaryText,
-                                    //                     fontWeight:
-                                    //                         FontWeight.normal,
-                                    //                   ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //         Row(
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           children: [
-                                    //             Text(
-                                    //               '${NumberFormat('#,##0').format((orderList['ยอดรวม'] * 0.07)).toString()} บาท',
-                                    //               style: FlutterFlowTheme.of(
-                                    //                       context)
-                                    //                   .bodyLarge
-                                    //                   .override(
-                                    //                     fontFamily: 'Kanit',
-                                    //                     color:
-                                    //                         FlutterFlowTheme.of(
-                                    //                                 context)
-                                    //                             .primaryText,
-                                    //                     fontWeight:
-                                    //                         FontWeight.normal,
-                                    //                   ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //         Row(
-                                    //           mainAxisSize: MainAxisSize.max,
-                                    //           children: [
-                                    //             Text(
-                                    //               '${NumberFormat('#,##0').format((orderList['ยอดรวม'] * 1.07)).toString()} บาท',
-                                    //               style: FlutterFlowTheme.of(
-                                    //                       context)
-                                    //                   .bodyLarge
-                                    //                   .override(
-                                    //                     fontFamily: 'Kanit',
-                                    //                     color:
-                                    //                         FlutterFlowTheme.of(
-                                    //                                 context)
-                                    //                             .primaryText,
-                                    //                     fontWeight:
-                                    //                         FontWeight.normal,
-                                    //                   ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //   ],
-                                    // ),
                                   ),
                                 ],
                               ),
@@ -2271,21 +2311,24 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Text(
-                                        orderList['สถานที่จัดส่ง'] == null ||
-                                                orderList['สถานที่จัดส่ง'] == ''
-                                            ? 'คุณไม่ได้เลือก'
-                                            : orderList['สถานที่จัดส่ง'],
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyLarge
-                                            .override(
-                                              fontFamily: 'Kanit',
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                            ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.clip,
+                                      Expanded(
+                                        child: Text(
+                                          orderList['สถานที่จัดส่ง'] == null ||
+                                                  orderList['สถานที่จัดส่ง'] ==
+                                                      ''
+                                              ? 'คุณไม่ได้เลือก'
+                                              : orderList['สถานที่จัดส่ง'],
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyLarge
+                                              .override(
+                                                fontFamily: 'Kanit',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                              ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.clip,
+                                        ),
                                       ),
                                     ],
                                   ),

@@ -20,8 +20,10 @@ import 'package:m_food/controller/user_controller.dart';
 class A160101CustomerChooseDay extends StatefulWidget {
   final String? date;
   final List<Map<String, dynamic>>? listOrders;
+  final List<Map<String, dynamic>>? listOrdersTeam;
   const A160101CustomerChooseDay({
     this.listOrders,
+    this.listOrdersTeam,
     super.key,
     this.date,
   });
@@ -41,12 +43,16 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
   List<Map<String, dynamic>>? customerDataList = [];
 
   List<Map<String, dynamic>>? mapDataOrdersData = [];
+  List<Map<String, dynamic>>? mapDataOrdersDataTeam = [];
 
   Map<String, dynamic>? customerDataWithID;
 
   List<dynamic> orderIDHistoryList = [];
   List<dynamic> orderCustomerIDHistoryList = [];
   List<dynamic> orderTimeHistoryList = [];
+
+  List<Map<String, dynamic>?>? orderListStatename = [];
+  List<Map<String, dynamic>?>? sectionID2List = [];
 
   bool isLoading = false;
 
@@ -192,6 +198,123 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
       // }
 
       mapDataOrdersData = widget.listOrders;
+      mapDataOrdersDataTeam = widget.listOrdersTeam;
+
+      //==============================================================
+      CollectionReference sectionID2ListColection =
+          FirebaseFirestore.instance.collection('Section');
+
+      QuerySnapshot sectionID2ListSubCollections =
+          await sectionID2ListColection.get();
+
+      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      sectionID2ListSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        sectionID2List!.add(data);
+        // print('------------');
+        // print(data);
+        // print('------------');
+      });
+
+      print('3');
+
+      //==============================================================
+
+      //==============================================================
+      CollectionReference orderColection = FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders');
+      // FirebaseFirestore.instance.collection('OrdersTest');
+
+      QuerySnapshot orderSubCollections = await orderColection
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+          .get();
+
+      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        orderListStatename!.add(data);
+        // print('------------');
+        // print(data);
+        // print('------------');
+      });
+
+      print('33');
+
+      orderListStatename = (orderListStatename ?? [])
+          .where((map) => map != null)
+          .cast<Map<String, dynamic>>()
+          .toList();
+
+      // orderListStatename!.removeWhere(
+      //     (element) => element!['CustomerDocId'] != widget.customerID);
+
+      // print('------------');
+
+      // for (var element in orderListStatename!) {
+      //   print(element!['StateName']);
+      // }
+      // print(orderListStatename!.length);
+      // print('------------');
+
+      for (int i = 0; i < mapDataOrdersData!.length; i++) {
+        bool check = orderListStatename!.any((element) =>
+            element!['OrdersDateID'] == mapDataOrdersData![i]!['OrdersDateID']);
+
+        print(i);
+        if (check) {
+          print(check);
+          Map<String, dynamic>? dataMatch = orderListStatename!.firstWhere(
+              (element) =>
+                  element!['OrdersDateID'] ==
+                  mapDataOrdersData![i]!['OrdersDateID']);
+
+          Map<String, dynamic>? dataSectionMatch = sectionID2List!.firstWhere(
+              (element) => element!['ID'] == dataMatch!['SectionID2']);
+
+          mapDataOrdersData![i]!['ชำระเงินแล้ว'] = dataMatch!['ชำระเงินแล้ว'];
+          mapDataOrdersData![i]!['SectionID2'] = dataSectionMatch!['Name'];
+
+          print(mapDataOrdersData![i]!['SectionID2']);
+        } else {
+          print(check);
+          print(mapDataOrdersData![i]!['SectionID2']);
+          mapDataOrdersData![i]!['SectionID2'] = 'รอดำเนินการ';
+          // mapDataOrdersData![i]!['SectionID2'] = null;
+        }
+      }
+
+      for (int i = 0; i < mapDataOrdersDataTeam!.length; i++) {
+        bool check = orderListStatename!.any((element) =>
+            element!['OrdersDateID'] ==
+            mapDataOrdersDataTeam![i]!['OrdersDateID']);
+
+        print(i);
+        if (check) {
+          print(check);
+          Map<String, dynamic>? dataMatch = orderListStatename!.firstWhere(
+              (element) =>
+                  element!['OrdersDateID'] ==
+                  mapDataOrdersDataTeam![i]!['OrdersDateID']);
+
+          Map<String, dynamic>? dataSectionMatch = sectionID2List!.firstWhere(
+              (element) => element!['ID'] == dataMatch!['SectionID2']);
+
+          mapDataOrdersDataTeam![i]!['ชำระเงินแล้ว'] =
+              dataMatch!['ชำระเงินแล้ว'];
+          mapDataOrdersDataTeam![i]!['SectionID2'] = dataSectionMatch!['Name'];
+
+          print(mapDataOrdersDataTeam![i]!['SectionID2']);
+        } else {
+          print(check);
+          print(mapDataOrdersDataTeam![i]!['SectionID2']);
+          mapDataOrdersDataTeam![i]!['SectionID2'] = 'รอดำเนินการ';
+          // mapDataOrdersDataTeam![i]!['SectionID2'] = null;
+        }
+      }
+
+      //==============================================================
 
       // mapDataOrdersData = (mapDataOrdersData ?? [])
       //     .where((map) => map != null)
@@ -861,7 +984,7 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['CustomerID']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ClientIdจากMfoodAPI']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             14,
@@ -875,7 +998,10 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                 ),
                                                                 DataCell(
                                                                   Text(
-                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+                                                                    // '  ${mapDataOrdersData![index]!['CustomerDoc']['ประเภทลูกค้า'] == 'Company' ? mapDataOrdersData![index]!['CustomerDoc']['ชื่อบริษัท'] : mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+                                                                    '  ${mapDataOrdersData![index]!['CustomerDoc']['ประเภทลูกค้า'] == 'Company' ? mapDataOrdersData![index]!['CustomerDoc']['ชื่อบริษัท'] : mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล'] == ' ' ? '${mapDataOrdersData![index]!['CustomerDoc']['ชื่อ']} ${mapDataOrdersData![index]!['CustomerDoc']['นามสกุล']}' : mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+
+                                                                    // '  ${mapDataOrdersData![index]!['CustomerDoc']['ชื่อนามสกุล']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -888,8 +1014,8 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                   ),
                                                                 ),
                                                                 DataCell(
-                                                                  Text(  
-                                                                    '${mapDataOrdersData![index]!['SALE_ORDER_ID_REF']== null ? 'รอการอัพเดท' :mapDataOrdersData![index]!['SALE_ORDER_ID_REF'] }',
+                                                                  Text(
+                                                                    '${mapDataOrdersData![index]!['SALE_ORDER_ID_REF'] == null ? 'รอการอัพเดท' : mapDataOrdersData![index]!['SALE_ORDER_ID_REF']}',
                                                                     style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                         fontSize:
                                                                             10,
@@ -936,19 +1062,54 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                                                           context,
                                                                           CupertinoPageRoute(
                                                                             builder: (context) =>
-                                                                                A1603OrderDetail(customerID: mapDataOrdersData![index]['CustomerDoc']['CustomerID'], orderDataMap: mapDataOrdersData![index]),
+                                                                                A1603OrderDetail(
+                                                                              customerID: mapDataOrdersData![index]['CustomerDoc']['CustomerID'],
+                                                                              orderDataMap: mapDataOrdersData![index],
+                                                                              checkTeam: false,
+                                                                            ),
                                                                           ));
                                                                     },
                                                                     child: Text(
-                                                                      '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
+                                                                      mapDataOrdersData![index]!['ชำระเงินแล้ว'] !=
+                                                                              null
+                                                                          ? mapDataOrdersData![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersData![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                              ? mapDataOrdersData![index]!['ชำระเงินแล้ว']
+                                                                              : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
+                                                                                  ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : mapDataOrdersData![index]!['SectionID2']
+                                                                                  : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
+                                                                                          ? 'รอดำเนินการ'
+                                                                                          : 'รอดำเนินการ'
+                                                                          : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
+                                                                              ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                  ? 'รอดำเนินการ'
+                                                                                  : mapDataOrdersData![index]!['SectionID2']
+                                                                              : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                  ? 'รอดำเนินการ'
+                                                                                  : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : 'รอดำเนินการ',
+
+                                                                      // '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
                                                                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                           fontSize: 14,
                                                                           fontFamily: 'Kanit',
-                                                                          color: mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ'
-                                                                              ? Colors.green.shade900
-                                                                              : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ยกทั้งตระกร้า' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'รอตัดสต็อก' || mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == null
-                                                                                  ? Colors.yellow.shade900
-                                                                                  : FlutterFlowTheme.of(context).primaryText,
+                                                                          color: mapDataOrdersData![index]!['ชำระเงินแล้ว'] != null
+                                                                              ? mapDataOrdersData![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersData![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                                  ? Colors.green.shade700
+                                                                                  : Colors.yellow.shade900
+                                                                              : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
+                                                                                  ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                      ? Colors.yellow.shade700
+                                                                                      : Colors.yellow.shade900
+                                                                                  : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                      ? Colors.yellow.shade700
+                                                                                      : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
+                                                                                          ? Colors.yellow.shade700
+                                                                                          : Colors.yellow.shade900,
                                                                           fontWeight: FontWeight.w400),
                                                                     ),
                                                                   ),
@@ -968,6 +1129,383 @@ class _A160101CustomerChooseDayState extends State<A160101CustomerChooseDay> {
                                     SizedBox(
                                       height: 50,
                                     ),
+                                    Container(
+                                      // color: Colors.amber,
+                                      // width: 225,
+                                      child: Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(3.0, 0.0, 0.0, 0.0),
+                                        child: Text(
+                                          'ตารางรีพอร์ตการขายที่ท่านเปิดออเดอร์แทน',
+                                          // 'รีพอร์ตการสั่งขายประจำวันที่ ${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyLarge
+                                              .override(
+                                                  fontSize: 20,
+                                                  fontFamily: 'Kanit',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: mapDataOrdersDataTeam!.isEmpty
+                                          ? 50
+                                          : 5,
+                                    ),
+                                    mapDataOrdersDataTeam!.length == 0
+                                        ? Text(
+                                            'วันนี้ยังไม่มีคำสั่งขายค่ะ!!',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyLarge
+                                                .override(
+                                                    fontSize: 14,
+                                                    fontFamily: 'Kanit',
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryText,
+                                                    fontWeight:
+                                                        FontWeight.w800),
+                                          )
+                                        : SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: (60 *
+                                                    mapDataOrdersDataTeam!
+                                                        .length) +
+                                                60,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(4),
+                                              child: DataTable2(
+                                                  border: TableBorder.all(
+                                                      width: 0.2),
+                                                  columnSpacing: 12,
+                                                  horizontalMargin: 12,
+                                                  minWidth: 600,
+                                                  columns: [
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          'ลำดับ',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 40),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          '   รหัสลูกค้า',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 80),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          '   ชื่อลูกค้า',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 100),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          'Sale Order',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 90),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          'เวลาเปิดใบสั่งขาย',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 120),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          'พนักงานที่ดูแล',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 120),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          '   ยอดเงิน',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 85),
+                                                    DataColumn2(
+                                                        label: Text(
+                                                          '  ติดตามสถานะ',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyLarge
+                                                              .override(
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                        ),
+                                                        // size: ColumnSize.L,
+                                                        fixedWidth: 90),
+                                                  ],
+                                                  rows: List<DataRow>.generate(
+                                                      mapDataOrdersDataTeam!
+                                                          .length,
+                                                      (index) => DataRow(
+                                                              cells: [
+                                                                DataCell(
+                                                                  Text(
+                                                                    '    ${(index + 1).toString()}',
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  Text(
+                                                                    '  ${mapDataOrdersDataTeam![index]!['CustomerDoc']['ClientIdจากMfoodAPI']}',
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  Text(
+                                                                    '  ${mapDataOrdersDataTeam![index]!['CustomerDoc']['ประเภทลูกค้า'] == 'Company' ? mapDataOrdersDataTeam![index]!['CustomerDoc']['ชื่อบริษัท'] : mapDataOrdersDataTeam![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+
+                                                                    // '  ${mapDataOrdersDataTeam![index]!['CustomerDoc']['ชื่อนามสกุล']}',
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            10,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  Text(
+                                                                    '${mapDataOrdersDataTeam![index]!['SALE_ORDER_ID_REF'] == null ? 'รอการยืนยัน' : mapDataOrdersDataTeam![index]!['SALE_ORDER_ID_REF']}',
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            10,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  Text(
+                                                                    '${DateFormat("dd-MM-yyyy \nเวลา HH:mm:ss น.").format(DateTime.parse(mapDataOrdersDataTeam![index]!['OrdersDateID']))}',
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  Text(
+                                                                    '  ${mapDataOrdersDataTeam![index]!['CustomerDoc']['ชื่อพนักงานขาย']}',
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  Text(
+                                                                    // '    ${double.parse(mapDataOrdersDataTeam![index]!['มูลค่าสินค้ารวม'].toString()).toStringAsFixed(2)}',
+                                                                    '    ${NumberFormat('#,##0.00').format(double.parse(mapDataOrdersDataTeam![index]!['มูลค่าสินค้ารวม'].toString())).toString()}',
+
+                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'Kanit',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                                DataCell(
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          CupertinoPageRoute(
+                                                                            builder: (context) =>
+                                                                                A1603OrderDetail(
+                                                                              customerID: mapDataOrdersDataTeam![index]!['CustomerDoc']['CustomerID'],
+                                                                              orderDataMap: mapDataOrdersDataTeam![index],
+                                                                              checkTeam: true,
+                                                                            ),
+                                                                          ));
+                                                                    },
+                                                                    child: Text(
+                                                                      mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว'] !=
+                                                                              null
+                                                                          ? mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                              ? mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว']
+                                                                              : mapDataOrdersDataTeam![index]!['SectionID2'] != null && mapDataOrdersDataTeam![index]!['SectionID2'] != ''
+                                                                                  ? mapDataOrdersDataTeam![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : mapDataOrdersDataTeam![index]!['SectionID2']
+                                                                                  : mapDataOrdersDataTeam![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : mapDataOrdersDataTeam![index]!['สถานะอนุมัติขาย'] != true
+                                                                                          ? 'รอดำเนินการ'
+                                                                                          : 'รอดำเนินการ'
+                                                                          : mapDataOrdersDataTeam![index]!['SectionID2'] != null && mapDataOrdersDataTeam![index]!['SectionID2'] != ''
+                                                                              ? mapDataOrdersDataTeam![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                  ? 'รอดำเนินการ'
+                                                                                  : mapDataOrdersDataTeam![index]!['SectionID2']
+                                                                              : mapDataOrdersDataTeam![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                  ? 'รอดำเนินการ'
+                                                                                  : mapDataOrdersDataTeam![index]!['สถานะอนุมัติขาย'] != true
+                                                                                      ? 'รอดำเนินการ'
+                                                                                      : 'รอดำเนินการ',
+                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                          fontSize: 12,
+                                                                          fontFamily: 'Kanit',
+                                                                          color: mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว'] != null
+                                                                              ? mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersDataTeam![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                                  ? Colors.green.shade700
+                                                                                  : Colors.yellow.shade900
+                                                                              : mapDataOrdersDataTeam![index]!['SectionID2'] != null && mapDataOrdersDataTeam![index]!['SectionID2'] != ''
+                                                                                  ? mapDataOrdersDataTeam![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
+                                                                                      ? Colors.yellow.shade700
+                                                                                      : Colors.yellow.shade900
+                                                                                  : mapDataOrdersDataTeam![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
+                                                                                      ? Colors.yellow.shade700
+                                                                                      : mapDataOrdersDataTeam![index]!['สถานะอนุมัติขาย'] != true
+                                                                                          ? Colors.yellow.shade700
+                                                                                          : Colors.yellow.shade900,
+                                                                          fontWeight: FontWeight.w400),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ]))),
+                                            ),
+                                          ),
                                     // Container(
                                     //   // color: Colors.amber,
                                     //   // width: 225,

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:m_food/a09_customer_open_sale/a0902_customer_history_list.dart';
+import 'package:m_food/a09_customer_open_sale/open_order_team/a0902_customer_history_list_team.dart';
 import 'package:m_food/main.dart';
 import 'package:m_food/widgets/circular_loading_home.dart';
 
@@ -15,8 +16,17 @@ import 'package:m_food/controller/user_controller.dart';
 
 class ListOpenSaleTeamWidget extends StatefulWidget {
   final List<Map<String, dynamic>?>? mapData;
+  final String? userIDOpen;
+  final String? userNameOpen;
+  final String? idEmployee;
 
-  ListOpenSaleTeamWidget({super.key, @required this.mapData});
+  ListOpenSaleTeamWidget({
+    super.key,
+    @required this.mapData,
+    @required this.idEmployee,
+    @required this.userIDOpen,
+    @required this.userNameOpen,
+  });
 
   @override
   _ListOpenSaleTeamWidgetState createState() => _ListOpenSaleTeamWidgetState();
@@ -77,8 +87,6 @@ class _ListOpenSaleTeamWidgetState extends State<ListOpenSaleTeamWidget> {
       });
 
       customerAllDataList = customerDataList;
-
-
 
       if (mounted) {
         setState(() {
@@ -252,9 +260,13 @@ class _ListOpenSaleTeamWidgetState extends State<ListOpenSaleTeamWidget> {
                                 context,
                                 CupertinoPageRoute(
                                   builder: (context) =>
-                                      A0902CustomerHistoryList(
-                                          customerID: customerDataList![i]![
-                                              'CustomerID']),
+                                      A0902CustomerHistoryListTeam(
+                                    customerID:
+                                        customerDataList![i]!['CustomerID'],
+                                    idEmployee: widget.idEmployee,
+                                    userIDOpen: widget.userIDOpen,
+                                    userNameOpen: widget.userNameOpen,
+                                  ),
                                 ));
                           },
                           child: Row(
