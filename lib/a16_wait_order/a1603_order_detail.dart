@@ -110,25 +110,41 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
           Map<String, dynamic> productMatch = resultList.firstWhere(
               (elementProduct) =>
                   elementProduct['PRODUCT_ID'] == element['ProductID']);
-          // print('-888-');
+          print('-888-');
 
           // print(productMatch);
           print(productMatch['รูปภาพ']);
 
-          // print('-999-');
+          print('-999-');
           if (productMatch['รูปภาพ'] == null) {
             // print(productMatch['รูปภาพ'][0]);
+            print('if1');
             if (productMatch['รูปภาพ'] == []) {
+              print('if2');
+
               if (productMatch['รูปภาพ'][0] != '') {
+                print('if3');
+
                 productImage.add(productMatch['รูปภาพ'][0]);
               } else {
+                print('else3');
+
                 productImage.add('');
               }
             } else {
+              print('else2');
+
               productImage.add('');
             }
           } else {
-            productImage.add(productMatch['รูปภาพ'][0]);
+            print('else1');
+            print(productMatch['รูปภาพ']);
+
+            if (productMatch['รูปภาพ'].isEmpty) {
+              productImage.add('');
+            } else {
+              productImage.add(productMatch['รูปภาพ'][0]);
+            }
           }
         }
       }

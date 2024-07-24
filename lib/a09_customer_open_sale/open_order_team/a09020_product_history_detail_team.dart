@@ -2189,38 +2189,26 @@ class _A09020ProductHistoryDetailTeamState
                           child: Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 10.0, 10.0, 0.0, 10.0),
-                            child: Expanded(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            orderList['สถานที่จัดส่ง'] == ''
-                                                ? 'คุณไม่ได้เลือก'
-                                                : orderList['สถานที่จัดส่ง'],
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyLarge
-                                                .override(
-                                                  fontFamily: 'Kanit',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryText,
-                                                ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.clip,
-                                          ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    orderList['สถานที่จัดส่ง'] == ''
+                                        ? 'คุณไม่ได้เลือก'
+                                        : orderList['สถานที่จัดส่ง'],
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyLarge
+                                        .override(
+                                          fontFamily: 'Kanit',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
                                         ),
-                                      ],
-                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.clip,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -2444,6 +2432,57 @@ class _A09020ProductHistoryDetailTeamState
                                     // print(orderList['ProductList']);
                                     // print(orderList['ProductList']);
                                     // print(orderList['ProductList']);
+
+                                    for (int i = 0;
+                                        i < nonNullableList.length;
+                                        i++) {
+                                      print(nonNullableList[i]['LeadTime']);
+
+                                      //=============== โหลด LeadTime อีกครั้ง =========================
+
+                                      QuerySnapshot querySnapshot =
+                                          await FirebaseFirestore.instance
+                                              .collection(
+                                                  AppSettings.customerType ==
+                                                          CustomerType.Test
+                                                      ? 'ProductTest'
+                                                      : 'Product')
+                                              .where('PRODUCT_ID',
+                                                  isEqualTo: nonNullableList[i]
+                                                      ['ProductID'])
+                                              .get();
+
+                                      if (querySnapshot.docs.isNotEmpty) {
+                                        // print(querySnapshot.docs.length);
+                                        // length == 1 เพราะ PRODUCT_ID มีตัวเดียว
+
+                                        for (var doc in querySnapshot.docs) {
+                                          Map<String, dynamic> data = doc.data()
+                                              as Map<String, dynamic>;
+                                          // print('Document data: ${doc.data()}');
+                                          // print('จำนวนสต๊อก');
+                                          // print(foundMap['Balance']);
+
+                                          print(data['LeadTime']);
+
+                                          if (data['LeadTime'] == null) {
+                                            nonNullableList[i]['LeadTime'] =
+                                                '0';
+                                          } else {
+                                            nonNullableList[i]['LeadTime'] =
+                                                data['LeadTime'];
+                                          }
+
+                                          // print(foundMap['Balance']);
+                                        }
+                                      } else {
+                                        print('No documents found!');
+                                      }
+
+                                      //=======================================================
+
+                                      print(nonNullableList[i]['LeadTime']);
+                                    }
 
                                     orderLast = {
                                       'OrdersDateID': DateTime.now().toString(),

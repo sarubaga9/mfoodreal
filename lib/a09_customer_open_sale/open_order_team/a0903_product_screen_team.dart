@@ -1961,7 +1961,7 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
                                                             context,
                                                             CupertinoPageRoute(
                                                               builder: (context) =>
-                                                                  A090301ProductDetail(
+                                                                  A090301ProductDetailTeam(
                                                                 customerID: widget
                                                                     .customerID,
                                                                 orderDataMap:
@@ -1971,6 +1971,12 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
                                                                         i],
                                                                 productListAll:
                                                                     productList,
+                                                                idEmployee: widget
+                                                                    .idEmployee,
+                                                                userIDOpen: widget
+                                                                    .userIDOpen,
+                                                                userNameOpen: widget
+                                                                    .userNameOpen,
                                                               ),
                                                             )).then((result) {
                                                           // ตรวจสอบค่าที่ถูกส่งกลับมา
@@ -3587,6 +3593,11 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
                                                                 'ยูนิต':
                                                                     unitChoose[
                                                                         i],
+
+                                                                'LeadTime':
+                                                                    productList[
+                                                                            i][
+                                                                        'LeadTime'],
                                                                 // productList[i]
                                                                 //     ['PRICE'],
                                                                 'ราคาพิเศษ':

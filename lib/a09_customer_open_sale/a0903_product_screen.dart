@@ -288,9 +288,6 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
     // print(orderLast!['ListCustomerAddressID']);
 
     // ดึงข้อมูลจาก collection 'Customer'
-
-    print(widget.customerID);
-
     DocumentSnapshot customerDoc = await FirebaseFirestore.instance
         .collection(AppSettings.customerType == CustomerType.Test
             ? 'CustomerTest'
@@ -3563,6 +3560,10 @@ class _A0903ProductScreenState extends State<A0903ProductScreen> {
                                                                 'ยูนิต':
                                                                     unitChoose[
                                                                         i],
+                                                                'LeadTime':
+                                                                    productList[
+                                                                            i][
+                                                                        'LeadTime'],
                                                                 // productList[i]
                                                                 //     ['PRICE'],
                                                                 'ราคาพิเศษ':

@@ -2073,6 +2073,20 @@ class _A0904ProductOrderDetailTeamState
                                                                   ),
                                                                 );
                                                               }),
+                                                              Text(
+                                                                'Lead time = ${orderList['ProductList'][i]['LeadTime']} วัน ',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Kanit',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .tertiary,
+                                                                    ),
+                                                                maxLines: 2,
+                                                              ),
                                                             ],
                                                           ),
                                                         ],
@@ -4145,6 +4159,42 @@ class _A0904ProductOrderDetailTeamState
                                               ['ProductID'],
                                       orElse: () => {},
                                     );
+
+                                    //=============== โหลด balance อีกครั้ง =========================
+
+                                    QuerySnapshot querySnapshot =
+                                        await FirebaseFirestore.instance
+                                            .collection(
+                                                AppSettings.customerType ==
+                                                        CustomerType.Test
+                                                    ? 'ProductTest'
+                                                    : 'Product')
+                                            .where('PRODUCT_ID',
+                                                isEqualTo:
+                                                    foundMap['PRODUCT_ID'])
+                                            .get();
+
+                                    if (querySnapshot.docs.isNotEmpty) {
+                                      // print(querySnapshot.docs.length);
+                                      // length == 1 เพราะ PRODUCT_ID มีตัวเดียว
+
+                                      for (var doc in querySnapshot.docs) {
+                                        Map<String, dynamic> data =
+                                            doc.data() as Map<String, dynamic>;
+                                        // print('Document data: ${doc.data()}');
+                                        // print('จำนวนสต๊อก');
+                                        // print(foundMap['Balance']);
+
+                                        foundMap['Balance'] = data['Balance'];
+
+                                        // print(foundMap['Balance']);
+                                      }
+                                    } else {
+                                      print('No documents found!');
+                                    }
+
+                                    //=======================================================
+
                                     print('4');
 
                                     // print('จำนวนสต๊อก');
@@ -4156,7 +4206,20 @@ class _A0904ProductOrderDetailTeamState
                                         foundMap['Balance'].toString());
 
                                     print('----- บวก balnce -----');
+                                    print(foundMap['Balance']);
+                                    print(stock);
                                     print(planProductBalanceList!.length);
+
+                                    //ปัดเศษขึ้น
+
+                                    NumberFormat numberFormat =
+                                        NumberFormat("#.00");
+                                    String formattedNumber =
+                                        numberFormat.format(stock);
+
+                                    print(formattedNumber);
+
+                                    stock = double.parse(formattedNumber);
 
                                     for (int j = 0;
                                         j < planProductBalanceList!.length;
@@ -5494,7 +5557,7 @@ class _A0904ProductOrderDetailTeamState
                                                                                             'PO': textController1.text.trim(),
                                                                                             'หมายเหตุ': textController2.text,
                                                                                             'เปิดออเดอร์แทน': true,
-                                                                                            'idผู้เปิดออเดอร์แทน': widget.userIDOpen,
+                                                                                            'idผู้เปิดออเดอร์แทน': userData!['EmployeeID'],
                                                                                           }).whenComplete(() async {
                                                                                             HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('apiConfirmOrder');
                                                                                             var params = <String, dynamic>{
@@ -5848,7 +5911,7 @@ class _A0904ProductOrderDetailTeamState
                                                                                                 'PO': textController1.text.trim(),
                                                                                                 'หมายเหตุ': textController2.text,
                                                                                                 'เปิดออเดอร์แทน': true,
-                                                                                                'idผู้เปิดออเดอร์แทน': widget.userIDOpen,
+                                                                                                'idผู้เปิดออเดอร์แทน': userData!['EmployeeID'],
                                                                                               }).whenComplete(() async {
                                                                                                 HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('apiConfirmOrder');
                                                                                                 var params = <String, dynamic>{
@@ -6395,7 +6458,7 @@ class _A0904ProductOrderDetailTeamState
                                                                                                 'PO': textController1.text.trim(),
                                                                                                 'หมายเหตุ': textController2.text,
                                                                                                 'เปิดออเดอร์แทน': true,
-                                                                                                'idผู้เปิดออเดอร์แทน': widget.userIDOpen,
+                                                                                                'idผู้เปิดออเดอร์แทน': userData!['EmployeeID'],
                                                                                               }).whenComplete(() async {
                                                                                                 HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('apiConfirmOrder');
                                                                                                 var params = <String, dynamic>{
@@ -6760,7 +6823,8 @@ class _A0904ProductOrderDetailTeamState
                                       'PO': textController1.text.trim(),
                                       'หมายเหตุ': textController2.text,
                                       'เปิดออเดอร์แทน': true,
-                                      'idผู้เปิดออเดอร์แทน': widget.userIDOpen,
+                                      'idผู้เปิดออเดอร์แทน':
+                                          userData!['EmployeeID'],
                                     }).whenComplete(() async {
                                       HttpsCallable callable = FirebaseFunctions
                                           .instance

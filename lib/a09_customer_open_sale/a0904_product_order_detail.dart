@@ -223,6 +223,15 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
         productGetData!.forEach((key, value) {
           Map<String, dynamic> entry = value;
 
+          if (entry['PRODUCT_ID'] == '0270310070900') {
+            print(entry['PRODUCT_ID']);
+            print(entry['PRODUCT_ID']);
+            print(entry['PRODUCT_ID']);
+            print(entry['PRODUCT_ID']);
+            print(entry['PRODUCT_ID']);
+            print(entry['Balance']);
+          }
+
           resultList.add(entry);
         });
       }
@@ -2015,6 +2024,20 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                   ),
                                                                 );
                                                               }),
+                                                              Text(
+                                                                'Lead time = ${orderList['ProductList'][i]['LeadTime']} วัน ',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Kanit',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .tertiary,
+                                                                    ),
+                                                                maxLines: 2,
+                                                              ),
                                                             ],
                                                           ),
                                                         ],
@@ -4090,18 +4113,64 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                               ['ProductID'],
                                       orElse: () => {},
                                     );
+
+                                    //=============== โหลด balance อีกครั้ง =========================
+
+                                    QuerySnapshot querySnapshot =
+                                        await FirebaseFirestore.instance
+                                            .collection(
+                                                AppSettings.customerType ==
+                                                        CustomerType.Test
+                                                    ? 'ProductTest'
+                                                    : 'Product')
+                                            .where('PRODUCT_ID',
+                                                isEqualTo:
+                                                    foundMap['PRODUCT_ID'])
+                                            .get();
+
+                                    if (querySnapshot.docs.isNotEmpty) {
+                                      // print(querySnapshot.docs.length);
+                                      // length == 1 เพราะ PRODUCT_ID มีตัวเดียว
+
+                                      for (var doc in querySnapshot.docs) {
+                                        Map<String, dynamic> data =
+                                            doc.data() as Map<String, dynamic>;
+                                        print('Document data: ${doc.data()}');
+                                        // print('จำนวนสต๊อก');
+                                        // print(foundMap['Balance']);
+
+                                        foundMap['Balance'] = data['Balance'];
+
+                                        // print(foundMap['Balance']);
+                                      }
+                                    } else {
+                                      print('No documents found!');
+                                    }
+
+                                    //=======================================================
+
                                     print('4');
 
-                                    // print('จำนวนสต๊อก');
-                                    // print(foundMap['Balance']);
-
-                                    // print(planProductBalanceList!.length);
+                                    // return;
 
                                     double stock = double.parse(
                                         foundMap['Balance'].toString());
 
                                     print('----- บวก balnce -----');
+                                    print(foundMap['Balance']);
+                                    print(stock);
                                     print(planProductBalanceList!.length);
+
+                                    //ปัดเศษขึ้น
+
+                                    NumberFormat numberFormat =
+                                        NumberFormat("#.00");
+                                    String formattedNumber =
+                                        numberFormat.format(stock);
+
+                                    print(formattedNumber);
+
+                                    stock = double.parse(formattedNumber);
 
                                     for (int j = 0;
                                         j < planProductBalanceList!.length;
@@ -4195,6 +4264,8 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                         print('สินค้านี้ไม่มีในแผนทั้งหมด');
                                       }
                                     }
+
+                                    print(stock);
                                     print('----- จบ บวก balnce -----');
 
                                     // Map<String, dynamic>? foundMapFastMove =
@@ -4337,13 +4408,25 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                   print(textController2.text);
                                   print(textController2.text);
 
-                                  // for(int i =0 ; i< orderList['ProductList'].length;i++){
-                                  //   print(orderList['ProductList'][i]['ชื่อสินค้า']);
-                                  //   print(orderList['ProductList'][i]['จำนวน']);
-                                  //   print(orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม']);
-                                  // }
+                                  for (int i = 0;
+                                      i < orderList['ProductList'].length;
+                                      i++) {
+                                    print(orderList['ProductList'][i]
+                                        ['ชื่อสินค้า']);
+                                    print(orderList['ProductList'][i]['จำนวน']);
+                                    print(orderList['ProductList'][i]
+                                        ['สถานะรายการนี้เป็นของแถม']);
+                                    print(orderList['ProductList'][i]
+                                        ['รายการนี้เกินสต๊อก']);
+                                    print(stockAll[i]);
+                                    print(stockOrderAll[i]);
+                                  }
 
-                                  //return;
+                                  print(statusOrderPass);
+                                  print(statusOrderPass);
+                                  print(statusOrderPass);
+
+                                  // return;
 
                                   if (!statusOrderPass) {
                                     //======= นำสินค้าไปเทียบกับ balance ทุกตัว หากมีตัวใดตัวนึงเกิน balance ให้เข้าตัวเลือก 3 ข้อ======================

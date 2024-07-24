@@ -2411,6 +2411,59 @@ class _A09020ProductHistoryDetailState
                                     // print(orderList['ProductList']);
                                     // print(orderList['ProductList']);
 
+                                    for (int i = 0;
+                                        i < nonNullableList.length;
+                                        i++) {
+                                      print(nonNullableList[i]['LeadTime']);
+
+                                      //=============== โหลด LeadTime อีกครั้ง =========================
+
+                                      QuerySnapshot querySnapshot =
+                                          await FirebaseFirestore.instance
+                                              .collection(
+                                                  AppSettings.customerType ==
+                                                          CustomerType.Test
+                                                      ? 'ProductTest'
+                                                      : 'Product')
+                                              .where('PRODUCT_ID',
+                                                  isEqualTo: nonNullableList[i]
+                                                      ['ProductID'])
+                                              .get();
+
+                                      if (querySnapshot.docs.isNotEmpty) {
+                                        // print(querySnapshot.docs.length);
+                                        // length == 1 เพราะ PRODUCT_ID มีตัวเดียว
+
+                                        for (var doc in querySnapshot.docs) {
+                                          Map<String, dynamic> data = doc.data()
+                                              as Map<String, dynamic>;
+                                          // print('Document data: ${doc.data()}');
+                                          // print('จำนวนสต๊อก');
+                                          // print(foundMap['Balance']);
+
+                                          print(data['LeadTime']);
+
+                                          if (data['LeadTime'] == null) {
+                                            nonNullableList[i]['LeadTime'] =
+                                                '0';
+                                          } else {
+                                            nonNullableList[i]['LeadTime'] =
+                                                data['LeadTime'];
+                                          }
+
+                                          // print(foundMap['Balance']);
+                                        }
+                                      } else {
+                                        print('No documents found!');
+                                      }
+
+                                      //=======================================================
+
+                                      print(nonNullableList[i]['LeadTime']);
+                                    }
+
+                                    // return;
+
                                     orderLast = {
                                       'OrdersDateID': DateTime.now().toString(),
                                       'OrdersUpdateTime': DateTime.now(),

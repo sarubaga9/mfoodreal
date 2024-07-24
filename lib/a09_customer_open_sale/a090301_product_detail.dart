@@ -1858,6 +1858,29 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                           ),
                                                         ],
                                                       ),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        children: [
+                                                          Text(
+                                                            'Lead time = ${productDetail!['LeadTime']} วัน',
+                                                            // 'ราคา ${productDetail!['PRICE']} บาท',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .titleMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Kanit',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  lineHeight:
+                                                                      1.25,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 3,),
                                                       productDetail![
                                                                   'ประเภทสินค้าDesc'] ==
                                                               null
@@ -2926,6 +2949,8 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                                 priceChooseproductDetail,
                                                                             'ยูนิต':
                                                                                 unitChooseproductDetail,
+                                                                            'LeadTime':
+                                                                                productDetail!['LeadTime'],
                                                                             // 'ราคา':
                                                                             //     productDetail!['PRICE'],
                                                                             'ราคาพิเศษ':
@@ -4425,6 +4450,7 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                                                 'จำนวน': productCountList[i],
                                                                                 'ราคา': priceChoose[i],
                                                                                 'ยูนิต': unitChoose[i],
+                                                                                'LeadTime': productList[i]['LeadTime'],
                                                                                 // 'ราคา': productList[i]['PRICE'],
                                                                                 'ราคาพิเศษ': false,
                                                                               },

@@ -14,7 +14,7 @@ export '/a01_home/a01_03_register/a0103_register_widget.dart'
     show A0103RegisterWidget;
 export '/a01_home/a01_04_data_transfer/a0104_data_transfer_widget.dart'
     show A0104DataTransferWidget;
-export 'a01_home/a01_05_dashboard/a0105_dashboard_widget_0707.dart'
+export 'a01_home/a01_05_dashboard/a0105_dashboard_widget.dart'
     show A0105DashboardWidget;
 export '/a01_home/a01_06_otp/a0106_otp_widget.dart' show A0106OtpWidget;
 export '/a01_home/a01_07_password_reset/a0107_password_reset_widget.dart'

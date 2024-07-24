@@ -261,7 +261,7 @@ class _MyAppState extends State<MyApp> {
         isLoading = true;
       });
 
-      String versionNow = '1.11';
+      String versionNow = '1.12';
 
       print(versionNow);
 
@@ -516,9 +516,8 @@ class _MyAppState extends State<MyApp> {
         // print(message);
         await FirebaseFirestore.instance
             // .collection('User')
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'UserTest'
-                : 'User')
+            .collection(
+                AppSettings.customerType == CustomerType.Test ? 'User' : 'User')
             .doc(message)
             .get()
             .then((DocumentSnapshot<Map<String, dynamic>> value) async {
@@ -552,9 +551,8 @@ class _MyAppState extends State<MyApp> {
         print(message);
         await FirebaseFirestore.instance
             // .collection('User')
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'UserTest'
-                : 'User')
+            .collection(
+                AppSettings.customerType == CustomerType.Test ? 'User' : 'User')
             .where('Username', isEqualTo: message)
             .get()
             .then(
