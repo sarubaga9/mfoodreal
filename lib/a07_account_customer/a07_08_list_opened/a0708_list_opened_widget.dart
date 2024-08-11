@@ -450,6 +450,8 @@ class _A0708ListOpenedWidgetState extends State<A0708ListOpenedWidget> {
                                                 CustomerType.Test
                                             ? 'CustomerTest'
                                             : 'Customer')
+                                        .where('รหัสพนักงานขาย',
+                                            isEqualTo: userData!['EmployeeID'])
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
@@ -466,7 +468,6 @@ class _A0708ListOpenedWidgetState extends State<A0708ListOpenedWidget> {
                                       if (snapshot.data!.docs.isEmpty) {
                                         print(snapshot.data);
                                       }
-
 
                                       customerController
                                           .updateCustomerData(snapshot.data);

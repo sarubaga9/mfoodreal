@@ -103,6 +103,10 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
   List<Map<String, dynamic>>? nonNullableList = [];
   List<dynamic>? dynamicList = [];
 
+  Map<String, dynamic>? customerDataWithmfoodtoken;
+  Map<String, dynamic>? urlApi;
+
+
   @override
   void initState() {
     loadData();
@@ -149,6 +153,51 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
         }
       }
     }
+
+    //==============================================================
+    // ดึงข้อมูลจาก collection 'mfoodtoken'
+    DocumentSnapshot customerDocmfoodtoken = await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'mfoodtoken'
+            : 'mfoodtoken')
+        .doc('EDpTMkR8myW4zhdUALCP')
+        .get();
+
+    print('customerid');
+    print(widget.customerID);
+
+    if (customerDocmfoodtoken.exists) {
+      customerDataWithmfoodtoken =
+          customerDocmfoodtoken.data() as Map<String, dynamic>?;
+    }
+
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+
+       //==============================================================
+
+    // ดึงข้อมูลจาก collection 'mfoodtoken'
+    DocumentSnapshot urlApiWithPort = await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'AppSettingUrl'
+            : 'AppSettingUrl')
+        .doc(AppSettings.customerType == CustomerType.Test ? '7104' : '7105')
+        .get();
+
+    if (urlApiWithPort.exists) {
+      urlApi = urlApiWithPort.data() as Map<String, dynamic>?;
+    }
+
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+
+    //==============================================================
 
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('แท็กสินค้า').get();
@@ -209,11 +258,20 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
 
         HttpsCallable callable2 =
             FirebaseFunctions.instance.httpsCallable('getApiMfood');
-        var params2 = <String, dynamic>{
-          "url": "http://mobile.mfood.co.th:7105/MBServices.asmx?op=Sell_Price",
-          "xml":
-              '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
-        };
+
+        var params2 = AppSettings.customerType == CustomerType.Test
+            ? <String, dynamic>{
+                "url":
+                    "${urlApi!['Url']}:7104/MBServices.asmx?op=Sell_Price",
+                "xml":
+                    '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
+              }
+            : <String, dynamic>{
+                "url":
+                    "${urlApi!['Url']}:7105/MBServices.asmx?op=Sell_Price",
+                "xml":
+                    '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
+              };
 
         print(params2['xml']);
         print('======================================= aaaaa');

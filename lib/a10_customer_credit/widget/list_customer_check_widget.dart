@@ -155,6 +155,7 @@ class _ListCustomerCheckWidgetState extends State<ListCustomerCheckWidget> {
                   .collection(AppSettings.customerType == CustomerType.Test
                       ? 'CustomerTest'
                       : 'Customer')
+                  .where('รหัสพนักงานขาย', isEqualTo: userData!['EmployeeID'])
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

@@ -90,6 +90,9 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
 
   List<SalesData> data = [];
 
+  List<Map<String, dynamic>?>? topSaleList = [];
+  List<Map<String, dynamic>?>? goalOfMonth = [];
+
   // ฟังก์ชันแปลง String เป็น DateTime
   DateTime parseDate(String date) {
     return DateTime.parse(date);
@@ -127,7 +130,64 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
 
       await initializeDateFormatting('th_TH', null);
 
-      print(userData!['เป้าหมายประจำเดือน']);
+      //---------------------- ดึงข้อมูล topsale ประจำเดือน ----------------------------
+
+      DateTime topSaleDatetimeNow = DateTime.now();
+
+      print(topSaleDatetimeNow.month.toString());
+      print(topSaleDatetimeNow.year.toString());
+
+      QuerySnapshot topSaleCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'Topsaleประจำเดือน'
+              : 'Topsaleประจำเดือน')
+          .where('เดือน',
+              isEqualTo: topSaleDatetimeNow.month.toString().padLeft(2, '0'))
+          .where('ปี', isEqualTo: topSaleDatetimeNow.year.toString())
+          .get();
+      print('-----------------------------------');
+
+      topSaleCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        topSaleList!.add(data);
+
+        print(data);
+        // print(data['ยอดขาย']);
+        // print(data['ปี']);
+        // print(data['เดือน']);
+      });
+
+      topSaleList!.sort((a, b) =>
+          int.parse(b!['ยอดขาย']!).compareTo(int.parse(a!['ยอดขาย']!)));
+
+      print('-----------------------------------');
+
+      //----------------------------------------------------------------------------
+
+      await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'เป้าการขาย'
+              : 'เป้าการขาย')
+          .where('EmployeeID', isEqualTo: userData!['EmployeeID'])
+          .where('เดือน',
+              isEqualTo: topSaleDatetimeNow.month.toString().padLeft(2, '0'))
+          .where('ปี', isEqualTo: topSaleDatetimeNow.year.toString())
+          .get()
+          .then(
+        (QuerySnapshot<Map<String, dynamic>>? data) async {
+          if (data != null && data.docs.isNotEmpty) {
+            print(data.docs.length);
+            for (int index = 0; index < data.docs.length; index++) {
+              final Map<String, dynamic> docData =
+                  data.docs[index].data() as Map<String, dynamic>;
+
+              goalOfMonth!.add(docData);
+            }
+          }
+        },
+      );
+
+      print(goalOfMonth![0]!['เป้าการขาย']);
 
       //---------------------- คำนวนอดขาย 6 เดือนหลัง --------------------------------
 
@@ -173,7 +233,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
         // print(NumberFormat('#,##0').format(totalOrderList!.last));
       }
       double totalFlag =
-          double.parse(userData!['เป้าหมายประจำเดือน'].toString());
+          double.parse(goalOfMonth![0]!['เป้าการขาย'].toString());
 
       double totalMonthPercent = totalMonthCheck;
 
@@ -208,7 +268,9 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
       //---------------------- แผนเข้าพบลูกค้า เดือนหลัง --------------------------------
 
       QuerySnapshot visitSubCollections = await FirebaseFirestore.instance
-          .collection('เข้าเยี่ยมลูกค้า')
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'เข้าเยี่ยมลูกค้าTest'
+              : 'เข้าเยี่ยมลูกค้า')
           .where('UserID', isEqualTo: userData!['EmployeeID'])
           .get();
       // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
@@ -1474,7 +1536,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                                                         .max,
                                                                 children: [
                                                                   Text(
-                                                                    '${NumberFormat('#,##0').format(int.parse(userData!['เป้าหมายประจำเดือน']))} บาท',
+                                                                    '${NumberFormat('#,##0').format(int.parse(goalOfMonth![0]!['เป้าการขาย'].toString()))} บาท',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .bodyMedium
@@ -1512,7 +1574,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                                                         .max,
                                                                 children: [
                                                                   Text(
-                                                                    '${NumberFormat('#,##0').format((int.parse(userData!['เป้าหมายประจำเดือน']) - totalMonth))} บาท',
+                                                                    '${NumberFormat('#,##0').format((int.parse(goalOfMonth![0]!['เป้าการขาย'].toString()) - totalMonth))} บาท',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .bodyMedium
@@ -4413,13 +4475,13 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {},
-                                      // onTap: () => Navigator.push(
-                                      //     context,
-                                      //     CupertinoPageRoute(
-                                      //       builder: (context) =>
-                                      //           A2400ChooseReport(),
-                                      //     )),
+                                      // onTap: () {},
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) =>
+                                                A2400ChooseReport(),
+                                          )),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -4440,7 +4502,8 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                                   decoration: BoxDecoration(
                                                     color: FlutterFlowTheme.of(
                                                             context)
-                                                        .primaryText.withOpacity(0.3),
+                                                        // .primaryText.withOpacity(0.3),
+                                                        .alternate,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20.0),
@@ -4691,10 +4754,8 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                                                     Navigator.push(
                                                                         context,
                                                                         CupertinoPageRoute(
-                                                                          builder: (context) => A010502SalesList(
-                                                                              topSaleImg: topSaleImg,
-                                                                              topSaleName: topSaleName,
-                                                                              topSaleTotal: topSaleTotal),
+                                                                          builder: (context) =>
+                                                                              A010502SalesList(topSaleList: topSaleList),
                                                                           // A010501NewsDetail(),
                                                                         ));
                                                                   },
@@ -4732,441 +4793,441 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                                         ),
                                                       ],
                                                     ),
-                                                    // for (int i = 0; i < 4; i++)
-                                                    //   Padding(
-                                                    //     padding:
-                                                    //         EdgeInsetsDirectional
-                                                    //             .fromSTEB(
-                                                    //                 0.0,
-                                                    //                 10.0,
-                                                    //                 0.0,
-                                                    //                 0.0),
-                                                    //     child: Row(
-                                                    //       mainAxisSize:
-                                                    //           MainAxisSize.max,
-                                                    //       mainAxisAlignment:
-                                                    //           MainAxisAlignment
-                                                    //               .start,
-                                                    //       children: [
-                                                    //         Column(
-                                                    //           mainAxisSize:
-                                                    //               MainAxisSize
-                                                    //                   .max,
-                                                    //           children: [
-                                                    //             Padding(
-                                                    //               padding: EdgeInsetsDirectional
-                                                    //                   .fromSTEB(
-                                                    //                       0.0,
-                                                    //                       0.0,
-                                                    //                       8.0,
-                                                    //                       0.0),
-                                                    //               child:
-                                                    //                   ClipRRect(
-                                                    //                 borderRadius:
-                                                    //                     BorderRadius.circular(
-                                                    //                         8.0),
-                                                    //                 child: topSaleImg[i] ==
-                                                    //                         null
-                                                    //                     ? Container(
-                                                    //                         width:
-                                                    //                             40.0,
-                                                    //                         height:
-                                                    //                             40.0,
-                                                    //                         color:
-                                                    //                             FlutterFlowTheme.of(context).alternate,
-                                                    //                       )
-                                                    //                     : topSaleImg[i] ==
-                                                    //                             ''
-                                                    //                         ? Container(
-                                                    //                             width: 40.0,
-                                                    //                             height: 40.0,
-                                                    //                             color: Colors.grey,
-                                                    //                           )
-                                                    //                         : Image.network(
-                                                    //                             // 'assets/images/shutterstock_674309551.jpg',
-                                                    //                             topSaleImg[i]!,
-                                                    //                             width: 40.0,
-                                                    //                             height: 40.0,
-                                                    //                             fit: BoxFit.cover,
-                                                    //                           ),
+                                                    for (int i = 0; i < 3; i++)
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                    0.0,
+                                                                    10.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          0.0,
+                                                                          8.0,
+                                                                          0.0),
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    child: topSaleList![i]!['รูปภาพ'] ==
+                                                                            null
+                                                                        ? Container(
+                                                                            width:
+                                                                                40.0,
+                                                                            height:
+                                                                                40.0,
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).alternate,
+                                                                          )
+                                                                        : topSaleList![i]!['รูปภาพ'] ==
+                                                                                ''
+                                                                            ? Container(
+                                                                                width: 40.0,
+                                                                                height: 40.0,
+                                                                                color: Colors.grey,
+                                                                              )
+                                                                            : Image.network(
+                                                                                // 'assets/images/shutterstock_674309551.jpg',
+                                                                                topSaleList![i]!['รูปภาพ'],
+                                                                                width: 40.0,
+                                                                                height: 40.0,
+                                                                                fit: BoxFit.cover,
+                                                                              ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  children: [
+                                                                    Text(
+                                                                      topSaleList![
+                                                                              i]![
+                                                                          'ชื่อนามสกุล'],
+                                                                      // 'นายพฤตินัย พรมวิสิทธิ์สุนทร',
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodySmall
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Kanit',
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primaryBackground,
+                                                                            fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                                                ? 13.0
+                                                                                : 10.0,
+                                                                          ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  children: [
+                                                                    Text(
+                                                                      // 'ยอดขาย 20434332 บาท',
+
+                                                                      'ยอดขาย ${NumberFormat('#,##0').format(int.parse(topSaleList![i]!['ยอดขาย']))} บาท',
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodySmall
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                'Kanit',
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primaryBackground,
+                                                                            fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                                                ? 13.0
+                                                                                : 10.0,
+                                                                          ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       EdgeInsetsDirectional
+                                                    //           .fromSTEB(
+                                                    //               0.0,
+                                                    //               10.0,
+                                                    //               0.0,
+                                                    //               0.0),
+                                                    //   child: Row(
+                                                    //     mainAxisSize:
+                                                    //         MainAxisSize.max,
+                                                    //     mainAxisAlignment:
+                                                    //         MainAxisAlignment
+                                                    //             .start,
+                                                    //     children: [
+                                                    //       Column(
+                                                    //         mainAxisSize:
+                                                    //             MainAxisSize
+                                                    //                 .max,
+                                                    //         children: [
+                                                    //           Padding(
+                                                    //             padding:
+                                                    //                 EdgeInsetsDirectional
+                                                    //                     .fromSTEB(
+                                                    //                         0.0,
+                                                    //                         0.0,
+                                                    //                         8.0,
+                                                    //                         0.0),
+                                                    //             child:
+                                                    //                 ClipRRect(
+                                                    //               borderRadius:
+                                                    //                   BorderRadius
+                                                    //                       .circular(
+                                                    //                           8.0),
+                                                    //               child: Image
+                                                    //                   .asset(
+                                                    //                 'assets/images/young-caucasian-man-formal-shirt-tie-sitting-office-working-computer_1098-20584.jpg',
+                                                    //                 width: 40.0,
+                                                    //                 height:
+                                                    //                     40.0,
+                                                    //                 fit: BoxFit
+                                                    //                     .cover,
                                                     //               ),
                                                     //             ),
-                                                    //           ],
-                                                    //         ),
-                                                    //         Column(
-                                                    //           mainAxisSize:
-                                                    //               MainAxisSize
-                                                    //                   .max,
-                                                    //           crossAxisAlignment:
-                                                    //               CrossAxisAlignment
-                                                    //                   .start,
-                                                    //           children: [
-                                                    //             Row(
-                                                    //               mainAxisSize:
-                                                    //                   MainAxisSize
-                                                    //                       .max,
-                                                    //               children: [
-                                                    //                 Text(
-                                                    //                   topSaleName[
-                                                    //                       i],
-                                                    //                   // 'นายพฤตินัย พรมวิสิทธิ์สุนทร',
-                                                    //                   style: FlutterFlowTheme.of(
-                                                    //                           context)
-                                                    //                       .bodySmall
-                                                    //                       .override(
-                                                    //                         fontFamily:
-                                                    //                             'Kanit',
-                                                    //                         color:
-                                                    //                             FlutterFlowTheme.of(context).primaryBackground,
-                                                    //                         fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                    //                             ? 13.0
-                                                    //                             : 10.0,
-                                                    //                       ),
-                                                    //                 ),
-                                                    //               ],
-                                                    //             ),
-                                                    //             Row(
-                                                    //               mainAxisSize:
-                                                    //                   MainAxisSize
-                                                    //                       .max,
-                                                    //               children: [
-                                                    //                 Text(
-                                                    //                   topSaleTotal[i] ==
-                                                    //                           0
-                                                    //                       ? ''
-                                                    //                       : 'ยอดขาย ${NumberFormat('#,##0').format(topSaleTotal[i])} บาท',
-                                                    //                   style: FlutterFlowTheme.of(
-                                                    //                           context)
-                                                    //                       .bodySmall
-                                                    //                       .override(
-                                                    //                         fontFamily:
-                                                    //                             'Kanit',
-                                                    //                         color:
-                                                    //                             FlutterFlowTheme.of(context).primaryBackground,
-                                                    //                         fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                    //                             ? 13.0
-                                                    //                             : 10.0,
-                                                    //                       ),
-                                                    //                 ),
-                                                    //               ],
-                                                    //             ),
-                                                    //           ],
-                                                    //         ),
-                                                    //       ],
-                                                    //     ),
+                                                    //           ),
+                                                    //         ],
+                                                    //       ),
+                                                    //       Column(
+                                                    //         mainAxisSize:
+                                                    //             MainAxisSize
+                                                    //                 .max,
+                                                    //         crossAxisAlignment:
+                                                    //             CrossAxisAlignment
+                                                    //                 .start,
+                                                    //         children: [
+                                                    //           Row(
+                                                    //             mainAxisSize:
+                                                    //                 MainAxisSize
+                                                    //                     .max,
+                                                    //             children: [
+                                                    //               Text(
+                                                    //                 'นายพฤตินัย พรมวิสิทธิ์สุนทร',
+                                                    //                 style: FlutterFlowTheme.of(
+                                                    //                         context)
+                                                    //                     .bodySmall
+                                                    //                     .override(
+                                                    //                       fontFamily:
+                                                    //                           'Kanit',
+                                                    //                       color:
+                                                    //                           FlutterFlowTheme.of(context).primaryBackground,
+                                                    //                       fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                    //                           ? 13.0
+                                                    //                           : 10.0,
+                                                    //                     ),
+                                                    //               ),
+                                                    //             ],
+                                                    //           ),
+                                                    //           Row(
+                                                    //             mainAxisSize:
+                                                    //                 MainAxisSize
+                                                    //                     .max,
+                                                    //             children: [
+                                                    //               Text(
+                                                    //                 'ยอดขาย 190,000 บาท',
+                                                    //                 style: FlutterFlowTheme.of(
+                                                    //                         context)
+                                                    //                     .bodySmall
+                                                    //                     .override(
+                                                    //                       fontFamily:
+                                                    //                           'Kanit',
+                                                    //                       color:
+                                                    //                           FlutterFlowTheme.of(context).primaryBackground,
+                                                    //                       fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                    //                           ? 13.0
+                                                    //                           : 10.0,
+                                                    //                     ),
+                                                    //               ),
+                                                    //             ],
+                                                    //           ),
+                                                    //         ],
+                                                    //       ),
+                                                    //     ],
                                                     //   ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  10.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            8.0,
-                                                                            0.0),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    'assets/images/young-caucasian-man-formal-shirt-tie-sitting-office-working-computer_1098-20584.jpg',
-                                                                    width: 40.0,
-                                                                    height:
-                                                                        40.0,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Text(
-                                                                    'นายพฤตินัย พรมวิสิทธิ์สุนทร',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodySmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Kanit',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                                              ? 13.0
-                                                                              : 10.0,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Text(
-                                                                    'ยอดขาย 190,000 บาท',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodySmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Kanit',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                                              ? 13.0
-                                                                              : 10.0,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  10.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            8.0,
-                                                                            0.0),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    'assets/images/GettyImages-1318459282.jpg',
-                                                                    width: 40.0,
-                                                                    height:
-                                                                        40.0,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Text(
-                                                                    'นายพฤตินัย พรมวิสิทธิ์สุนทร',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodySmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Kanit',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                                              ? 13.0
-                                                                              : 10.0,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Text(
-                                                                    'ยอดขาย 190,000 บาท',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodySmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Kanit',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                                              ? 13.0
-                                                                              : 10.0,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  10.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            8.0,
-                                                                            0.0),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    'assets/images/31047129_m.jpg',
-                                                                    width: 40.0,
-                                                                    height:
-                                                                        40.0,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Text(
-                                                                    'นายพฤตินัย พรมวิสิทธิ์สุนทร',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodySmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Kanit',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                                              ? 13.0
-                                                                              : 10.0,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Text(
-                                                                    'ยอดขาย 190,000 บาท',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodySmall
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Kanit',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize: MediaQuery.sizeOf(context).width >= 800.0
-                                                                              ? 13.0
-                                                                              : 10.0,
-                                                                        ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       EdgeInsetsDirectional
+                                                    //           .fromSTEB(
+                                                    //               0.0,
+                                                    //               10.0,
+                                                    //               0.0,
+                                                    //               0.0),
+                                                    //   child: Row(
+                                                    //     mainAxisSize:
+                                                    //         MainAxisSize.max,
+                                                    //     mainAxisAlignment:
+                                                    //         MainAxisAlignment
+                                                    //             .start,
+                                                    //     children: [
+                                                    //       Column(
+                                                    //         mainAxisSize:
+                                                    //             MainAxisSize
+                                                    //                 .max,
+                                                    //         children: [
+                                                    //           Padding(
+                                                    //             padding:
+                                                    //                 EdgeInsetsDirectional
+                                                    //                     .fromSTEB(
+                                                    //                         0.0,
+                                                    //                         0.0,
+                                                    //                         8.0,
+                                                    //                         0.0),
+                                                    //             child:
+                                                    //                 ClipRRect(
+                                                    //               borderRadius:
+                                                    //                   BorderRadius
+                                                    //                       .circular(
+                                                    //                           8.0),
+                                                    //               child: Image
+                                                    //                   .asset(
+                                                    //                 'assets/images/GettyImages-1318459282.jpg',
+                                                    //                 width: 40.0,
+                                                    //                 height:
+                                                    //                     40.0,
+                                                    //                 fit: BoxFit
+                                                    //                     .cover,
+                                                    //               ),
+                                                    //             ),
+                                                    //           ),
+                                                    //         ],
+                                                    //       ),
+                                                    //       Column(
+                                                    //         mainAxisSize:
+                                                    //             MainAxisSize
+                                                    //                 .max,
+                                                    //         crossAxisAlignment:
+                                                    //             CrossAxisAlignment
+                                                    //                 .start,
+                                                    //         children: [
+                                                    //           Row(
+                                                    //             mainAxisSize:
+                                                    //                 MainAxisSize
+                                                    //                     .max,
+                                                    //             children: [
+                                                    //               Text(
+                                                    //                 'นายพฤตินัย พรมวิสิทธิ์สุนทร',
+                                                    //                 style: FlutterFlowTheme.of(
+                                                    //                         context)
+                                                    //                     .bodySmall
+                                                    //                     .override(
+                                                    //                       fontFamily:
+                                                    //                           'Kanit',
+                                                    //                       color:
+                                                    //                           FlutterFlowTheme.of(context).primaryBackground,
+                                                    //                       fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                    //                           ? 13.0
+                                                    //                           : 10.0,
+                                                    //                     ),
+                                                    //               ),
+                                                    //             ],
+                                                    //           ),
+                                                    //           Row(
+                                                    //             mainAxisSize:
+                                                    //                 MainAxisSize
+                                                    //                     .max,
+                                                    //             children: [
+                                                    //               Text(
+                                                    //                 'ยอดขาย 190,000 บาท',
+                                                    //                 style: FlutterFlowTheme.of(
+                                                    //                         context)
+                                                    //                     .bodySmall
+                                                    //                     .override(
+                                                    //                       fontFamily:
+                                                    //                           'Kanit',
+                                                    //                       color:
+                                                    //                           FlutterFlowTheme.of(context).primaryBackground,
+                                                    //                       fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                    //                           ? 13.0
+                                                    //                           : 10.0,
+                                                    //                     ),
+                                                    //               ),
+                                                    //             ],
+                                                    //           ),
+                                                    //         ],
+                                                    //       ),
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       EdgeInsetsDirectional
+                                                    //           .fromSTEB(
+                                                    //               0.0,
+                                                    //               10.0,
+                                                    //               0.0,
+                                                    //               0.0),
+                                                    //   child: Row(
+                                                    //     mainAxisSize:
+                                                    //         MainAxisSize.max,
+                                                    //     mainAxisAlignment:
+                                                    //         MainAxisAlignment
+                                                    //             .start,
+                                                    //     children: [
+                                                    //       Column(
+                                                    //         mainAxisSize:
+                                                    //             MainAxisSize
+                                                    //                 .max,
+                                                    //         children: [
+                                                    //           Padding(
+                                                    //             padding:
+                                                    //                 EdgeInsetsDirectional
+                                                    //                     .fromSTEB(
+                                                    //                         0.0,
+                                                    //                         0.0,
+                                                    //                         8.0,
+                                                    //                         0.0),
+                                                    //             child:
+                                                    //                 ClipRRect(
+                                                    //               borderRadius:
+                                                    //                   BorderRadius
+                                                    //                       .circular(
+                                                    //                           8.0),
+                                                    //               child: Image
+                                                    //                   .asset(
+                                                    //                 'assets/images/31047129_m.jpg',
+                                                    //                 width: 40.0,
+                                                    //                 height:
+                                                    //                     40.0,
+                                                    //                 fit: BoxFit
+                                                    //                     .cover,
+                                                    //               ),
+                                                    //             ),
+                                                    //           ),
+                                                    //         ],
+                                                    //       ),
+                                                    //       Column(
+                                                    //         mainAxisSize:
+                                                    //             MainAxisSize
+                                                    //                 .max,
+                                                    //         crossAxisAlignment:
+                                                    //             CrossAxisAlignment
+                                                    //                 .start,
+                                                    //         children: [
+                                                    //           Row(
+                                                    //             mainAxisSize:
+                                                    //                 MainAxisSize
+                                                    //                     .max,
+                                                    //             children: [
+                                                    //               Text(
+                                                    //                 'นายพฤตินัย พรมวิสิทธิ์สุนทร',
+                                                    //                 style: FlutterFlowTheme.of(
+                                                    //                         context)
+                                                    //                     .bodySmall
+                                                    //                     .override(
+                                                    //                       fontFamily:
+                                                    //                           'Kanit',
+                                                    //                       color:
+                                                    //                           FlutterFlowTheme.of(context).primaryBackground,
+                                                    //                       fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                    //                           ? 13.0
+                                                    //                           : 10.0,
+                                                    //                     ),
+                                                    //               ),
+                                                    //             ],
+                                                    //           ),
+                                                    //           Row(
+                                                    //             mainAxisSize:
+                                                    //                 MainAxisSize
+                                                    //                     .max,
+                                                    //             children: [
+                                                    //               Text(
+                                                    //                 'ยอดขาย 190,000 บาท',
+                                                    //                 style: FlutterFlowTheme.of(
+                                                    //                         context)
+                                                    //                     .bodySmall
+                                                    //                     .override(
+                                                    //                       fontFamily:
+                                                    //                           'Kanit',
+                                                    //                       color:
+                                                    //                           FlutterFlowTheme.of(context).primaryBackground,
+                                                    //                       fontSize: MediaQuery.sizeOf(context).width >= 800.0
+                                                    //                           ? 13.0
+                                                    //                           : 10.0,
+                                                    //                     ),
+                                                    //               ),
+                                                    //             ],
+                                                    //           ),
+                                                    //         ],
+                                                    //       ),
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
                                                     Divider(
                                                       thickness: 1.0,
                                                       color:

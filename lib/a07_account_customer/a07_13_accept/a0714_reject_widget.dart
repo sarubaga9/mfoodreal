@@ -421,6 +421,8 @@ class _A0714RejectWidgetState extends State<A0714RejectWidget> {
                                                 CustomerType.Test
                                             ? 'CustomerTest'
                                             : 'Customer')
+                                        .where('รหัสพนักงานขาย',
+                                            isEqualTo: userData!['EmployeeID'])
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==

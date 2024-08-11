@@ -8,15 +8,11 @@ import 'package:m_food/flutter_flow/flutter_flow_theme%20copy.dart';
 import 'package:m_food/flutter_flow/flutter_flow_util.dart';
 
 class A010502SalesList extends StatefulWidget {
-  final List<double>? topSaleTotal;
-  final List<String>? topSaleName;
-  final List<String?>? topSaleImg;
+  final List<Map<String, dynamic>?>? topSaleList;
 
   const A010502SalesList({
     super.key,
-    @required this.topSaleTotal,
-    @required this.topSaleName,
-    @required this.topSaleImg,
+    @required this.topSaleList,
   });
 
   @override
@@ -27,9 +23,7 @@ class _A010502SalesListState extends State<A010502SalesList> {
   final userController = Get.find<UserController>();
   RxMap<String, dynamic>? userData;
 
-  List<double> topSaleTotal = [];
-  List<String> topSaleName = [];
-  List<String?> topSaleImg = [];
+  List<Map<String, dynamic>?>? topSale = [];
 
   String formatThaiDate(Timestamp timestamp) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -54,17 +48,7 @@ class _A010502SalesListState extends State<A010502SalesList> {
   Widget build(BuildContext context) {
     userData = userController.userData;
 
-    topSaleTotal = widget.topSaleTotal!;
-    topSaleName = widget.topSaleName!;
-    topSaleImg = widget.topSaleImg!;
-
-    for (int i = 0; i < topSaleTotal.length; i++) {
-      if (topSaleTotal[i] == 0 && topSaleName[i] == '') {
-        topSaleTotal!.removeAt(i);
-        topSaleName.removeAt(i);
-        topSaleImg.removeAt(i);
-      }
-    }
+    topSale = widget.topSaleList!;
 
     return Scaffold(
       body: SafeArea(
@@ -337,7 +321,7 @@ class _A010502SalesListState extends State<A010502SalesList> {
               const SizedBox(
                 height: 20,
               ),
-              for (int i = 0; i < topSaleTotal!.length; i++)
+              for (int i = 0; i < topSale!.length; i++)
                 Padding(
                   padding:
                       EdgeInsetsDirectional.fromSTEB(20.0, 10.0, 20.0, 0.0),
@@ -360,14 +344,14 @@ class _A010502SalesListState extends State<A010502SalesList> {
                                   0.0, 0.0, 8.0, 0.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
-                                child: topSaleImg![i] == null
+                                child: topSale![i]!['รูปภาพ'] == null
                                     ? Container(
                                         width: 100.0,
                                         height: 100.0,
                                         color: FlutterFlowTheme.of(context)
                                             .alternate,
                                       )
-                                    : topSaleImg![i] == ''
+                                    : topSale![i]!['รูปภาพ'] == ''
                                         ? Container(
                                             width: 100.0,
                                             height: 100.0,
@@ -375,7 +359,7 @@ class _A010502SalesListState extends State<A010502SalesList> {
                                           )
                                         : Image.network(
                                             // 'assets/images/shutterstock_674309551.jpg',
-                                            topSaleImg![i]!,
+                                            topSale![i]!['รูปภาพ']!,
                                             width: 100.0,
                                             height: 100.0,
                                             fit: BoxFit.cover,
@@ -415,7 +399,8 @@ class _A010502SalesListState extends State<A010502SalesList> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  'ชื่อพนักงานขาย : ' + topSaleName![i],
+                                  'ชื่อพนักงานขาย : ' +
+                                      topSale![i]!['ชื่อนามสกุล']!,
                                   // 'นายพฤตินัย พรมวิสิทธิ์สุนทร',
                                   style: FlutterFlowTheme.of(context)
                                       .bodySmall
@@ -435,9 +420,7 @@ class _A010502SalesListState extends State<A010502SalesList> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  topSaleTotal![i] == 0
-                                      ? ''
-                                      : 'ยอดขาย ${NumberFormat('#,##0').format(topSaleTotal![i])} บาท',
+                                  'ยอดขาย ${NumberFormat('#,##0').format(int.parse(topSale![i]!['ยอดขาย']))} บาท',
                                   style: FlutterFlowTheme.of(context)
                                       .bodySmall
                                       .override(

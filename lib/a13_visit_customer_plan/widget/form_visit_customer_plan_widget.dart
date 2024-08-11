@@ -276,6 +276,9 @@ class _FormVisitCustomerPlanWidgetState
         target: google_maps.LatLng(13.7563309, 100.5017651),
         zoom: 14.4746,
       );
+
+      print('333333333333333');
+
       print('22');
     }
 
@@ -285,6 +288,7 @@ class _FormVisitCustomerPlanWidgetState
         .collection(AppSettings.customerType == CustomerType.Test
             ? 'CustomerTest'
             : 'Customer')
+        .where('รหัสพนักงานขาย', isEqualTo: userData!['EmployeeID'])
         .get()
         .then((QuerySnapshot<Map<String, dynamic>>? data) async {
       if (data != null && data.docs.isNotEmpty) {
@@ -1853,7 +1857,7 @@ class _FormVisitCustomerPlanWidgetState
             mainAxisSize: MainAxisSize.max,
             children: [
               InkWell(
-                onTap: () {
+                onTap: () async {
                   addressAll.clear();
                   latAll.clear();
                   lotAll.clear();
@@ -1890,6 +1894,22 @@ class _FormVisitCustomerPlanWidgetState
                     }
                     customerID = foundMap['CustomerID'];
                     print(addressAll);
+
+                    //======== เพิ่ม default ที่อยู่ ให้เป็น index 0 =============
+
+                    if (addressAll.isNotEmpty) {
+                      _model.dropDownValueController3Address =
+                          FormFieldController<String>(addressAll[0]);
+
+                      _model.dropDownValue3Address = addressAll[0];
+
+                      _model.dropDownValueController3 =
+                          FormFieldController<String>(addressAll[0]);
+                      _model.dropDownValue3 = addressAll[0];
+
+                      await updateMap(addressAll, _model.dropDownValue3);
+                    }
+
                     setState(() {});
                   } else {
                     print(foundMap);

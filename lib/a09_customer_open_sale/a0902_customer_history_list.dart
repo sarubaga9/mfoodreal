@@ -136,8 +136,9 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
               : 'Orders');
       // FirebaseFirestore.instance.collection('OrdersTest');
 
-      QuerySnapshot orderSubCollections =
-          await orderColection.where('CustomerDocId', isEqualTo: widget.customerID).get();
+      QuerySnapshot orderSubCollections = await orderColection
+          .where('CustomerDocId', isEqualTo: widget.customerID)
+          .get();
 
       // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
       orderSubCollections.docs.forEach((doc) {
@@ -327,12 +328,19 @@ class _A0902CustomerHistoryListState extends State<A0902CustomerHistoryList> {
     print('bb');
 
     // ย้อนหลัง 1 เดือน
+
+    int daysInMonth = DateUtils.getDaysInMonth(currentDate.year, currentDate.month);
     DateTime twoMonthsAgo =
-        DateTime(currentDate.year, currentDate.month - 1, currentDate.day);
+        // DateTime(currentDate.year, currentDate.month - 1, currentDate.day);
+        currentDate.subtract(Duration(days: daysInMonth));
 
     // ย้อนหลัง 2 เดือน
+    int daysInMonth2 = DateUtils.getDaysInMonth(currentDate.year, currentDate.month-1);
+
     DateTime threeMonthsAgo =
-        DateTime(currentDate.year, currentDate.month - 2, currentDate.day);
+        // DateTime(currentDate.year, currentDate.month - 2, currentDate.day);
+        currentDate.subtract(Duration(days: daysInMonth2+daysInMonth));
+
     // print(
     // 'Three Months Ago in Thai: ${formatThaiMonth(oneMonthsAgo.month)} ${oneMonthsAgo.year + 543}');
 

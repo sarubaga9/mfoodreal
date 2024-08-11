@@ -450,6 +450,9 @@ class _A0710SaveWidgetState extends State<A0710SaveWidget> {
                                                         CustomerType.Test
                                                     ? 'CustomerTest'
                                                     : 'Customer')
+                                            .where('รหัสพนักงานขาย',
+                                                isEqualTo:
+                                                    userData!['EmployeeID'])
                                             .snapshots(),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
@@ -549,6 +552,8 @@ class _A0710SaveWidgetState extends State<A0710SaveWidget> {
                                               CustomerType.Test
                                           ? 'CustomerTest'
                                           : 'Customer')
+                                      .where('รหัสพนักงานขาย',
+                                          isEqualTo: userData!['EmployeeID'])
                                       .snapshots(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
@@ -571,7 +576,7 @@ class _A0710SaveWidgetState extends State<A0710SaveWidget> {
                                     customerController
                                         .updateCustomerData(snapshot.data);
                                     // print(customerController
-                                        // .customerData!.length);
+                                    // .customerData!.length);
 
                                     Map<String, dynamic> customerMap = {};
                                     //     data.docs.first.data() as Map<String, dynamic>;

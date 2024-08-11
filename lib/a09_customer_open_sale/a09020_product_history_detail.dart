@@ -94,6 +94,10 @@ class _A09020ProductHistoryDetailState
 
   List<bool> checkBoxList = [];
 
+  Map<String, dynamic>? customerDataWithmfoodtoken;
+  Map<String, dynamic>? urlApi;
+
+
   @override
   void initState() {
     // _model = createModel(context, () => A0904ProductOrderModel());
@@ -128,6 +132,30 @@ class _A09020ProductHistoryDetailState
       setState(() {
         isLoading = true;
       });
+
+      //==============================================================
+      // ดึงข้อมูลจาก collection 'mfoodtoken'
+      DocumentSnapshot customerDocmfoodtoken = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'mfoodtoken'
+              : 'mfoodtoken')
+          .doc('EDpTMkR8myW4zhdUALCP')
+          .get();
+
+      print('customerid');
+      print(widget.customerID);
+
+      if (customerDocmfoodtoken.exists) {
+        customerDataWithmfoodtoken =
+            customerDocmfoodtoken.data() as Map<String, dynamic>?;
+      }
+
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+
       //=======================================================================================
       // ดึงข้อมูลจาก collection 'Customer'
       DocumentSnapshot customerDoc = await FirebaseFirestore.instance
@@ -148,7 +176,27 @@ class _A09020ProductHistoryDetailState
       print(data['ClientIdจากMfoodAPI']);
 
       //=======================================================================================
+      //==============================================================
 
+      // ดึงข้อมูลจาก collection 'mfoodtoken'
+      DocumentSnapshot urlApiWithPort = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'AppSettingUrl'
+              : 'AppSettingUrl')
+          .doc(AppSettings.customerType == CustomerType.Test ? '7104' : '7105')
+          .get();
+
+      if (urlApiWithPort.exists) {
+        urlApi = urlApiWithPort.data() as Map<String, dynamic>?;
+      }
+
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+
+      //==============================================================
       productGetData = productController.productData;
 
       if (productGetData != null) {
@@ -404,17 +452,29 @@ class _A09020ProductHistoryDetailState
 
       HttpsCallable callableBillLast =
           FirebaseFunctions.instance.httpsCallable('getApiMfood');
-      var paramsBillLast = <String, dynamic>{
-        "url":
-            "http://mobile.mfood.co.th:7105/MBServices.asmx?op=BILL_DISCOUNT_INFO",
-        // "http://mobile.mfood.co.th:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
-        "xml":
-            //pro type discount
-            // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
-            //pro type bonus item
-            // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>01000004</Client_ID><ITEMCODE>0271330020450</ITEMCODE><UM>ซอง</UM><QTY>20</QTY><DOC_DATE>2024-04-01</DOC_DATE><ITEMAMT>980</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
-            '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><BILL_DISCOUNT_INFO xmlns="MFOODMOBILEAPI"><PROMO_DATE>$formattedDate</PROMO_DATE><CUSTMER_ID>${data['ClientIdจากMfoodAPI']}</CUSTMER_ID><BILL_AMT>$totalAll</BILL_AMT></BILL_DISCOUNT_INFO></soap12:Body></soap12:Envelope>'
-      };
+      var paramsBillLast = AppSettings.customerType == CustomerType.Test
+          ? <String, dynamic>{
+              "url":
+                  "${urlApi!['Url']}:7104/MBServices.asmx?op=BILL_DISCOUNT_INFO",
+              // "http://mobile.mfood.co.th:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+              "xml":
+                  //pro type discount
+                  // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                  //pro type bonus item
+                  // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>01000004</Client_ID><ITEMCODE>0271330020450</ITEMCODE><UM>ซอง</UM><QTY>20</QTY><DOC_DATE>2024-04-01</DOC_DATE><ITEMAMT>980</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><BILL_DISCOUNT_INFO xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PROMO_DATE>$formattedDate</PROMO_DATE><CUSTMER_ID>${data['ClientIdจากMfoodAPI']}</CUSTMER_ID><BILL_AMT>$totalAll</BILL_AMT></BILL_DISCOUNT_INFO></soap12:Body></soap12:Envelope>'
+            }
+          : <String, dynamic>{
+              "url":
+                  "${urlApi!['Url']}:7105/MBServices.asmx?op=BILL_DISCOUNT_INFO",
+              // "http://mobile.mfood.co.th:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+              "xml":
+                  //pro type discount
+                  // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                  //pro type bonus item
+                  // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>01000004</Client_ID><ITEMCODE>0271330020450</ITEMCODE><UM>ซอง</UM><QTY>20</QTY><DOC_DATE>2024-04-01</DOC_DATE><ITEMAMT>980</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><BILL_DISCOUNT_INFO xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PROMO_DATE>$formattedDate</PROMO_DATE><CUSTMER_ID>${data['ClientIdจากMfoodAPI']}</CUSTMER_ID><BILL_AMT>$totalAll</BILL_AMT></BILL_DISCOUNT_INFO></soap12:Body></soap12:Envelope>'
+            };
 
       // print(paramsDiscount['xml']);
       // print('======================================= aaaaa');

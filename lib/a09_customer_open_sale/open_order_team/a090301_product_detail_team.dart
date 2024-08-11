@@ -108,6 +108,9 @@ class _A090301ProductDetailTeamState extends State<A090301ProductDetailTeam> {
   List<TextEditingController> inModalDialog = [];
 
   List<dynamic> listFavToback = [];
+  Map<String, dynamic>? customerDataWithmfoodtoken;
+  Map<String, dynamic>? urlApi;
+
 
   @override
   void initState() {
@@ -131,6 +134,52 @@ class _A090301ProductDetailTeamState extends State<A090301ProductDetailTeam> {
 
     // print(widget.productListAll);
     // print(widget.productListAll!.length);
+
+    //==============================================================
+    // ดึงข้อมูลจาก collection 'mfoodtoken'
+    DocumentSnapshot customerDocmfoodtoken = await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'mfoodtoken'
+            : 'mfoodtoken')
+        .doc('EDpTMkR8myW4zhdUALCP')
+        .get();
+
+    print('customerid');
+    print(widget.customerID);
+
+    if (customerDocmfoodtoken.exists) {
+      customerDataWithmfoodtoken =
+          customerDocmfoodtoken.data() as Map<String, dynamic>?;
+    }
+
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+    print(customerDataWithmfoodtoken!['token_key']);
+
+        //==============================================================
+
+    // ดึงข้อมูลจาก collection 'mfoodtoken'
+    DocumentSnapshot urlApiWithPort = await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'AppSettingUrl'
+            : 'AppSettingUrl')
+        .doc(AppSettings.customerType == CustomerType.Test ? '7104' : '7105')
+        .get();
+
+    if (urlApiWithPort.exists) {
+      urlApi = urlApiWithPort.data() as Map<String, dynamic>?;
+    }
+
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+    print(urlApi!['Url']);
+
+    //==============================================================
+
 
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('แท็กสินค้า').get();
@@ -211,13 +260,21 @@ class _A090301ProductDetailTeamState extends State<A090301ProductDetailTeam> {
 
       HttpsCallable callablePromotion =
           FirebaseFunctions.instance.httpsCallable('getApiMfood');
-      var paramsPromotion = <String, dynamic>{
-        "url":
-            "http://mobile.mfood.co.th:7105/MBServices.asmx?op=CHECK_PROMOTION_INFO",
-        "xml":
-            '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>${data['ClientIdจากMfoodAPI']}</sCLIENT_ID><sPRODUCT_CODE>${productDetail!['PRODUCT_ID']}</sPRODUCT_CODE><sORDER_DATE>$formattedDate</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
-        // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>01000003</sCLIENT_ID><sPRODUCT_CODE>0140006421000</sPRODUCT_CODE><sORDER_DATE>2024-03-18</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
-      };
+      var paramsPromotion = AppSettings.customerType == CustomerType.Test
+          ? <String, dynamic>{
+              "url":
+                  "${urlApi!['Url']}:7104/MBServices.asmx?op=CHECK_PROMOTION_INFO",
+              "xml":
+                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><sCLIENT_ID>${data['ClientIdจากMfoodAPI']}</sCLIENT_ID><sPRODUCT_CODE>${productDetail!['PRODUCT_ID']}</sPRODUCT_CODE><sORDER_DATE>$formattedDate</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
+              // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>01000003</sCLIENT_ID><sPRODUCT_CODE>0140006421000</sPRODUCT_CODE><sORDER_DATE>2024-03-18</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
+            }
+          : <String, dynamic>{
+              "url":
+                  "${urlApi!['Url']}:7105/MBServices.asmx?op=CHECK_PROMOTION_INFO",
+              "xml":
+                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><sCLIENT_ID>${data['ClientIdจากMfoodAPI']}</sCLIENT_ID><sPRODUCT_CODE>${productDetail!['PRODUCT_ID']}</sPRODUCT_CODE><sORDER_DATE>$formattedDate</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
+              // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>01000003</sCLIENT_ID><sPRODUCT_CODE>0140006421000</sPRODUCT_CODE><sORDER_DATE>2024-03-18</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
+            };
 
       print(paramsPromotion['xml']);
       // print('======================================= aaaaa');

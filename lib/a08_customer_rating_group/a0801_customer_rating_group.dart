@@ -547,6 +547,11 @@ class _A0801CustomerRatingGroupState extends State<A0801CustomerRatingGroup> {
                                                                             .Test
                                                                     ? 'CustomerTest'
                                                                     : 'Customer')
+                                                                .where(
+                                                                    'รหัสพนักงานขาย',
+                                                                    isEqualTo:
+                                                                        userData![
+                                                                            'EmployeeID'])
                                                                 .snapshots(),
                                                             builder: (context,
                                                                 snapshot) {

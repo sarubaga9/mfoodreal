@@ -55,11 +55,13 @@ class _TotalHistoryOrderWidgetState extends State<TotalHistoryOrderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    int totalPrice = 0;
+    double totalPrice = 0;
 
     for (int j = 0; j < widget.mapData!['ProductList'].length; j++) {
-      int price = widget.mapData!['ProductList'][j]['ราคา'];
-      int quantity = widget.mapData!['ProductList'][j]['จำนวน'];
+      double price =
+          double.parse(widget.mapData!['ProductList'][j]['ราคา'].toString());
+      double quantity =
+          double.parse(widget.mapData!['ProductList'][j]['จำนวน'].toString());
 
       totalPrice += (price * quantity);
     }
@@ -68,7 +70,9 @@ class _TotalHistoryOrderWidgetState extends State<TotalHistoryOrderWidget> {
 
     double sevenPercent = totalPrice * 0.07;
 
-    int total = sevenPercent.toInt() + totalPrice;
+    double total = sevenPercent.toInt() + totalPrice;
+
+    print(total);
 
     return Container(
       decoration: BoxDecoration(
@@ -320,15 +324,17 @@ class _TotalHistoryOrderWidgetState extends State<TotalHistoryOrderWidget> {
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Text(
+                                            // '',
                                             NumberFormat('#,###')
-                                                    .format(widget.mapData![
-                                                                'ProductList']
-                                                            [i]['ราคา'] *
+                                                .format(double.parse(
                                                         widget.mapData![
                                                                 'ProductList']
-                                                            [i]['จำนวน'])
-                                                    .toString() 
-                                                ,
+                                                            [i]['ราคา'].toString()) *
+                                                    double.parse(
+                                                        widget.mapData![
+                                                                'ProductList']
+                                                            [i]['จำนวน'].toString()))
+                                                .toString(),
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyLarge
                                                 .override(

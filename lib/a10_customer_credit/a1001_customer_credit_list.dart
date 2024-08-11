@@ -312,37 +312,41 @@ class _A1001CustomerCreditListState extends State<A1001CustomerCreditList> {
                 ],
               ),
               //=============================================================
-              Padding(
-                padding:
-                    const EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 0.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //======================= menu bar ================================
-                    // Expanded(
-                    //   child: Padding(
-                    //     padding:
-                    //         EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
-                    //     child: MenuSidebarWidget(),
-                    //   ),
-                    // ),
-                    //=======================================================
-
-                    Expanded(
-                      // flex: 2,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0.0, 10.0, 0.0, 0.0),
-                            child: const ListCustomerCheckWidget(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding:
+                        const EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 10.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //======================= menu bar ================================
+                        // Expanded(
+                        //   child: Padding(
+                        //     padding:
+                        //         EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
+                        //     child: MenuSidebarWidget(),
+                        //   ),
+                        // ),
+                        //=======================================================
+                  
+                        Expanded(
+                          // flex: 2,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 10.0, 0.0, 0.0),
+                                child: const ListCustomerCheckWidget(),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],

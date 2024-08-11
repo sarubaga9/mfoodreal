@@ -10,7 +10,11 @@ import 'package:m_food/a09_customer_open_sale/open_order_team/a090001_choose_tea
 import 'package:m_food/a09_customer_open_sale/open_order_team/a090004_choose_name.dart';
 import 'package:m_food/a23_sale_setting/a2301_sale_setting.dart';
 import 'package:m_food/a23_sale_setting/a2302_history.dart';
+import 'package:m_food/a24_report/a2401_province.dart';
+import 'package:m_food/a24_report/a2402_brand.dart';
 import 'package:m_food/a24_report/a2403_category.dart';
+import 'package:m_food/a24_report/a2404_customer.dart';
+import 'package:m_food/a24_report/a2405_goal.dart';
 import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 import 'package:m_food/index.dart';
@@ -74,6 +78,8 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
       // print(data);
       // print('------------');
     });
+
+    print(orderList!.length);
 
     isLoading = false;
     if (mounted) {
@@ -427,7 +433,7 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                                 context,
                                 CupertinoPageRoute(
                                   builder: (context) =>
-                                      const A2301SaleSetting(),
+                                  A2401Distric(orderList: orderList!),
                                 )).whenComplete(() async {
                               setState(() {});
                             });
@@ -470,7 +476,8 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(
-                                  builder: (context) => const A2302History(),
+                                  builder: (context) =>
+                                      A2402Brand(orderList: orderList!),
                                 )).whenComplete(() async {
                               setState(() {});
                             });
@@ -517,7 +524,8 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(
-                                  builder: (context) =>  A2403Category(orderList: orderList!),
+                                  builder: (context) =>
+                                      A2403Category(orderList: orderList!),
                                 )).whenComplete(() async {
                               setState(() {});
                             });
@@ -551,7 +559,7 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                             ],
                           ),
                         ),
-                      ), 
+                      ),
                       //============ ยอดขายตามลูกค้า =================
                       Padding(
                         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -564,7 +572,8 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(
-                                  builder: (context) => const A2302History(),
+                                  builder: (context) =>
+                                      A2404Customer(orderList: orderList),
                                 )).whenComplete(() async {
                               setState(() {});
                             });
@@ -598,7 +607,7 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                             ],
                           ),
                         ),
-                      ), 
+                      ),
                       //============ ยอดขายเทียบเป้าการขาย =================
                       Padding(
                         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -611,7 +620,8 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(
-                                  builder: (context) => const A2302History(),
+                                  builder: (context) =>
+                                      A2405Goal(orderList: orderList),
                                 )).whenComplete(() async {
                               setState(() {});
                             });

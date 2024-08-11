@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:m_food/a09_customer_open_sale/a09020_product_history_detail.dart';
 import 'package:m_food/a13_visit_customer_plan/a1302_visit_detail.dart';
 import 'package:m_food/a13_visit_customer_plan/a1303_visit_form.dart';
 import 'package:m_food/a17_plan_send_order/a170101_plan_send._list.dart';
@@ -38,8 +39,8 @@ class _PlanSendState extends State<PlanSend> {
   List<DateTime?> uniqueDateFinal = [];
   List<String> id = [];
   List<String> customerName = [];
-  List<List<Map<String, dynamic>>> orderWithID = [];
-  List<List<DateTime?>> orderDatetimeList = [];
+  List<Map<String, dynamic>> orderWithID = [];
+  List<DateTime?> orderDatetimeList = [];
 
   @override
   void initState() {
@@ -55,88 +56,119 @@ class _PlanSendState extends State<PlanSend> {
 
       userData = userController.userData;
 
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection(AppSettings.customerType == CustomerType.Test
-                  ? 'CustomerTest'
-                  : 'Customer')
-              .get();
+      // QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      //     await FirebaseFirestore.instance
+      //         .collection(AppSettings.customerType == CustomerType.Test
+      //             ? 'CustomerTest'
+      //             : 'Customer')
+      //         .where('รหัสพนักงานขาย', isEqualTo: userData!['EmployeeID'])
+      //         .get();
 
-      for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
-        Map<String, dynamic> customerData =
-            customerDoc.data() as Map<String, dynamic>;
-        customerDataList.add(customerData);
-      }
+      // for (QueryDocumentSnapshot customerDoc in querySnapshot.docs) {
+      //   Map<String, dynamic> customerData =
+      //       customerDoc.data() as Map<String, dynamic>;
+      //   customerDataList.add(customerData);
+      // }
 
-      customerDataList
-          .removeWhere((customerData) => customerData['สถานะ'] == false);
+      // customerDataList
+      //     .removeWhere((customerData) => customerData['สถานะ'] == false);
 
+      // //==================================================
+      // // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
+      // customerDataList.removeWhere((customerData) =>
+      //     userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
+      // //==================================================
+      // customerDataList.sort((a, b) {
+      //   String nameA = a['ชื่อนามสกุล'];
+      //   String nameB = b['ชื่อนามสกุล'];
 
+      //   return nameA.compareTo(nameB);
+      // });
 
-      //==================================================
-      // หากเริ่มทำงานจริง ให้เปิดเงื่อนไขนี้ไว้ เพื่อกรองดาต้าจริง
-      customerDataList.removeWhere((customerData) =>
-          userData!['EmployeeID'] != customerData['รหัสพนักงานขาย']);
-      //==================================================
-      customerDataList.sort((a, b) {
-        String nameA = a['ชื่อนามสกุล'];
-        String nameB = b['ชื่อนามสกุล'];
-
-        return nameA.compareTo(nameB);
-      });
+      // print(customerDataList.length);
+      // print(customerDataList.length);
+      // print(customerDataList.length);
 
       List<DateTime?> allDate = [];
 
-      for (int i = 0; i < customerDataList.length; i++) {
-        id.add(customerDataList[i]['CustomerID']);
+      // for (int i = 0; i < customerDataList.length; i++) {
+      //   id.add(customerDataList[i]['CustomerID']);
 
-        if (customerDataList[i]['ประเภทลูกค้า'] == 'Company') {
-          customerName.add(customerDataList[i]['ชื่อบริษัท']);
+      //   if (customerDataList[i]['ประเภทลูกค้า'] == 'Company') {
+      //     customerName.add(customerDataList[i]['ชื่อบริษัท']);
+      //   } else {
+      //     customerName.add(
+      //         // '${customerDataList[i]['ชื่อ']} ${customerDataList[i]['นามสกุล']}');
+      //         '${customerDataList[i]['ชื่อนามสกุล']}');
+      //   }
+
+      //   // orderWithID.add([]);
+      //   // orderDatetimeList.add([]);
+      // }
+
+      // for (int i = 0; i < customerDataList.length; i++) {
+      // CollectionReference subCollectionRef = FirebaseFirestore.instance
+      //     .collection(AppSettings.customerType == CustomerType.Test
+      //         ? 'CustomerTest/${customerDataList[i]['CustomerID']}/แผนการจัดส่ง'
+      //         : 'Customer/${customerDataList[i]['CustomerID']}/แผนการจัดส่ง');
+
+      CollectionReference subCollectionRef = FirebaseFirestore.instance
+          // .collection(AppSettings.customerType == CustomerType.Test
+          //     ? 'CustomerTest/${customerDataList[i]['CustomerID']}/Orders'
+          //     : 'Customer/${customerDataList[i]['CustomerID']}/Orders');
+
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders');
+
+      // ดึงข้อมูลจาก subcollection 'นพกำพห'
+      QuerySnapshot subCollectionSnapshot = await subCollectionRef
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+          .get();
+      print('object');
+      print(subCollectionSnapshot.docs.length);
+      print(subCollectionSnapshot.docs.length);
+      print(subCollectionSnapshot.docs.length);
+
+      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      subCollectionSnapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        orderWithID.add(data);
+
+        data['วันเวลาจัดส่ง'] == ''
+            ? null
+            : orderDatetimeList.add(data['วันเวลาจัดส่ง'].toDate());
+
+        allDate.add(data['วันเวลาจัดส่ง'] == ''
+            ? null
+            : data['วันเวลาจัดส่ง'].toDate());
+
+        id.add(data['CustomerDoc']['CustomerID']);
+
+        if (data['CustomerDoc']['ประเภทลูกค้า'] == 'Company') {
+          customerName.add(data['CustomerDoc']['ชื่อนามสกุล']);
+          // customerName.add(data['CustomerDoc']['ชื่อบริษัท']);
         } else {
           customerName.add(
-              '${customerDataList[i]['ชื่อ']} ${customerDataList[i]['นามสกุล']}');
+              // '${customerDataList[i]['ชื่อ']} ${customerDataList[i]['นามสกุล']}');
+              '${data['CustomerDoc']['ชื่อนามสกุล']}');
         }
+      });
 
-        orderWithID.add([]);
-        orderDatetimeList.add([]);
-      }
-
-      for (int i = 0; i < customerDataList.length; i++) {
-        CollectionReference subCollectionRef = FirebaseFirestore.instance
-            .collection(AppSettings.customerType == CustomerType.Test
-                ? 'CustomerTest/${customerDataList[i]['CustomerID']}/แผนการจัดส่ง'
-                : 'Customer/${customerDataList[i]['CustomerID']}/แผนการจัดส่ง');
-
-        // ดึงข้อมูลจาก subcollection 'นพกำพห'
-        QuerySnapshot subCollectionSnapshot = await subCollectionRef.get();
-
-        // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
-        subCollectionSnapshot.docs.forEach((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          orderWithID[i].add(data);
-
-          data['วันเวลาจัดส่ง'] == ''
-              ? null
-              : orderDatetimeList[i].add(data['วันเวลาจัดส่ง'].toDate());
-
-          allDate.add(data['วันเวลาจัดส่ง'] == ''
-              ? null
-              : data['วันเวลาจัดส่ง'].toDate());
-        });
-
-        // mapDataOrdersData = (mapDataOrdersData ?? [])
-        //     .where((map) => map != null)
-        //     .cast<Map<String, dynamic>>()
-        //     .toList();
-      }
-      print(id);
-      print(customerName);
+      // mapDataOrdersData = (mapDataOrdersData ?? [])
+      //     .where((map) => map != null)
+      //     .cast<Map<String, dynamic>>()
+      //     .toList();
+      // }
+      print(id.length);
+      print(customerName.length);
 
       print(orderDatetimeList);
 
       print(orderWithID.length);
 
-      print(allDate);
+      print(allDate.length);
+      print('object');
 
       String formatDateCheck(DateTime date) {
         return '${date.day}/${date.month}/${date.year}';
@@ -374,7 +406,7 @@ class _PlanSendState extends State<PlanSend> {
                   //         ),
                   //       ),
                   //       Text(
-                  //         'เพิ่มแผนการเข้าเยี่ยมลูกค้า',
+                  //         'เพิ่มแผนการจัดส่งลูกค้า',
                   //         style: FlutterFlowTheme.of(context).titleMedium.override(
                   //               fontFamily: 'Kanit',
                   //               color: FlutterFlowTheme.of(context).primaryText,
@@ -403,7 +435,7 @@ class _PlanSendState extends State<PlanSend> {
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Text(
-                                        'แผนการเข้าเยี่ยมประจำวันที่ ${formatThaiDate(uniqueDateFinal[j]!)}',
+                                        'แผนการจัดส่งประจำวันที่ ${formatThaiDate(uniqueDateFinal[j]!)}',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyLarge
                                             .override(
@@ -447,21 +479,31 @@ class _PlanSendState extends State<PlanSend> {
                                               //     ? SizedBox()
                                               //     :
 
-                                              orderDatetimeList[k].any(
-                                                      (dateTime) =>
-                                                          dateTime!.year ==
-                                                              uniqueDateFinal[
-                                                                      j]!
-                                                                  .year &&
-                                                          dateTime.month ==
-                                                              uniqueDateFinal[
-                                                                      j]!
-                                                                  .month &&
-                                                          dateTime
-                                                                  .day ==
-                                                              uniqueDateFinal[
-                                                                      j]!
-                                                                  .day)
+                                              orderDatetimeList[k]!.year ==
+                                                          uniqueDateFinal[j]!
+                                                              .year &&
+                                                      orderDatetimeList[k]!
+                                                              .month ==
+                                                          uniqueDateFinal[j]!
+                                                              .month &&
+                                                      orderDatetimeList[k]!
+                                                              .day ==
+                                                          uniqueDateFinal[j]!
+                                                              .day
+                                                  // orderDatetimeList.any(
+                                                  //         (dateTime) =>
+                                                  //             dateTime!.year ==
+                                                  //                 uniqueDateFinal[
+                                                  //                         j]!
+                                                  //                     .year &&
+                                                  //             dateTime.month ==
+                                                  //                 uniqueDateFinal[
+                                                  //                         j]!
+                                                  //                     .month &&
+                                                  //             dateTime.day ==
+                                                  //                 uniqueDateFinal[
+                                                  //                         j]!
+                                                  //                     .day)
                                                   ? InkWell(
                                                       splashColor:
                                                           Colors.transparent,
@@ -479,22 +521,33 @@ class _PlanSendState extends State<PlanSend> {
                                                         print(
                                                             uniqueDateFinal[j]);
                                                         print(orderWithID[k]);
+
                                                         Navigator.push(
                                                             context,
                                                             CupertinoPageRoute(
-                                                              builder: (context) => A170101PlanSendList(
-                                                                  customerID:
-                                                                      id[k],
-                                                                  customerName:
-                                                                      customerName[
-                                                                          k],
-                                                                  orderDataMap:
-                                                                      orderWithID[
-                                                                          k],
-                                                                  uniqueDateFinal:
-                                                                      uniqueDateFinal[
-                                                                          j]),
+                                                              builder: (context) =>
+                                                                  A09020ProductHistoryDetail(
+                                                                      customerID:
+                                                                          id[k],
+                                                                      orderDataMap:
+                                                                          orderWithID[
+                                                                              k]),
                                                             ));
+                                                        // Navigator.push(
+                                                        //     context,
+                                                        //     CupertinoPageRoute(
+                                                        //       builder: (context) => A170101PlanSendList(
+                                                        //           customerID:
+                                                        //               id[k],
+                                                        //           customerName:
+                                                        //               customerName[
+                                                        //                   k],
+                                                        //           orderDataMap:
+                                                        //               orderWithID,
+                                                        //           uniqueDateFinal:
+                                                        //               uniqueDateFinal[
+                                                        //                   j]),
+                                                        //     ));
                                                       },
                                                       child: Container(
                                                         // color: Colors.red,
@@ -529,8 +582,10 @@ class _PlanSendState extends State<PlanSend> {
                                                                       .max,
                                                               children: [
                                                                 Text(
-                                                                  customerName[
-                                                                      k],
+                                                                  orderWithID[k]![
+                                                                          'OrdersDateID'] + ' '+
+                                                                      customerName[
+                                                                          k],
                                                                   // '${entry.value['ชื่อนามสกุล']}  เวลา ${entry.value['วันเดือนปีนัดหมาย'].toDate().toString().substring(10, 16)} น.',
                                                                   style: FlutterFlowTheme.of(
                                                                           context)

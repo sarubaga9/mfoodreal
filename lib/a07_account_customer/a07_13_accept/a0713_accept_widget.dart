@@ -420,6 +420,8 @@ class _A0713AcceptWidgetState extends State<A0713AcceptWidget> {
                                                 CustomerType.Test
                                             ? 'CustomerTest'
                                             : 'Customer')
+                                        .where('รหัสพนักงานขาย',
+                                            isEqualTo: userData!['EmployeeID'])
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==

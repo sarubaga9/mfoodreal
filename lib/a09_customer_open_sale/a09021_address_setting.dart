@@ -82,6 +82,10 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
   DateTime? dateNow;
 
   String? dateUpdate = '';
+
+  Map<String, dynamic>? customerDataWithmfoodtoken;
+  Map<String, dynamic>? urlApi;
+
   @override
   void initState() {
     // _model = createModel(context, () => A0904ProductOrderModel());
@@ -96,6 +100,51 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
       });
       print('123');
       print(widget.orderDataMap);
+
+      //==============================================================
+      // ดึงข้อมูลจาก collection 'mfoodtoken'
+      DocumentSnapshot customerDocmfoodtoken = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'mfoodtoken'
+              : 'mfoodtoken')
+          .doc('EDpTMkR8myW4zhdUALCP')
+          .get();
+
+      print('customerid');
+      print(widget.customerID);
+
+      if (customerDocmfoodtoken.exists) {
+        customerDataWithmfoodtoken =
+            customerDocmfoodtoken.data() as Map<String, dynamic>?;
+      }
+
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+      print(customerDataWithmfoodtoken!['token_key']);
+
+      //==============================================================
+
+      // ดึงข้อมูลจาก collection 'mfoodtoken'
+      DocumentSnapshot urlApiWithPort = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'AppSettingUrl'
+              : 'AppSettingUrl')
+          .doc(AppSettings.customerType == CustomerType.Test ? '7104' : '7105')
+          .get();
+
+      if (urlApiWithPort.exists) {
+        urlApi = urlApiWithPort.data() as Map<String, dynamic>?;
+      }
+
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+      print(urlApi!['Url']);
+
+      //==============================================================
 
       if (!widget.orderDataMap!.isNotEmpty) {
         print('10');
@@ -148,7 +197,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
       // for (var element in waySendListData!) {
       //   if (element!['IS_ACTIVE'] == true) {
       //     // waySendList.add(element['VHC_DESC']);
-      //     waySendList.add('${element['VHC_CODE']} ${element['VHC_DESC']}');
+      //     waySendList.add('${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
       //   }
       // }
 
@@ -329,9 +378,11 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                   if (element2 == postalCode) {
                     // print(element['วันที่จัดส่ง']);
 
+                    // ประเภทส่ง
+
                     if (element['วันที่จัดส่ง']['ส่งทุกวัน']) {
-                      waySendList
-                          .add('${element['VHC_CODE']} ${element['VHC_DESC']}');
+                      waySendList.add(
+                          '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                       // print('ส่งทุกวัน');
                     } else {
                       // print('ส่งไม่ทุกวัน');
@@ -342,39 +393,39 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
 
                         if (element['วันที่จัดส่ง']['ส่งทุกวันอาทิตย์']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       } else if (dayName == 'Monday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันจันทร์']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       } else if (dayName == 'Tuesday') {
                         // print('เข้าลูป Tuesday');
                         // print(element['วันที่จัดส่ง']['ส่งทุกวันอังคาร']);
                         if (element['วันที่จัดส่ง']['ส่งทุกวันอังคาร']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       } else if (dayName == 'Wednesday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันพุธ']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       } else if (dayName == 'Thursday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันพฤหัสบดี']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       } else if (dayName == 'Friday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันศุกร์']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       } else if (dayName == 'Saturday') {
                         if (element['วันที่จัดส่ง']['ส่งทุกวันเสาร์']) {
                           waySendList.add(
-                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                         }
                       }
                     }
@@ -1074,7 +1125,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                         // print(element2);
                                         if (element2 == postalCode) {
                                           waySendList.add(
-                                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                         }
                                       }
                                     }
@@ -1191,7 +1242,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                         if (element['วันที่จัดส่ง']
                                             ['ส่งทุกวัน']) {
                                           waySendList.add(
-                                              '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                              '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                           // print('ส่งทุกวัน');
                                         } else {
                                           // print('ส่งไม่ทุกวัน');
@@ -1204,13 +1255,13 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันอาทิตย์']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           } else if (dayName == 'Monday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันจันทร์']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           } else if (dayName == 'Tuesday') {
                                             // print('เข้าลูป Tuesday');
@@ -1219,31 +1270,31 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันอังคาร']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           } else if (dayName == 'Wednesday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันพุธ']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           } else if (dayName == 'Thursday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันพฤหัสบดี']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           } else if (dayName == 'Friday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันศุกร์']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           } else if (dayName == 'Saturday') {
                                             if (element['วันที่จัดส่ง']
                                                 ['ส่งทุกวันเสาร์']) {
                                               waySendList.add(
-                                                  '${element['VHC_CODE']} ${element['VHC_DESC']}');
+                                                  '${element['VHC_CODE']} ${element['VHC_DESC']} ${element['ประเภทส่ง']}');
                                             }
                                           }
                                         }
@@ -1639,7 +1690,7 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                     } else {
                                       foundMap = waySendListData?.firstWhere(
                                         (Map<String, dynamic>? map) =>
-                                            '${map?['VHC_CODE']} ${map?['VHC_DESC']}'
+                                            '${map?['VHC_CODE']} ${map?['VHC_DESC']} ${map?['ประเภทส่ง']}'
                                             // map?['VHC_DESC']
                                             ==
                                             waySendDropdownController.text,
@@ -1669,6 +1720,12 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                                 'ตัวเลือก'
                                             ? ''
                                             : foundMap!['วันที่จัดส่ง'];
+
+                                    orderLast['ประเภทส่ง'] =
+                                        waySendDropdownController.text ==
+                                                'ตัวเลือก'
+                                            ? ''
+                                            : foundMap!['ประเภทส่ง'];
 
                                     // print(orderLast['สายส่ง']);
                                     // print(orderLast['สายส่งโค้ด']);
@@ -1734,12 +1791,21 @@ class _A09021AddressSettingState extends State<A09021AddressSetting> {
                                         HttpsCallable callable2 =
                                             FirebaseFunctions.instance
                                                 .httpsCallable('getApiMfood');
-                                        var params2 = <String, dynamic>{
-                                          "url":
-                                              "http://mobile.mfood.co.th:7105/MBServices.asmx?op=Sell_Price",
-                                          "xml":
-                                              '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
-                                        };
+                                        var params2 =
+                                            AppSettings.customerType ==
+                                                    CustomerType.Test
+                                                ? <String, dynamic>{
+                                                    "url":
+                                                        "${urlApi!['Url']}:7104/MBServices.asmx?op=Sell_Price",
+                                                    "xml":
+                                                        '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
+                                                  }
+                                                : <String, dynamic>{
+                                                    "url":
+                                                        "${urlApi!['Url']}:7105/MBServices.asmx?op=Sell_Price",
+                                                    "xml":
+                                                        '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
+                                                  };
 
                                         print(params2['xml']);
                                         print(
