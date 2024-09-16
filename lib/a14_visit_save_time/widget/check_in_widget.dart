@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:m_food/a07_account_customer/a07_02_open_account/a07021_map_widget.dart';
+import 'package:m_food/a14_visit_save_time/widget/map_checkin.dart';
 import 'package:m_food/components/form_general_user_widget.dart';
 import 'package:m_food/main.dart';
 import 'package:m_food/widgets/custom_text.dart';
@@ -62,6 +64,8 @@ class _CheckInWidgetState extends State<CheckInWidget> {
   //======================================================================
   bool checkDistance = false;
   //======================================================================
+  String? lat;
+  String? lot;
 
   @override
   void initState() {
@@ -353,6 +357,21 @@ class _CheckInWidgetState extends State<CheckInWidget> {
         });
       }
 
+      print(lat);
+      print(lot);
+
+      // return;
+
+      await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'เข้าเยี่ยมลูกค้าTest'
+              : 'เข้าเยี่ยมลูกค้า')
+          .doc(widget.entry!.value['VisitID'])
+          .update({
+        'ละติจูด': lat,
+        'ลองติจูด': lot,
+      });
+
       //================================= image ที่อยู่ ======================================
 
       List<String> listUrl = [];
@@ -389,8 +408,8 @@ class _CheckInWidgetState extends State<CheckInWidget> {
 
       await FirebaseFirestore.instance
           .collection(AppSettings.customerType == CustomerType.Test
-                        ? 'เข้าเยี่ยมลูกค้าTest'
-                        : 'เข้าเยี่ยมลูกค้า')
+              ? 'เข้าเยี่ยมลูกค้าTest'
+              : 'เข้าเยี่ยมลูกค้า')
           // .collection('เข้าเยี่ยมลูกค้า')
           .doc(widget.entry!.value['VisitID'])
           .update({
@@ -541,39 +560,182 @@ class _CheckInWidgetState extends State<CheckInWidget> {
                             onTap: () async {
                               if (checkDistance) {
                               } else {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          CircularProgressIndicator(),
-                                          SizedBox(height: 16),
-                                          Text("กำลังประมวลผล..."),
-                                        ],
+                                print('-------------------------------------');
+                                print(widget.entry!.value['ละติจูด']);
+                                print(widget.entry!.value['ลองติจูด']);
+                                print('-------------------------------------');
+
+                                if (widget.entry!.value['ละติจูด'] == '' ||
+                                    widget.entry!.value['ลองติจูด'] == '') {
+                                  LocationPermission permission =
+                                      await Geolocator.checkPermission();
+                                  if (permission == LocationPermission.denied) {
+                                    permission =
+                                        await Geolocator.requestPermission();
+                                    if (permission ==
+                                        LocationPermission.denied) {
+                                      // Permissions are denied, next time you could try
+                                      // requesting permissions again (this is also where
+                                      // Android's shouldShowRequestPermissionRationale
+                                      // returned true. According to Android guidelines
+                                      // your App should show an explanatory UI now.
+                                      print('Location permissions are denied');
+                                      return;
+                                    }
+                                  }
+
+                                  if (permission ==
+                                      LocationPermission.deniedForever) {
+                                    // Permissions are denied forever, handle appropriately.
+                                    print(
+                                        'Location permissions are permanently denied, we cannot request permissions.');
+                                    return;
+                                  }
+
+                                  Position position =
+                                      await Geolocator.getCurrentPosition(
+                                          desiredAccuracy:
+                                              LocationAccuracy.best);
+                                  double userLat = position.latitude;
+                                  double userLong = position.longitude;
+
+                                  // เปิดหน้า B และรอรับ Map ที่ส่งกลับมา
+
+                                  // // if (mounted) {
+                                  // Map<String, dynamic>? result =
+                                  //     await Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => MapCheckIn(
+                                  //         latitude: '', longtitude: ''),
+                                  //   ),
+                                  // ).then((e) async {
+                                  //   // อัปเดต State ด้วยค่าที่ส่งกลับมา
+                                  //   print(' Nav back');
+
+                                  //   // .collection('เข้าเยี่ยมลูกค้า')
+                                  // });
+                                  // // }
+
+                                  // First Screen: Navigating to MapCheckIn and waiting for the result
+                                  Map<String, dynamic>? result =
+                                      await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MapCheckIn(
+                                        latitude:
+                                            '', // Pass the correct initial latitude
+                                        longtitude:
+                                            '', // Pass the correct initial longitude
                                       ),
-                                    );
-                                  },
-                                );
-                                await checkDistanceGPS(
-                                    double.parse(widget
-                                                    .entry!.value['ละติจูด'] ==
-                                                null ||
-                                            widget.entry!.value['ละติจูด'] == ''
-                                        ? '0'
-                                        : widget.entry!.value['ละติจูด']),
-                                    double.parse(widget
-                                                    .entry!.value['ลองติจูด'] ==
-                                                null ||
-                                            widget.entry!.value['ลองติจูด'] ==
-                                                ''
-                                        ? '0'
-                                        : widget.entry!.value['ลองติจูด']),
-                                    context);
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
+                                    ),
+                                  );
+
+// Check if the result is not null and update state or use the values
+                                  if (result != null) {
+                                    setState(() {
+                                      final latitude =
+                                          result['latitudeToBack'] ?? '';
+                                      final longitude =
+                                          result['longitudeToBack'] ?? '';
+                                      // Use these values as needed in your app
+                                    });
+                                  } else {
+                                    print('No data returned from MapCheckIn');
+                                  }
+
+                                  // await Future.delayed(Duration(seconds: 3));
+
+                                  print(result!['latitudeToBack']);
+                                  print(result['longitudeToBack']);
+
+                                  lat = result!['latitudeToBack'];
+                                  lot = result!['longitudeToBack'];
+
+                                  _kGooglePlex = CameraPosition(
+                                    target: google_maps.LatLng(
+                                        double.parse(result!['latitudeToBack']),
+                                        double.parse(
+                                            result['longitudeToBack'])),
+                                    zoom: 15,
+                                  );
+                                  markers.clear();
+                                  markers.add(
+                                    Marker(
+                                      markerId: MarkerId('map'),
+                                      position: google_maps.LatLng(
+                                          double.parse(
+                                              result!['latitudeToBack']),
+                                          double.parse(result[
+                                              'longitudeToBack'])), // ตำแหน่ง
+                                      // infoWindow: InfoWindow(
+                                      //   title: 'จุดที่ ${i + 1}', // ชื่อของปักหมุด
+                                      //   snippet: resultList[i]['Latitude'],
+                                      //   onTap: () async {
+                                      //     await mapDialog(resultList, resultList[i]['ID']).whenComplete(() {
+                                      //       print('6666');
+                                      //       _mapKey = GlobalKey();
+                                      //       print('7777');
+                                      //       if (mounted) {
+                                      //         setState(() {});
+                                      //       }
+                                      //       print('88888');
+                                      //     });
+                                      //     //     .whenComplete(() {
+                                      //     //   setState(
+                                      //     //     () {
+                                      //     //       loadMap = true;
+                                      //     //     },
+                                      //     //   );
+
+                                      //     //   return;
+
+                                      //     // });
+                                      //   }, // คำอธิบายของปักหมุด
+                                      // ),
+                                    ),
+                                  );
+
+                                  _mapKey = GlobalKey();
+                                  checkDistance = true;
+
+                                  setState(() {});
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return const AlertDialog(
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CircularProgressIndicator(),
+                                            SizedBox(height: 16),
+                                            Text("กำลังประมวลผล..."),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  await checkDistanceGPS(
+                                      double.parse(widget.entry!
+                                                      .value['ละติจูด'] ==
+                                                  null ||
+                                              widget.entry!.value['ละติจูด'] ==
+                                                  ''
+                                          ? '0'
+                                          : widget.entry!.value['ละติจูด']),
+                                      double.parse(widget.entry!
+                                                      .value['ลองติจูด'] ==
+                                                  null ||
+                                              widget.entry!.value['ลองติจูด'] ==
+                                                  ''
+                                          ? '0'
+                                          : widget.entry!.value['ลองติจูด']),
+                                      context);
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                }
                               }
                             },
                             child: Column(
@@ -749,6 +911,7 @@ class _CheckInWidgetState extends State<CheckInWidget> {
 
           //     return;
           // } else
+
           if (image!.length == 0) {
             Fluttertoast.showToast(
               msg: "กรุณาเพิ่มรูปภาพอย่างน้อง 1 รูปค่ะ",

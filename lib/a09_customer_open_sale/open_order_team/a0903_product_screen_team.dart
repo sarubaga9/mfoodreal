@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:m_food/a09_customer_open_sale/a090301_product_detail.dart';
+import 'package:m_food/a09_customer_open_sale/a090503_product_detail_edit.dart';
 import 'package:m_food/a09_customer_open_sale/a0904_product_order_detail.dart';
 import 'package:m_food/a09_customer_open_sale/open_order_team/a090301_product_detail_team.dart';
 import 'package:m_food/a09_customer_open_sale/open_order_team/a0904_product_order_detail_team.dart';
@@ -106,7 +106,6 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
   Map<String, dynamic>? customerDataWithmfoodtoken;
   Map<String, dynamic>? urlApi;
 
-
   @override
   void initState() {
     loadData();
@@ -177,7 +176,7 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
     print(customerDataWithmfoodtoken!['token_key']);
     print(customerDataWithmfoodtoken!['token_key']);
 
-       //==============================================================
+    //==============================================================
 
     // ดึงข้อมูลจาก collection 'mfoodtoken'
     DocumentSnapshot urlApiWithPort = await FirebaseFirestore.instance
@@ -261,14 +260,12 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
 
         var params2 = AppSettings.customerType == CustomerType.Test
             ? <String, dynamic>{
-                "url":
-                    "${urlApi!['Url']}:7104/MBServices.asmx?op=Sell_Price",
+                "url": "${urlApi!['Url']}:7104/MBServices.asmx?op=Sell_Price",
                 "xml":
                     '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
               }
             : <String, dynamic>{
-                "url":
-                    "${urlApi!['Url']}:7105/MBServices.asmx?op=Sell_Price",
+                "url": "${urlApi!['Url']}:7105/MBServices.asmx?op=Sell_Price",
                 "xml":
                     '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
               };
@@ -842,27 +839,38 @@ class _A0903ProductScreenTeamState extends State<A0903ProductScreenTeam> {
       List<Map<String, dynamic>> checkProduct = List.from(resultList);
       checkProduct.removeWhere((map) {
         bool returnType = true;
-        for (int i = 0; i < userData![text].length; i++) {
-          if (text == 'สินค้าที่เคยสั่ง') {
-            if (userData![text][i] == map['PRODUCT_ID']) {
-              if (text == 'สินค้าที่เคยสั่ง') {
-                // print(userData![text]);
+        // for (int i = 0; i < userData![text].length; i++) {
+        //   if (text == 'สินค้าที่เคยสั่ง') {
+        //     if (userData![text][i] == map['PRODUCT_ID']) {
+        //       if (text == 'สินค้าที่เคยสั่ง') {
+        //         // print(userData![text]);
 
-                // print(listHistoryStringDate);
-                bool result =
-                    isMoreThanThreeMonthsAgo(listHistoryStringDate[i]!);
-                if (result) {
-                  print('เกิน 3 เดือน');
-                  // เกิน 3 เดือน
-                } else {
-                  print('ไม่เกิน 3 เดือน');
+        //         // print(listHistoryStringDate);
+        //         bool result =
+        //             isMoreThanThreeMonthsAgo(listHistoryStringDate[i]!);
+        //         if (result) {
+        //           print('เกิน 3 เดือน');
+        //           // เกิน 3 เดือน
+        //         } else {
+        //           print('ไม่เกิน 3 เดือน');
 
-                  // ไม่เกิน 3 เดือน
-                  returnType = false;
-                }
-              } else {
-                returnType = false;
-              }
+        //           // ไม่เกิน 3 เดือน
+        //           returnType = false;
+        //         }
+        //       } else {
+        //         returnType = false;
+        //       }
+        //     }
+        //   }
+        // }
+
+        if (text == 'สินค้าที่เคยสั่ง') {
+          if (customerDataFetch![text] == null) {
+            customerDataFetch![text] = [];
+          }
+          for (int i = 0; i < customerDataFetch![text].length; i++) {
+            if (customerDataFetch![text][i] == map['PRODUCT_ID']) {
+              returnType = false;
             }
           }
         }

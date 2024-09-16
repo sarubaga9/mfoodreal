@@ -34,6 +34,9 @@ class _A2403CategoryState extends State<A2403Category> {
 
   List<Map<String, dynamic>?>? orderList = [];
 
+  List<String?>? dropdownAlLCategory = ['ทั้งหมด'];
+
+
   String? selectedValue = 'ทั้งหมด';
 
   void loadData() async {
@@ -67,6 +70,23 @@ class _A2403CategoryState extends State<A2403Category> {
     );
 
     print(jobList.length);
+
+    await FirebaseFirestore.instance
+        .collection(
+            AppSettings.customerType == CustomerType.Test ? 'ProductCategory' : 'ProductCategory')
+        .get()
+        .then(
+      (QuerySnapshot<Map<String, dynamic>>? data) async {
+        if (data != null && data.docs.isNotEmpty) {
+          print(data.docs.length);
+          for (int index = 0; index < data.docs.length; index++) {
+            final Map<String, dynamic> docData =
+                data.docs[index].data() as Map<String, dynamic>;
+            dropdownAlLCategory!.add(docData['Name']);
+          }
+        }
+      },
+    );
 
     for (int i = 0; i < jobList!.length; i++) {
       // แปลงสตริงเป็นจำนวนเต็ม
@@ -528,17 +548,13 @@ class _A2403CategoryState extends State<A2403Category> {
                                                         color: Colors.black,
                                                       ),
                                                 ),
-                                                items: [
-                                                  'ทั้งหมด',
-                                                  'สินค้าเคลื่อนไหวเร็ว (Fast Moving)',
-                                                  'สินค้าที่โรงงานผลิต​ (PCF)',
-                                                  'สินค้าที่ต้องสั่งจองล่วงหน้า (Pre-Order)'
-                                                ].map((item) {
+                                                items: dropdownAlLCategory!
+                                                    .map((item) {
                                                   return DropdownMenuItem<
                                                       String>(
                                                     value: item,
                                                     child: Text(
-                                                      item,
+                                                      item!,
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .titleMedium

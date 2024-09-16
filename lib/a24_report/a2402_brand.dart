@@ -31,6 +31,7 @@ class _A2402BrandState extends State<A2402Brand> {
   bool isLoading = false;
   List<Map<String, dynamic>> jobList = [];
   List<Map<String, dynamic>> jobListData = [];
+  List<String?>? dropdownAllBrand = ['ทั้งหมด'];
 
   List<Map<String, dynamic>?>? orderList = [];
 
@@ -61,6 +62,24 @@ class _A2402BrandState extends State<A2402Brand> {
                 data.docs[index].data() as Map<String, dynamic>;
             jobListData.add(docData);
             jobList.add(docData);
+          }
+        }
+      },
+    );
+
+    await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'Brand'
+            : 'Brand')
+        .get()
+        .then(
+      (QuerySnapshot<Map<String, dynamic>>? data) async {
+        if (data != null && data.docs.isNotEmpty) {
+          print(data.docs.length);
+          for (int index = 0; index < data.docs.length; index++) {
+            final Map<String, dynamic> docData =
+                data.docs[index].data() as Map<String, dynamic>;
+            dropdownAllBrand!.add(docData['Name']);
           }
         }
       },
@@ -528,17 +547,12 @@ class _A2402BrandState extends State<A2402Brand> {
                                                         color: Colors.black,
                                                       ),
                                                 ),
-                                                items: [
-                                                  'ทั้งหมด',
-                                                  'ส.ขอนแก่น',
-                                                  'หมูดี',
-                                                  'บ้านไผ่'
-                                                ].map((item) {
+                                                items: dropdownAllBrand!.map((item) {
                                                   return DropdownMenuItem<
                                                       String>(
                                                     value: item,
                                                     child: Text(
-                                                      item,
+                                                      item!,
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .titleMedium
@@ -572,8 +586,7 @@ class _A2402BrandState extends State<A2402Brand> {
                                                         value as String?;
                                                     jobList.removeWhere(
                                                         (element) =>
-                                                            element[
-                                                                'ยี่ห้อ'] !=
+                                                            element['ยี่ห้อ'] !=
                                                             selectedValue);
                                                   }
 

@@ -11,6 +11,7 @@ import 'package:m_food/a09_customer_open_sale/a09021_address_setting.dart';
 import 'package:m_food/a09_customer_open_sale/a0902_customer_history_list.dart';
 import 'package:m_food/a09_customer_open_sale/a0905_success_order_product.dart';
 import 'package:m_food/a09_customer_open_sale/open_order_team/a09021_address_setting_team.dart';
+import 'package:m_food/a09_customer_open_sale/open_order_team/a090501_product_screen_edit_team.dart';
 import 'package:m_food/a09_customer_open_sale/widget/a0904_product_order_model.dart';
 import 'package:m_food/a20_add_new_customer_first/widget/form_open_customer_edit.dart';
 import 'package:m_food/controller/product_controller.dart';
@@ -18,6 +19,7 @@ import 'package:m_food/controller/product_group_controller.dart';
 import 'package:m_food/main.dart';
 import 'package:m_food/widgets/circular_loading.dart';
 import 'package:m_food/widgets/custom_text.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:xml2json/xml2json.dart';
 
 import '/flutter_flow/flutter_flow_count_controller.dart';
@@ -96,6 +98,9 @@ class _A09020ProductHistoryDetailTeamState
   List<Map<String, dynamic>> newOrder = [];
 
   bool statusOrderPass = true;
+  bool showButtonEdit = false;
+  bool showButtonEditDayAfter = false;
+  bool showButtonCancleOrder = false;
 
   String orderDateBefore = '';
   String orderDateBeforeDay = '';
@@ -113,6 +118,34 @@ class _A09020ProductHistoryDetailTeamState
     // _model = createModel(context, () => A0904ProductOrderModel());
     loadData();
     super.initState();
+  }
+
+  List<dynamic> deepCopyList(List<dynamic> original) {
+    List<dynamic> copy = [];
+    for (var value in original) {
+      if (value is Map<String, dynamic>) {
+        copy.add(deepCopyMap(value));
+      } else if (value is List) {
+        copy.add(deepCopyList(value));
+      } else {
+        copy.add(value);
+      }
+    }
+    return copy;
+  }
+
+  Map<String, dynamic> deepCopyMap(Map<String, dynamic> original) {
+    Map<String, dynamic> copy = {};
+    original.forEach((key, value) {
+      if (value is Map<String, dynamic>) {
+        copy[key] = deepCopyMap(value);
+      } else if (value is List) {
+        copy[key] = deepCopyList(value);
+      } else {
+        copy[key] = value;
+      }
+    });
+    return copy;
   }
 
   String convertFirebaseTimestampToDateString(Timestamp timestamp) {
@@ -219,6 +252,145 @@ class _A09020ProductHistoryDetailTeamState
       }
 
       orderList = widget.orderDataMap!;
+
+      //==============================================================
+      CollectionReference orderColection = FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders');
+
+      QuerySnapshot orderSubCollections = await orderColection
+          .where('OrdersDateID', isEqualTo: orderList['OrdersDateID'])
+          .get();
+
+      String? saleOrderIdRef;
+      String? saleOrderIdINVOICENO;
+      for (var doc in orderSubCollections.docs) {
+        // ตรวจสอบหลายฟิลด์
+        var data = doc.data() as Map<String, dynamic>;
+
+        saleOrderIdRef = data.containsKey('SALE_ORDER_ID_REF') ? 'Y' : 'N';
+        saleOrderIdINVOICENO = data.containsKey('INVOICE_NO') ? 'Y' : 'N';
+        break;
+      }
+      if (orderSubCollections.docs.isNotEmpty) {
+        print('orderSubCollections.docs.isNotEmpty');
+
+        print(orderList['SALE_ORDER_ID_REF']);
+        if (saleOrderIdRef == 'Y') {
+          orderList['SALE_ORDER_ID_REF'] =
+              orderSubCollections.docs.first['SALE_ORDER_ID_REF'];
+
+          orderList['SALE_ORDER_ID'] =
+              orderSubCollections.docs.first['SALE_ORDER_ID'];
+        } else {
+          orderList['SALE_ORDER_ID_REF'] = null;
+        }
+
+        print(orderList['INVOICE_NO']);
+        if (saleOrderIdINVOICENO == 'Y') {
+          orderList['INVOICE_NO'] =
+              orderSubCollections.docs.first['INVOICE_NO'];
+        } else {
+          orderList['INVOICE_NO'] = null;
+        }
+
+        if (orderList['SALE_ORDER_ID_REF'] == null) {
+          if (orderSubCollections.docs.first['SectionID2'] ==
+              '20240309000000') {
+            orderList['SectionID2'] = 'อยู่ระหว่างออกบิลขาย';
+            orderList['SALE_ORDER_ID_REF'] = null;
+          } else if (orderSubCollections.docs.first['SectionID2'] ==
+              '20240309000002') {
+            orderList['SectionID2'] = 'บุ๊กกิ้งออเดอร์';
+            orderList['SALE_ORDER_ID_REF'] = null;
+            orderList['INVOICE_NO'] = saleOrderIdINVOICENO == 'Y'
+                ? orderSubCollections.docs.first['INVOICE_NO']
+                : null;
+
+            orderList['docId'] = orderSubCollections.docs.first['docId'];
+          }
+          print(orderList['SectionID2']);
+          print(orderList['SALE_ORDER_ID_REF']);
+          print(orderList['INVOICE_NO']);
+        } else {
+          if (orderSubCollections.docs.first['SectionID2'] ==
+              '20240309000000') {
+            orderList['SectionID2'] = 'อยู่ระหว่างออกบิลขาย';
+            orderList['SALE_ORDER_ID_REF'] =
+                orderSubCollections.docs.first['SALE_ORDER_ID_REF'];
+          } else if (orderSubCollections.docs.first['SectionID2'] ==
+              '20240309000002') {
+            orderList['SectionID2'] = 'บุ๊กกิ้งออเดอร์';
+            orderList['SALE_ORDER_ID_REF'] =
+                orderSubCollections.docs.first['SALE_ORDER_ID_REF'];
+            orderList['INVOICE_NO'] = saleOrderIdINVOICENO == 'Y'
+                ? orderSubCollections.docs.first['INVOICE_NO']
+                : null;
+
+            orderList['docId'] = orderSubCollections.docs.first['docId'];
+          }
+          print(orderList['SectionID2']);
+          print(orderList['SALE_ORDER_ID_REF']);
+          print(orderList['INVOICE_NO']);
+        }
+      } else {
+        print('orderSubCollections.docs.isEmpty');
+      }
+      //==============================================================
+      print('SectionID2 && SALE_ORDER_ID_REF');
+      print(orderList['SectionID2']);
+      print(orderList['SALE_ORDER_ID_REF']);
+      print(orderList['INVOICE_NO']);
+      if (orderList['SectionID2'] == 'บุ๊กกิ้งออเดอร์') {
+        showButtonEdit = true;
+      } else if (orderList['SectionID2'] == 'อยู่ระหว่างออกบิลขาย' &&
+          orderList['SALE_ORDER_ID_REF'] != null) {
+        showButtonEdit = true;
+      }
+      String timestampString = orderList['วันเวลาจัดส่ง'].toDate().toString();
+      DateTime dateTimeCheck = DateTime(
+        DateTime.parse(timestampString).year,
+        DateTime.parse(timestampString).month,
+        DateTime.parse(timestampString).day,
+      );
+
+      DateTime now = DateTime.now();
+      DateTime nowDate = DateTime(now.year, now.month, now.day);
+
+      // เช็คสองเงื่อนไข: วันเดียวกันหรือ now น้อยกว่า
+      showButtonEditDayAfter = nowDate.isBefore(dateTimeCheck) ||
+          nowDate.isAtSameMomentAs(dateTimeCheck);
+
+      // แสดงผลลัพธ์
+      print('Show button: $showButtonEditDayAfter');
+
+      if (orderList['INVOICE_NO'] == null) {
+        showButtonCancleOrder = true;
+      }
+
+      //==============================================================
+
+      //==============================================================
+
+      // String timestampString = orderList['วันเวลาจัดส่ง'].toDate().toString();
+      // DateTime dateTimeCheck = DateTime(
+      //   DateTime.parse(timestampString).year,
+      //   DateTime.parse(timestampString).month,
+      //   DateTime.parse(timestampString).day,
+      // );
+
+      // DateTime now = DateTime.now();
+      // DateTime nowDate = DateTime(now.year, now.month, now.day);
+
+      // // เช็คสองเงื่อนไข: วันเดียวกันหรือ now น้อยกว่า
+      // showButtonEditDayAfter = nowDate.isBefore(dateTimeCheck) ||
+      //     nowDate.isAtSameMomentAs(dateTimeCheck);
+
+      // // แสดงผลลัพธ์
+      // print('Show button: $showButtonEditDayAfter');
+
+      //==============================================================
 
       List<String> imageList = [];
 
@@ -1674,7 +1846,7 @@ class _A09020ProductHistoryDetailTeamState
                                                                                 MainAxisAlignment.center,
                                                                             children: [
                                                                               Text(
-                                                                                orderList['ProductList'][i]['ยูนิต'],
+                                                                                orderList['ProductList'][i]['ยูนิต'].toString(),
                                                                                 // 'หน่วย',
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium,
                                                                               ),
@@ -1742,7 +1914,7 @@ class _A09020ProductHistoryDetailTeamState
                                                                         .max,
                                                                 children: [
                                                                   Text(
-                                                                    'ราคารวม ${priceSumProduct(double.parse(orderList['ProductList'][i]['ราคา']), productCount[i]).toString()} บาท ',
+                                                                    'ราคารวม ${priceSumProduct(double.parse(orderList['ProductList'][i]['ราคา'].toString()), productCount[i]).toString()} บาท ',
 
                                                                     // 'ราคารวม  ${(orderList['ProductList'][i]['ราคา'] * productCount[i])} บาท',
                                                                     style: FlutterFlowTheme.of(
@@ -1835,7 +2007,7 @@ class _A09020ProductHistoryDetailTeamState
                                                                                 MainAxisSize.max,
                                                                             children: [
                                                                               Text(
-                                                                                'จำนวน ${orderList['ProductList'][i]['จำนวนของแถม']} ${orderList['ProductList'][i]['หน่วยของแถม']}',
+                                                                                'จำนวน ${orderList['ProductList'][i]['จำนวนของแถม'].toString()} ${orderList['ProductList'][i]['หน่วยของแถม']}',
 
                                                                                 // 'ราคารวม  ${(orderList['ProductList'][i]['ราคา'] * productCount[i])} บาท',
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -2661,6 +2833,708 @@ class _A09020ProductHistoryDetailTeamState
                                 ),
                               ),
 
+                        !showButtonEdit
+                            ? const SizedBox(
+                                height: 50,
+                              )
+                            : const SizedBox(
+                                height: 50,
+                              ),
+                        !showButtonEdit
+                            ? const SizedBox(
+                                height: 0,
+                              )
+                            : Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 10.0, 0.0, 0.0),
+                                child: !showButtonEditDayAfter
+                                    ? FFButtonWidget(
+                                        onPressed: () async {},
+                                        text:
+                                            'วันจัดส่งน้อยกว่าวันปัจจุบัน ไม่สามารถแก้ไขออเดอร์ได้ค่ะ',
+                                        options: FFButtonOptions(
+                                          width: double.infinity,
+                                          height: 40.0,
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                          iconPadding:
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: Colors.red.shade900,
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'Kanit',
+                                                    color: Colors.white,
+                                                    fontSize: 14.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                          elevation: 3.0,
+                                          borderSide: const BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      )
+                                    : FFButtonWidget(
+                                        onPressed: () async {
+                                          bool checkLastStatus = false;
+                                          //==============================================================
+                                          CollectionReference orderColection =
+                                              FirebaseFirestore.instance
+                                                  .collection(AppSettings
+                                                              .customerType ==
+                                                          CustomerType.Test
+                                                      ? 'OrdersTest'
+                                                      : 'Orders');
+
+                                          QuerySnapshot orderSubCollections =
+                                              await orderColection
+                                                  .where('OrdersDateID',
+                                                      isEqualTo: orderList[
+                                                          'OrdersDateID'])
+                                                  .get();
+
+                                          if (orderSubCollections
+                                              .docs.isNotEmpty) {
+                                            if (orderSubCollections
+                                                    .docs.first['SectionID2'] ==
+                                                '20240309000000') {
+                                              checkLastStatus = true;
+                                            } else if (orderSubCollections.docs
+                                                        .first['SectionID2'] ==
+                                                    '20240309000002'
+                                                //     &&
+                                                // orderSubCollections.docs.first[
+                                                //         'SALE_ORDER_ID_REF'] !=
+                                                //     null
+                                                ) {
+                                              checkLastStatus = true;
+                                            }
+                                          }
+                                          //==============================================================
+
+                                          if (checkLastStatus) {
+                                            Map<String, dynamic> data = {};
+
+                                            //==================== Step 1 ==============================
+                                            await FirebaseFirestore.instance
+                                                .collection(AppSettings
+                                                            .customerType ==
+                                                        CustomerType.Test
+                                                    ? 'ระยะเวลาแก้ไขออเดอร์Test'
+                                                    : 'ระยะเวลาแก้ไขออเดอร์')
+                                                // .collection('ระยะเวลารับคำสั่งขายTest')
+                                                .doc('1')
+                                                .get()
+                                                .then((DocumentSnapshot
+                                                    documentSnapshot) {
+                                              if (documentSnapshot.exists) {
+                                                // ดึงข้อมูลจากเอกสาร
+                                                data = documentSnapshot.data()
+                                                    as Map<String, dynamic>;
+                                              } else {
+                                                print(
+                                                    'Document does not exist');
+                                              }
+                                            }).catchError((error) {
+                                              print(
+                                                  "Failed to fetch document: $error");
+                                              return;
+                                            });
+                                            // print(data['IS_ACTIVE']);
+                                            // print(data['EndTime']);
+                                            //==================== จบ Step 1 ==============================
+                                            //==================== Step 2 ==============================
+                                            DateTime now = DateTime.now();
+                                            // แปลงสตริงเป็น DateTime
+                                            DateFormat dateFormat =
+                                                DateFormat("HH:mm");
+                                            DateTime inputTime =
+                                                dateFormat.parse(
+                                                    data['EndTime'].toString());
+                                            // สร้าง DateTime ใหม่ที่มีวันที่เดียวกับเวลาปัจจุบัน แต่ใช้เวลาที่ได้จากสตริง
+                                            DateTime inputDateTime = DateTime(
+                                              now.year,
+                                              now.month,
+                                              now.day,
+                                              inputTime.hour,
+                                              inputTime.minute,
+                                            );
+
+                                            int day = now.year;
+                                            int month = now.month;
+                                            int year = now.day;
+                                            DateTime newDate = DateTime(
+                                                year,
+                                                month,
+                                                day,
+                                                now.hour,
+                                                now.minute);
+
+                                            print(inputDateTime.toString());
+                                            print(newDate.toString());
+                                            if (data['IS_ACTIVE'] == true) {
+                                              // เปรียบเทียบเวลาปัจจุบันกับเวลาจากสตริง
+                                              // if (newDate.year == inputDateTime.year &&
+                                              //     newDate.month ==
+                                              //         inputDateTime.month &&
+                                              //     newDate.day == inputDateTime.day) {
+                                              // if (now.isAfter(inputDateTime)) {
+                                              if ((newDate.hour >
+                                                      inputDateTime.hour ||
+                                                  (newDate.hour ==
+                                                          inputDateTime.hour &&
+                                                      newDate.minute >
+                                                          inputDateTime
+                                                              .minute))) {
+                                                print(
+                                                    "เวลาปัจจุบันเกินจาก 16:00 แล้ว และเป็นวันเดียวกัน");
+
+                                                if (mounted) {
+                                                  await QuickAlert.show(
+                                                      context: context,
+                                                      type:
+                                                          QuickAlertType.error,
+                                                      title:
+                                                          'คุณทำการแก้ไขออเดอร์เลยเวลาที่กำหนด',
+                                                      text:
+                                                          'เวลาการแก้ไขออเดอร์ ต้องไมเ่กิน ${data['EndTime']} น.',
+                                                      confirmBtnText: 'ตกลง');
+                                                }
+
+                                                return;
+                                              }
+                                              // }
+                                            }
+                                            print(
+                                                "เวลาปัจจุบันยังไม่เกิน 16:00");
+
+                                            //===============================================================
+
+                                            List<Map<String, dynamic>>?
+                                                nonNullableList = [];
+
+                                            for (int i = 0;
+                                                i <
+                                                    orderList['ProductList']
+                                                        .length;
+                                                i++) {
+                                              nonNullableList!.add(
+                                                  orderList['ProductList'][i]);
+                                            }
+
+                                            for (int i = 0;
+                                                i < nonNullableList!.length;
+                                                i++) {
+                                              print(nonNullableList[i]
+                                                  ['LeadTime']);
+
+                                              //=============== โหลด LeadTime อีกครั้ง =========================
+
+                                              QuerySnapshot querySnapshot =
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection(AppSettings
+                                                                  .customerType ==
+                                                              CustomerType.Test
+                                                          ? 'ProductTest'
+                                                          : 'Product')
+                                                      .where('PRODUCT_ID',
+                                                          isEqualTo:
+                                                              nonNullableList[i]
+                                                                  ['ProductID'])
+                                                      .get();
+
+                                              if (querySnapshot
+                                                  .docs.isNotEmpty) {
+                                                // print(querySnapshot.docs.length);
+                                                // length == 1 เพราะ PRODUCT_ID มีตัวเดียว
+
+                                                for (var doc
+                                                    in querySnapshot.docs) {
+                                                  Map<String, dynamic> data =
+                                                      doc.data() as Map<String,
+                                                          dynamic>;
+                                                  // print('Document data: ${doc.data()}');
+                                                  // print('จำนวนสต๊อก');
+                                                  // print(foundMap['Balance']);
+
+                                                  print(data['LeadTime']);
+
+                                                  if (data['LeadTime'] ==
+                                                      null) {
+                                                    nonNullableList[i]
+                                                        ['LeadTime'] = '0';
+                                                  } else {
+                                                    nonNullableList[i]
+                                                            ['LeadTime'] =
+                                                        data['LeadTime'];
+                                                  }
+
+                                                  // print(foundMap['Balance']);
+                                                }
+                                              } else {
+                                                print('No documents found!');
+                                              }
+
+                                              //=======================================================
+
+                                              print(nonNullableList[i]
+                                                  ['LeadTime']);
+                                            }
+
+                                            // return;
+
+                                            orderLast = {
+                                              'OrdersDateID':
+                                                  DateTime.now().toString(),
+                                              'OrdersUpdateTime':
+                                                  DateTime.now(),
+                                              'สถานที่จัดส่ง': '',
+                                              'วันเวลาจัดส่ง': '',
+                                              'สายส่ง': '',
+                                              'สายส่งโค้ด': '',
+                                              'สายส่งไอดี': '',
+                                              'ProductList': nonNullableList,
+                                              'ยอดรวม': 0,
+                                            };
+
+                                            Map<String, dynamic> originalMap =
+                                                widget.orderDataMap!;
+                                            // Map<String, dynamic> copiedMap =
+                                            //     Map<String, dynamic>.from(originalMap);
+
+                                            Map<String, dynamic> copiedMap =
+                                                deepCopyMap(originalMap);
+
+                                            await Navigator.push(
+                                                context,
+                                                CupertinoPageRoute(
+                                                  builder: (context) =>
+                                                      A090501ProductSceenEditTeam(
+                                                          customerID:
+                                                              widget.customerID,
+                                                          orderDataMap: widget
+                                                              .orderDataMap,
+                                                          orderOLD: copiedMap),
+                                                )).whenComplete(() {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            });
+
+                                            // await Navigator.push(
+                                            //     context,
+                                            //     CupertinoPageRoute(
+                                            //       builder: (context) => A09021AddressSetting(
+                                            //           customerID: widget.customerID,
+                                            //           orderDataMap: orderLast),
+                                            //     )).whenComplete(() async {
+                                            //   Navigator.pop(context);
+                                            //   Navigator.pop(context);
+                                            //   Navigator.pop(context);
+                                            //   // Navigator.push(
+                                            //   //   context,
+                                            //   //   CupertinoPageRoute(
+                                            //   //     builder: (context) =>
+                                            //   //         A0902CustomerHistoryList(
+                                            //   //             customerID:
+                                            //   //                 widget.customerID),
+                                            //   //   ),
+                                            //   // );
+                                            //   // Navigator.pushAndRemoveUntil(
+                                            //   //     context,
+                                            //   //     CupertinoPageRoute(
+                                            //   //       builder: (context) =>
+                                            //   //           A0902CustomerHistoryList(
+                                            //   //               customerID:
+                                            //   //                   widget.customerID),
+                                            //   //     ),
+                                            //   //     (route) => false);
+                                            // });
+                                          } else {
+                                            if (mounted) {
+                                              await QuickAlert.show(
+                                                  context: context,
+                                                  type: QuickAlertType.error,
+                                                  title:
+                                                      'การแก้ไขออเดอร์ไม่สามารถทำได้',
+                                                  text:
+                                                      'ขณะนี้ ออเดอร์นี้ได้ถูกเปลี่ยนสถานะแล้วค่ะ',
+                                                  confirmBtnText: 'ตกลง');
+                                            }
+
+                                            return;
+                                          }
+                                        },
+                                        text: 'ทำการแก้ไขออเดอร์',
+                                        options: FFButtonOptions(
+                                          width: double.infinity,
+                                          height: 40.0,
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                          iconPadding:
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: Colors.purple.shade900,
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'Kanit',
+                                                    color: Colors.white,
+                                                    fontSize: 14.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                          elevation: 3.0,
+                                          borderSide: const BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                              ),
+                        !showButtonCancleOrder
+                            ? const SizedBox(
+                                height: 0,
+                              )
+                            : const SizedBox(
+                                height: 50,
+                              ),
+                        !showButtonCancleOrder
+                            ? const SizedBox(
+                                height: 0,
+                              )
+                            : orderList['SectionID2'] == 'ยกเลิกออเดอร์' ||
+                                    orderList['SectionID2'] == 'รอดำเนินการ'
+                                ? const SizedBox(
+                                    height: 0,
+                                  )
+                                : FFButtonWidget(
+                                    onPressed: () async {
+                                      if (orderList['SALE_ORDER_ID_REF'] ==
+                                          null) {
+                                        if (mounted) {
+                                          await QuickAlert.show(
+                                              context: context,
+                                              type: QuickAlertType.error,
+                                              title:
+                                                  'ยังไม่สามารถยกเลิกออเดอร์ได้',
+                                              text:
+                                                  'ยังไม่สามารถยกเลิกได้ ต้องได้รับ SALE_ORDER_ID_REF ก่อนค่ะ',
+                                              confirmBtnText: 'ตกลง');
+                                        }
+
+                                        return;
+                                      }
+
+                                      // ดึงข้อมูลจาก collection 'mfoodtoken'
+
+                                      Map<String, dynamic>? urlApi = {};
+                                      DocumentSnapshot urlApiWithPort =
+                                          await FirebaseFirestore.instance
+                                              .collection(
+                                                  AppSettings.customerType ==
+                                                          CustomerType.Test
+                                                      ? 'AppSettingUrl'
+                                                      : 'AppSettingUrl')
+                                              .doc(AppSettings.customerType ==
+                                                      CustomerType.Test
+                                                  ? '7104'
+                                                  : '7105')
+                                              .get();
+
+                                      if (urlApiWithPort.exists) {
+                                        urlApi = urlApiWithPort.data()
+                                            as Map<String, dynamic>?;
+                                      }
+
+                                      print(urlApi!['Url']);
+
+                                      Map<String, dynamic>? tokenApi = {};
+                                      DocumentSnapshot tokenApiWithPort =
+                                          await FirebaseFirestore.instance
+                                              .collection(
+                                                  AppSettings.customerType ==
+                                                          CustomerType.Test
+                                                      ? 'mfoodtoken'
+                                                      : 'mfoodtoken')
+                                              .doc(AppSettings.customerType ==
+                                                      CustomerType.Test
+                                                  ? 'EDpTMkR8myW4zhdUALCP'
+                                                  : 'EDpTMkR8myW4zhdUALCP')
+                                              .get();
+
+                                      if (tokenApiWithPort.exists) {
+                                        tokenApi = tokenApiWithPort.data()
+                                            as Map<String, dynamic>?;
+                                      }
+
+                                      print(tokenApi!['token_key']);
+
+                                      String xmlString =
+                                          '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>';
+
+                                      print(xmlString);
+                                      try {
+                                        HttpsCallable callableCancelLast =
+                                            FirebaseFunctions.instance
+                                                .httpsCallable('getApiMfood');
+                                        var paramsCancelLast =
+                                            AppSettings.customerType ==
+                                                    CustomerType.Test
+                                                ? <String, dynamic>{
+                                                    "url":
+                                                        "${urlApi!['Url']}:7104/MBServices.asmx?op=Cancel_SO",
+                                                    "xml":
+                                                        '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>'
+                                                  }
+                                                : <String, dynamic>{
+                                                    "url":
+                                                        "${urlApi!['Url']}:7105/MBServices.asmx?op=Cancel_SO",
+                                                    "xml":
+                                                        '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>'
+                                                  };
+
+                                        if (mounted) {
+                                          bool deleteOrder = false;
+                                          await QuickAlert.show(
+                                            context: context,
+                                            type: QuickAlertType.info,
+                                            title: 'คุณกำลังจะยกเลิกออเดอร์นี้',
+                                            text: 'คุณต้องการยกเลิกออเดอร์นี้',
+                                            confirmBtnText:
+                                                'ยืนยันการยกเลิกออเดอร์',
+                                            cancelBtnText: 'ยกเลิก',
+                                            showCancelBtn: true,
+                                            showConfirmBtn: true,
+                                            onCancelBtnTap: () => Navigator.of(
+                                                    context,
+                                                    rootNavigator: true)
+                                                .pop(),
+                                            onConfirmBtnTap: () async {
+                                              deleteOrder = true;
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .pop();
+                                            },
+                                          );
+                                          print(deleteOrder);
+                                          print(deleteOrder);
+                                          print(deleteOrder);
+                                          // return;
+                                          if (deleteOrder) {
+                                            print(orderList['SectionID2']);
+                                            print(orderList['SectionID2']);
+                                            print(orderList['SectionID2']);
+                                            print(orderList['SectionID2']);
+                                            print(orderList['SectionID2']);
+
+                                            if (orderList['SectionID2'] ==
+                                                'บุ๊กกิ้งออเดอร์') {
+                                              await FirebaseFirestore.instance
+                                                  .collection(AppSettings
+                                                              .customerType ==
+                                                          CustomerType.Test
+                                                      ? 'LogXMLยกเลิกso'
+                                                      : 'LogXMLยกเลิกso')
+                                                  .doc(
+                                                      DateTime.now().toString())
+                                                  .set({
+                                                'OrdersDateID':
+                                                    orderList['OrdersDateID'],
+                                                'Timestamp': DateTime.now(),
+                                                'URL': AppSettings
+                                                            .customerType ==
+                                                        CustomerType.Test
+                                                    ? "${urlApi!['Url']}:7104/MBServices.asmx?op=Cancel_SO"
+                                                    : "${urlApi!['Url']}:7105/MBServices.asmx?op=Cancel_SO",
+                                                'XML': AppSettings
+                                                            .customerType ==
+                                                        CustomerType.Test
+                                                    ? '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi!['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>'
+                                                    : '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi!['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>',
+                                                'note': "ยกเลิกออเดอร์ผ่านแอพ",
+                                                'order': orderList,
+                                              });
+
+                                              Navigator.of(context,
+                                                  rootNavigator: true);
+                                              await FirebaseFirestore.instance
+                                                  .collection(AppSettings
+                                                              .customerType ==
+                                                          CustomerType.Test
+                                                      ? 'OrdersTest'
+                                                      : 'Orders')
+                                                  .doc(orderList['docId'])
+                                                  .update({
+                                                'SectionID2': '20240309000004'
+                                              }).then((value) async {
+                                                await QuickAlert.show(
+                                                  context: context,
+                                                  type: QuickAlertType.info,
+                                                  title:
+                                                      'ยกเลิก ${orderList['OrdersDateID']} ออเดอร์แล้ว',
+                                                  text:
+                                                      'คุณทำการยกเลิกออเดอร์สำเร็จแล้วค่ะ',
+                                                  confirmBtnText: 'ตกลง',
+                                                );
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              });
+                                            } else {
+                                              await callableCancelLast
+                                                  .call(paramsCancelLast)
+                                                  .then((value) async {
+                                                print(
+                                                    'ข้อมูลที่ส่งกลับจาก cloud function ${value.data}');
+                                                if (value.data['status'] ==
+                                                    'success') {
+                                                  print(value.data['status']);
+                                                  print(value.data);
+
+                                                  Xml2Json xml2json =
+                                                      Xml2Json();
+                                                  xml2json.parse(
+                                                      value.data.toString());
+
+                                                  jsonStringDiscount =
+                                                      xml2json.toOpenRally();
+
+                                                  Map<String, dynamic> data =
+                                                      json.decode(
+                                                          jsonStringDiscount);
+
+                                                  print(data);
+
+                                                  Map<String,
+                                                      dynamic> dataMap = data[
+                                                                  'Envelope']
+                                                              ['Body']
+                                                          ['Cancel_SOResponse']
+                                                      ['Cancel_SOResult'];
+                                                  print(dataMap);
+
+                                                  if (dataMap['RESULT']
+                                                          .toString() ==
+                                                      'false') {
+                                                    if (mounted) {
+                                                      await QuickAlert.show(
+                                                          context: context,
+                                                          type: QuickAlertType
+                                                              .error,
+                                                          title:
+                                                              'การยกเลิกออเดอร์ไม่สามารถทำได้',
+                                                          text:
+                                                              '${dataMap['SALE_ORDER_ID_REF'].toString()} ${dataMap['DETAIL'].toString()}',
+                                                          confirmBtnText:
+                                                              'ตกลง');
+                                                    }
+
+                                                    return;
+                                                  } else {
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection(AppSettings
+                                                                    .customerType ==
+                                                                CustomerType
+                                                                    .Test
+                                                            ? 'LogXMLยกเลิกso'
+                                                            : 'LogXMLยกเลิกso')
+                                                        .doc(DateTime.now()
+                                                            .toString())
+                                                        .set({
+                                                      'OrdersDateID': orderList[
+                                                          'OrdersDateID'],
+                                                      'Timestamp':
+                                                          DateTime.now(),
+                                                      'URL': AppSettings
+                                                                  .customerType ==
+                                                              CustomerType.Test
+                                                          ? "${urlApi!['Url']}:7104/MBServices.asmx?op=Cancel_SO"
+                                                          : "${urlApi!['Url']}:7105/MBServices.asmx?op=Cancel_SO",
+                                                      'XML': AppSettings
+                                                                  .customerType ==
+                                                              CustomerType.Test
+                                                          ? '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi!['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>'
+                                                          : '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><Cancel_SO xmlns="MFOODMOBILEAPI"><SO_NO>${orderList['SALE_ORDER_ID_REF']}</SO_NO><Token>${tokenApi!['token_key']}</Token></Cancel_SO></soap12:Body></soap12:Envelope>',
+                                                      'note':
+                                                          "ยกเลิกออเดอร์ผ่านแอพ",
+                                                      'order': orderList,
+                                                    });
+
+                                                    Navigator.of(context,
+                                                        rootNavigator: true);
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection(AppSettings
+                                                                    .customerType ==
+                                                                CustomerType
+                                                                    .Test
+                                                            ? 'OrdersTest'
+                                                            : 'Orders')
+                                                        .doc(orderList['docId'])
+                                                        .update({
+                                                      'SectionID2':
+                                                          '20240309000004'
+                                                    }).then((value) async {
+                                                      await QuickAlert.show(
+                                                        context: context,
+                                                        type:
+                                                            QuickAlertType.info,
+                                                        title:
+                                                            'ยกเลิก ${dataMap['SALE_ORDER_ID_REF']} ออเดอร์แล้ว',
+                                                        text:
+                                                            'คุณทำการยกเลิกออเดอร์สำเร็จแล้วค่ะ',
+                                                        confirmBtnText: 'ตกลง',
+                                                      );
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    });
+                                                  }
+                                                }
+                                              });
+                                            }
+                                          }
+                                        }
+                                      } catch (e) {
+                                        print('ข้อผิดพลาดในการส่งคำขอ: $e');
+                                      }
+                                    },
+                                    text: 'ยกเลิกออเดอร์',
+                                    options: FFButtonOptions(
+                                      width: double.infinity,
+                                      height: 40.0,
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
+                                      iconPadding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 0.0, 0.0),
+                                      color: Colors.red.shade900,
+                                      textStyle: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .override(
+                                            fontFamily: 'Kanit',
+                                            color: Colors.white,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                      elevation: 3.0,
+                                      borderSide: const BorderSide(
+                                        color: Colors.transparent,
+                                        width: 1.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
                         SizedBox(
                           height: 50,
                         ),

@@ -94,9 +94,9 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         orderList!.add(data);
         orderListTosend!.add(data);
-        // print('------------');
-        // print(data);
-        // print('------------');
+        print('------------');
+        print(data['INVOICE_NO']);
+        print('------------');
       });
 
       QuerySnapshot orderSubCollectionsTeam = await FirebaseFirestore.instance

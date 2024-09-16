@@ -678,8 +678,21 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
       print(totalPrice);
       print(totalPrice);
 
+      print('เช็คค่า ก่อนส่ง SALES_ITEM_PROMOTION');
+      print(orderList['วันเวลาจัดส่ง']);
+
+      DateFormat inputFormat = DateFormat("dd-MM-yyyy");
+      DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+
+      DateTime dateTimeSend = inputFormat.parse(orderList['วันเวลาจัดส่ง']);
+      String formattedDateSend = outputFormat.format(dateTimeSend);
+
+      print(formattedDateSend);
+
       DateTime dateTime = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
+      String saleOrderID = orderList['OrdersDateID'];
 
       HttpsCallable callableDiscount =
           FirebaseFunctions.instance.httpsCallable('getApiMfood');
@@ -689,14 +702,14 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                   "${urlApi!['Url']}:7104/MBServices.asmx?op=SALES_ITEM_PROMOTION",
               "xml":
                   //pro type discount
-                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><SALE_ORDER_ID>$saleOrderID</SALE_ORDER_ID><SHIP_DATE>$formattedDateSend</SHIP_DATE><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
             }
           : <String, dynamic>{
               "url":
                   "${urlApi!['Url']}:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
               "xml":
                   //pro type discount
-                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                  '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><SALE_ORDER_ID>$saleOrderID</SALE_ORDER_ID><SHIP_DATE>$formattedDateSend</SHIP_DATE><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
               //pro type bonus item
               // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>01000004</Client_ID><ITEMCODE>0271330020450</ITEMCODE><UM>ซอง</UM><QTY>20</QTY><DOC_DATE>2024-04-01</DOC_DATE><ITEMAMT>980</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
 //    <?xml version="1.0" encoding="utf-8"?>
@@ -711,6 +724,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
 // </soap12:Envelope>
             };
 
+      print(paramsDiscount['url']);
       print(paramsDiscount['xml']);
       // print('======================================= aaaaa');
 
@@ -2093,12 +2107,7 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                 );
                                                               }),
                                                               Text(
-                                                                orderList['ProductList'][i]
-                                                                            [
-                                                                            'LeadTime'] ==
-                                                                        null
-                                                                    ? 'Lead time = 0 วัน '
-                                                                    : 'Lead time = ${orderList['ProductList'][i]['LeadTime']} วัน ',
+                                                                'Lead time = ${orderList['ProductList'][i]['LeadTime']} วัน ',
                                                                 style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
@@ -5300,20 +5309,36 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                               // print(newOrder[i]);
                                                                                               // print(i);
                                                                                               // print('สินค้าที่ส่งไปเช็คโปรโมชั่น');
+
+                                                                                              print('เช็คค่า ก่อนส่ง SALES_ITEM_PROMOTION');
+                                                                                              print(orderList['วันเวลาจัดส่ง']);
+
+                                                                                              DateFormat inputFormat = DateFormat("dd-MM-yyyy");
+                                                                                              DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+
+                                                                                              DateTime dateTimeSend = inputFormat.parse(orderList['วันเวลาจัดส่ง']);
+                                                                                              String formattedDateSend = outputFormat.format(dateTimeSend);
+
+                                                                                              String saleOrderID = orderList['OrdersDateID'];
+
+                                                                                              print(formattedDateSend);
+
                                                                                               var paramsDiscount = AppSettings.customerType == CustomerType.Test
                                                                                                   ? <String, dynamic>{
                                                                                                       "url": "${urlApi!['Url']}:7104/MBServices.asmx?op=SALES_ITEM_PROMOTION",
                                                                                                       "xml":
                                                                                                           //pro type discount
-                                                                                                          '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                                                                                                          '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><SALE_ORDER_ID>$saleOrderID</SALE_ORDER_ID><SHIP_DATE>$formattedDateSend</SHIP_DATE><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
                                                                                                     }
                                                                                                   : <String, dynamic>{
                                                                                                       "url": "${urlApi!['Url']}:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
                                                                                                       "xml":
                                                                                                           //pro type discount
-                                                                                                          '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${newOrder[i]['ProductID']}</ITEMCODE><UM>${newOrder[i]['ยูนิต']}</UM><QTY>${newOrder[i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+                                                                                                          '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><SALE_ORDER_ID>$saleOrderID</SALE_ORDER_ID><SHIP_DATE>$formattedDateSend</SHIP_DATE><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${newOrder[i]['ProductID']}</ITEMCODE><UM>${newOrder[i]['ยูนิต']}</UM><QTY>${newOrder[i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
                                                                                                     };
-                                                                                              // print(paramsDiscount['xml']);
+                                                                                              print(paramsDiscount['url']);
+
+                                                                                              print(paramsDiscount['xml']);
                                                                                               await callableDiscount.call(paramsDiscount).then((value) async {
                                                                                                 // print('ข้อมูลที่ส่งกลับจาก cloud function ${value.data}');
                                                                                                 if (value.data['status'] == 'success') {}
@@ -5708,6 +5733,45 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                             // if (mounted) {
                                                                                             // setState(() {});
                                                                                             // }
+                                                                                          });
+
+                                                                                          // ====================== สินค้าที่เคยสั่ง บันทึกลงลูกค้า ==========================
+
+                                                                                          List<dynamic> listHistoryCustomer = [];
+                                                                                          List<String> listHistoryStringCustomer = [];
+
+                                                                                          await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).get().then((value) {
+                                                                                            Map<String, dynamic> data = value.data() as Map<String, dynamic>;
+
+                                                                                            listHistoryCustomer = data['สินค้าที่เคยสั่ง'] ?? [];
+
+                                                                                            for (int i = 0; i < listHistoryCustomer.length; i++) {
+                                                                                              listHistoryStringCustomer.add(listHistoryCustomer[i].toString());
+                                                                                            }
+
+                                                                                            for (int i = 0; i < orderList['ProductList'].length; i++) {
+                                                                                              bool isStringFound = listHistoryStringCustomer.any((map) => map == orderList['ProductList'][i]['ProductID']);
+
+                                                                                              if (isStringFound) {
+                                                                                              } else {
+                                                                                                listHistoryStringCustomer.add(orderList['ProductList'][i]['ProductID'].toString());
+                                                                                              }
+                                                                                            }
+                                                                                          });
+                                                                                          print('สินค้าที่เคยสั่ง');
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+                                                                                          print(listHistoryCustomer);
+
+                                                                                          await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).update({
+                                                                                            'สินค้าที่เคยสั่ง': listHistoryStringCustomer,
                                                                                           });
                                                                                           // ====================== เพิ่ม ประวัติออเดอร์วันนี้ ==========================
                                                                                           List<dynamic> listOrderCustomerIDToday = [];
@@ -6116,7 +6180,44 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                                 // setState(() {});
                                                                                                 // }
                                                                                               });
+                                                                                              // ====================== สินค้าที่เคยสั่ง บันทึกลงลูกค้า ==========================
 
+                                                                                              List<dynamic> listHistoryCustomer = [];
+                                                                                              List<String> listHistoryStringCustomer = [];
+
+                                                                                              await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).get().then((value) {
+                                                                                                Map<String, dynamic> data = value.data() as Map<String, dynamic>;
+
+                                                                                                listHistoryCustomer = data['สินค้าที่เคยสั่ง'] ?? [];
+
+                                                                                                for (int i = 0; i < listHistoryCustomer.length; i++) {
+                                                                                                  listHistoryStringCustomer.add(listHistoryCustomer[i].toString());
+                                                                                                }
+
+                                                                                                for (int i = 0; i < orderList['ProductList'].length; i++) {
+                                                                                                  bool isStringFound = listHistoryStringCustomer.any((map) => map == orderList['ProductList'][i]['ProductID']);
+
+                                                                                                  if (isStringFound) {
+                                                                                                  } else {
+                                                                                                    listHistoryStringCustomer.add(orderList['ProductList'][i]['ProductID'].toString());
+                                                                                                  }
+                                                                                                }
+                                                                                              });
+                                                                                              print('สินค้าที่เคยสั่ง');
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+                                                                                              print(listHistoryCustomer);
+
+                                                                                              await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).update({
+                                                                                                'สินค้าที่เคยสั่ง': listHistoryStringCustomer,
+                                                                                              });
                                                                                               // ====================== เพิ่ม ประวัติออเดอร์วันนี้ ==========================
                                                                                               List<dynamic> listOrderCustomerIDToday = [];
 
@@ -6570,7 +6671,44 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                                                                                   });
 
                                                                                                   print('2222222222212');
+                                                                                                  // ====================== สินค้าที่เคยสั่ง บันทึกลงลูกค้า ==========================
 
+                                                                                                  List<dynamic> listHistoryCustomer = [];
+                                                                                                  List<String> listHistoryStringCustomer = [];
+
+                                                                                                  await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).get().then((value) {
+                                                                                                    Map<String, dynamic> data = value.data() as Map<String, dynamic>;
+
+                                                                                                    listHistoryCustomer = data['สินค้าที่เคยสั่ง'] ?? [];
+
+                                                                                                    for (int i = 0; i < listHistoryCustomer.length; i++) {
+                                                                                                      listHistoryStringCustomer.add(listHistoryCustomer[i].toString());
+                                                                                                    }
+
+                                                                                                    for (int i = 0; i < orderList['ProductList'].length; i++) {
+                                                                                                      bool isStringFound = listHistoryStringCustomer.any((map) => map == orderList['ProductList'][i]['ProductID']);
+
+                                                                                                      if (isStringFound) {
+                                                                                                      } else {
+                                                                                                        listHistoryStringCustomer.add(orderList['ProductList'][i]['ProductID'].toString());
+                                                                                                      }
+                                                                                                    }
+                                                                                                  });
+                                                                                                  print('สินค้าที่เคยสั่ง');
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+                                                                                                  print(listHistoryCustomer);
+
+                                                                                                  await FirebaseFirestore.instance.collection(AppSettings.customerType == CustomerType.Test ? 'CustomerTest' : 'Customer').doc(widget.customerID).update({
+                                                                                                    'สินค้าที่เคยสั่ง': listHistoryStringCustomer,
+                                                                                                  });
                                                                                                   // ====================== เพิ่ม ประวัติออเดอร์วันนี้ ==========================
                                                                                                   print('3');
                                                                                                   List<dynamic> listOrderCustomerIDToday = [];
@@ -7030,6 +7168,73 @@ class _A0904ProductOrderDetailState extends State<A0904ProductOrderDetail> {
                                       // if (mounted) {
                                       // setState(() {});
                                       // }
+                                    });
+                                    // ====================== สินค้าที่เคยสั่ง บันทึกลงลูกค้า ==========================
+
+                                    List<dynamic> listHistoryCustomer = [];
+                                    List<String> listHistoryStringCustomer = [];
+
+                                    await FirebaseFirestore.instance
+                                        .collection(AppSettings.customerType ==
+                                                CustomerType.Test
+                                            ? 'CustomerTest'
+                                            : 'Customer')
+                                        .doc(widget.customerID)
+                                        .get()
+                                        .then((value) {
+                                      Map<String, dynamic> data =
+                                          value.data() as Map<String, dynamic>;
+
+                                      listHistoryCustomer =
+                                          data['สินค้าที่เคยสั่ง'] ?? [];
+
+                                      for (int i = 0;
+                                          i < listHistoryCustomer.length;
+                                          i++) {
+                                        listHistoryStringCustomer.add(
+                                            listHistoryCustomer[i].toString());
+                                      }
+
+                                      for (int i = 0;
+                                          i < orderList['ProductList'].length;
+                                          i++) {
+                                        bool isStringFound =
+                                            listHistoryStringCustomer.any(
+                                                (map) =>
+                                                    map ==
+                                                    orderList['ProductList'][i]
+                                                        ['ProductID']);
+
+                                        if (isStringFound) {
+                                        } else {
+                                          listHistoryStringCustomer.add(
+                                              orderList['ProductList'][i]
+                                                      ['ProductID']
+                                                  .toString());
+                                        }
+                                      }
+                                    });
+                                    print('สินค้าที่เคยสั่ง');
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+                                    print(listHistoryCustomer);
+
+                                    await FirebaseFirestore.instance
+                                        .collection(AppSettings.customerType ==
+                                                CustomerType.Test
+                                            ? 'CustomerTest'
+                                            : 'Customer')
+                                        .doc(widget.customerID)
+                                        .update({
+                                      'สินค้าที่เคยสั่ง':
+                                          listHistoryStringCustomer,
                                     });
                                     // ====================== เพิ่ม ประวัติออเดอร์วันนี้ ==========================
                                     List<dynamic> listOrderCustomerIDToday = [];

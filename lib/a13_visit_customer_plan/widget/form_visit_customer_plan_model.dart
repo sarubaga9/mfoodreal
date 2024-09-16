@@ -38,6 +38,9 @@ class FormVisitCustomerPlanModel
   String? dropDownValue3;
   FormFieldController<String>? dropDownValueController3;
 
+  String? dropDownValue3Goal;
+  FormFieldController<String>? dropDownValueController3Goal;
+
   String? dropDownValue3Address;
   FormFieldController<String>? dropDownValueController3Address;
   // State field(s) for TextField widget.

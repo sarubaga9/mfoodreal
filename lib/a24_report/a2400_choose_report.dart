@@ -421,49 +421,49 @@ class _A2400ChooseReportState extends State<A2400ChooseReport> {
                         ),
                       ),
                       //============ ยอดขายตามเขต =================
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) =>
-                                  A2401Distric(orderList: orderList!),
-                                )).whenComplete(() async {
-                              setState(() {});
-                            });
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 5.0, 0.0),
-                                child: Icon(
-                                  Icons.map,
-                                  color: FlutterFlowTheme.of(context).alternate,
-                                  size: 30.0,
-                                ),
-                              ),
-                              Text(
-                                'ยอดขายตามเขต',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyLarge
-                                    .override(
-                                      fontFamily: 'Kanit',
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
+                      //   child: InkWell(
+                      //     splashColor: Colors.transparent,
+                      //     focusColor: Colors.transparent,
+                      //     hoverColor: Colors.transparent,
+                      //     highlightColor: Colors.transparent,
+                      //     onTap: () async {
+                      //       Navigator.push(
+                      //           context,
+                      //           CupertinoPageRoute(
+                      //             builder: (context) =>
+                      //             A2401Distric(orderList: orderList!),
+                      //           )).whenComplete(() async {
+                      //         setState(() {});
+                      //       });
+                      //     },
+                      //     child: Row(
+                      //       mainAxisSize: MainAxisSize.max,
+                      //       children: [
+                      //         Padding(
+                      //           padding: const EdgeInsetsDirectional.fromSTEB(
+                      //               0.0, 0.0, 5.0, 0.0),
+                      //           child: Icon(
+                      //             Icons.map,
+                      //             color: FlutterFlowTheme.of(context).alternate,
+                      //             size: 30.0,
+                      //           ),
+                      //         ),
+                      //         Text(
+                      //           'ยอดขายตามเขต',
+                      //           style: FlutterFlowTheme.of(context)
+                      //               .bodyLarge
+                      //               .override(
+                      //                 fontFamily: 'Kanit',
+                      //                 color: FlutterFlowTheme.of(context)
+                      //                     .primaryText,
+                      //               ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       //============ ยอดขายตามยี่ห้อสินค้า =================
                       Padding(
                         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),

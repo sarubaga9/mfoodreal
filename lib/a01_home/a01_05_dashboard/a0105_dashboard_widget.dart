@@ -188,6 +188,10 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
       );
 
       print(goalOfMonth![0]!['เป้าการขาย']);
+      print(goalOfMonth![0]!['เป้าการขาย']);
+      print(goalOfMonth![0]!['เป้าการขาย']);
+      print(goalOfMonth![0]!['เป้าการขาย']);
+      print(goalOfMonth![0]!['เป้าการขาย']);
 
       //---------------------- คำนวนอดขาย 6 เดือนหลัง --------------------------------
 
@@ -206,6 +210,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
       });
 
       print(orderList!.length);
+      print('-----------------------------------');
 
       // กรองข้อมูล
       monthlyOrders = filterOrdersByMonth(orderList!);
@@ -232,20 +237,42 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
 
         // print(NumberFormat('#,##0').format(totalOrderList!.last));
       }
-      double totalFlag =
-          double.parse(goalOfMonth![0]!['เป้าการขาย'].toString());
+      print('-----------------------------------');
+
+      double totalFlag = 0.0;
+
+      if (goalOfMonth!.isEmpty) {
+        goalOfMonth!.add({'เป้าการขาย': '100000'});
+        totalFlag = 100000.0;
+      } else {
+        totalFlag = double.parse(goalOfMonth![0]!['เป้าการขาย'].toString());
+      }
+      print('-----------------------------------');
 
       double totalMonthPercent = totalMonthCheck;
+      print('-----------------------------------');
 
       double percentageDouble = (totalMonthPercent / totalFlag) * 100;
+      print('-----------------------------------');
 
-      int percentage = percentageDouble.round();
+      print(percentageDouble.toString());
+      int percentage = 0;
+
+      if (percentageDouble.toString() == 'NaN') {
+      } else {
+        percentage = percentageDouble.round();
+      }
+
+      print('-----------------------------------');
+
       percentageShow = percentage;
+      print('-----------------------------------');
 
       data = [
         SalesData('now', percentage > 100 ? 100 : percentage),
         SalesData('before', percentage > 100 ? 0 : 100 - percentage),
       ];
+      print('-----------------------------------');
 
       //---------------------- คำนวนเดือน 6 เดือนหลัง --------------------------------
 
@@ -288,6 +315,8 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
         }
       });
 
+      print('-----------------แผนเข้าพบลูกค้า------------------');
+
       // จัดเรียง visitList ตามฟิลด์เวลา (จากใหม่ไปเก่า)
       visitList!.sort((b, a) {
         Timestamp aTimestamp = a!['วันเดือนปีนัดหมาย'];
@@ -318,6 +347,9 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
           });
         }
       }
+
+      print('-----------------แผนเข้าพบลูกค้าEND------------------');
+
       // //---------------------- ออเดอร์ยอดขายพนักงานทั้งหมด เดือนปัจจุบัน --------------------------------
 
       // DateTime nowTime = DateTime.now();
@@ -424,6 +456,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
       // }
 
       //---------------------- ข่าวสาร --------------------------------
+      print('-----------------ข่าวสาร------------------');
 
       QuerySnapshot news =
           await FirebaseFirestore.instance.collection('ข่าวสาร').get();
@@ -433,6 +466,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
         newsList.add(data);
         newsListLength.add(data);
       });
+      print('-----------------ข่าวสารCENTER------------------');
 
       // จัดเรียง visitList ตามฟิลด์เวลา (จากใหม่ไปเก่า)
       newsList!.sort((a, b) {
@@ -449,6 +483,7 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
           });
         }
       }
+      print('-----------------ข่าวสารEND------------------');
 
       if (mounted) {
         setState(() {
@@ -2974,38 +3009,54 @@ class _A0105DashboardWidgetState extends State<A0105DashboardWidget> {
                                                         for (int i = 0;
                                                             i < 5;
                                                             i++)
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              Text(
-                                                                visitBeforeList![
-                                                                        i]![
-                                                                    'ชื่อนามสกุล'],
-                                                                // 'ร้านสมศรีโภชนา',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Kanit',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryBackground,
-                                                                    ),
-                                                              ),
-                                                            ],
+                                                          SizedBox(
+                                                            width: 100,
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              children: [
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    visitBeforeList![
+                                                                            i]![
+                                                                        'ชื่อนามสกุล'],
+                                                                    // 'ร้านสมศรีโภชนา',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Kanit',
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBackground,
+                                                                        ),
+
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
+
+                                                                    maxLines: 1,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                       ],
                                                     ),
                                                     Column(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
+                                                        // SizedBox(
+                                                        //   height: 5,
+                                                        // ),
                                                         for (int i = 0;
                                                             i < 5;
                                                             i++)

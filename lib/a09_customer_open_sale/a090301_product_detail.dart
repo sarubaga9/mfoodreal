@@ -1919,7 +1919,7 @@ class _A090301ProductDetailState extends State<A090301ProductDetail> {
                                                             MainAxisSize.max,
                                                         children: [
                                                           Text(
-                                                      productDetail!['LeadTime'] == null ?'Lead time = 0 วัน' :      'Lead time = ${productDetail!['LeadTime']} วัน',
+                                                            'Lead time = ${productDetail!['LeadTime']} วัน',
                                                             // 'ราคา ${productDetail!['PRICE']} บาท',
                                                             style: FlutterFlowTheme
                                                                     .of(context)

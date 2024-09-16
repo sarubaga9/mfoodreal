@@ -102,63 +102,98 @@ class _A2405GoalState extends State<A2405Goal> {
 
     print('finish');
 
-    for (int i = 0; i < orderList!.length; i++) {
-      print(orderList![i]!['OrdersUpdateTime'].toDate().toString());
-      print(orderList![i]!['ยอดรวม']);
-    }
+    // for (int i = 0; i < orderList!.length; i++) {
+    //   print(orderList![i]!['OrdersUpdateTime'].toDate().toString());
+    //   print(orderList![i]!['ยอดรวม']);
+    // }
 
-    // แปลงสตริง datetime เป็น DateTime ใน Map
+    // // แปลงสตริง datetime เป็น DateTime ใน Map
+    // // for (var entry in orderList!) {
+    // //   if (entry!["SALE_ORDER_ID"] == null) {
+    // //   } else {
+    // //     entry!["datetime"] = DateTime.parse(entry!["SALE_ORDER_ID"]);
+    // //   }
+    // // }
+
+    // orderList!.removeWhere((element) => element!['OrdersUpdateTime'] == null);
+    // orderList!.removeWhere((element) => element!['SALE_ORDER_ID'] == null);
+
+    // for (int i = 0; i < orderList!.length; i++) {
+    //   orderList![i]!["datetime"] = DateTime.parse(
+    //       orderList![i]!['OrdersUpdateTime'].toDate().toString());
+    //   print(orderList![i]!["datetime"]);
+    // }
+
+    // // ใช้ Map เพื่อจัดกลุ่มตามเดือนและปี
+    // Map<String, List<Map<String, dynamic>>> groupedByMonthAndYear = {};
+
     // for (var entry in orderList!) {
-    //   if (entry!["SALE_ORDER_ID"] == null) {
+    //   print('==========');
+    //   print(entry!["datetime"]);
+    //   DateTime dateTime = entry!["datetime"];
+    //   String key =
+    //       DateFormat('yyyy-MM').format(dateTime); // ใช้ yyyy-MM เป็นคีย์
+    //   if (groupedByMonthAndYear.containsKey(key)) {
+    //     groupedByMonthAndYear[key]!.add(entry);
     //   } else {
-    //     entry!["datetime"] = DateTime.parse(entry!["SALE_ORDER_ID"]);
+    //     groupedByMonthAndYear[key] = [entry];
     //   }
     // }
 
-    orderList!.removeWhere((element) => element!['OrdersUpdateTime'] == null);
-    orderList!.removeWhere((element) => element!['SALE_ORDER_ID'] == null);
-
-    for (int i = 0; i < orderList!.length; i++) {
-      orderList![i]!["datetime"] = DateTime.parse(
-          orderList![i]!['OrdersUpdateTime'].toDate().toString());
-      print(orderList![i]!["datetime"]);
-    }
-
-    // ใช้ Map เพื่อจัดกลุ่มตามเดือนและปี
-    Map<String, List<Map<String, dynamic>>> groupedByMonthAndYear = {};
-
-    for (var entry in orderList!) {
-      print('==========');
-      print(entry!["datetime"]);
-      DateTime dateTime = entry!["datetime"];
-      String key =
-          DateFormat('yyyy-MM').format(dateTime); // ใช้ yyyy-MM เป็นคีย์
-      if (groupedByMonthAndYear.containsKey(key)) {
-        groupedByMonthAndYear[key]!.add(entry);
-      } else {
-        groupedByMonthAndYear[key] = [entry];
-      }
-    }
-
-    // แปลง Map เป็น List<List<Map<String, dynamic>>>
-    List<List<Map<String, dynamic>>> listOfLists =
-        groupedByMonthAndYear.values.toList();
+    // // แปลง Map เป็น List<List<Map<String, dynamic>>>
+    // List<List<Map<String, dynamic>>> listOfLists =
+    //     groupedByMonthAndYear.values.toList();
 
     List<Map<String, dynamic>> listData = [];
 
-    // แสดงผล
+    // // แสดงผล
 
-    for (int i = 0; i < listOfLists.length; i++) {
+    // for (int i = 0; i < listOfLists.length; i++) {
+    //   listData.add({
+    //     'datetime': listOfLists[i][0]["datetime"],
+    //   });
+
+    //   double total = 0.0;
+    //   for (var entry in listOfLists[i]) {
+    //     print(entry['มูลค่าสินค้ารวม']);
+    //     total = total + double.parse(entry['มูลค่าสินค้ารวม'].toString());
+    //   }
+    //   listData[i]['ยอดรวมรายเดือน'] = total;
+
+    //   print(listData[i]);
+    // }
+
+    List<Map<String, dynamic>> topSaleList = [];
+
+    await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'Topsaleประจำเดือน'
+            : 'Topsaleประจำเดือน')
+        .where('EmployeeID', isEqualTo: userData!['EmployeeID'])
+        .get()
+        .then(
+      (QuerySnapshot<Map<String, dynamic>>? data) async {
+        if (data != null && data.docs.isNotEmpty) {
+          print(data.docs.length);
+          for (int index = 0; index < data.docs.length; index++) {
+            final Map<String, dynamic> docData =
+                data.docs[index].data() as Map<String, dynamic>;
+
+            topSaleList.add(docData);
+          }
+        }
+      },
+    );
+
+    for (int i = 0; i < topSaleList.length; i++) {
       listData.add({
-        'datetime': listOfLists[i][0]["datetime"],
+        'datetime': DateTime(int.parse(topSaleList[i]['ปี']),
+            int.parse(topSaleList[i]['เดือน']), 1),
       });
 
       double total = 0.0;
-      for (var entry in listOfLists[i]) {
-        print(entry['มูลค่าสินค้ารวม']);
-        total = total + double.parse(entry['มูลค่าสินค้ารวม'].toString());
-      }
-      listData[i]['ยอดรวมรายเดือน'] = total;
+
+      listData[i]['ยอดรวมรายเดือน'] = int.parse(topSaleList[i]['ยอดขาย']);
 
       print(listData[i]);
     }

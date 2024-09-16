@@ -3,6 +3,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:m_food/a13_visit_customer_plan/widget/form_visit_customer_plan_model.dart';
+import 'package:m_food/a20_add_new_customer_first/widget/map_widget.dart';
 import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 import 'package:m_food/main.dart';
@@ -48,6 +49,8 @@ class _FormVisitCustomerPlanWidgetState
   FocusNode textFieldFocusNode1 = FocusNode();
   TextEditingController textController2 = TextEditingController();
   FocusNode textFieldFocusNode2 = FocusNode();
+  TextEditingController textController2GoalEtc = TextEditingController();
+  FocusNode textFieldFocusNode2GoalEtc = FocusNode();
   TextEditingController textController21 = TextEditingController();
   FocusNode textFieldFocusNode21 = FocusNode();
   TextEditingController textController22 = TextEditingController();
@@ -97,6 +100,9 @@ class _FormVisitCustomerPlanWidgetState
 
   bool edit = false;
 
+  List<Map<String, dynamic>> listGoals = [];
+  List<String> listGoalsString = [];
+
   @override
   void initState() {
     _model = createModel(context, () => FormVisitCustomerPlanModel());
@@ -124,8 +130,18 @@ class _FormVisitCustomerPlanWidgetState
     setState(() {
       isLoading = true;
     });
-    print('sdjfkkdfljdksnfbsdjfndsf');
-    print(widget.entry);
+
+    QuerySnapshot querySnapshotGoal = await FirebaseFirestore.instance
+        .collection(AppSettings.customerType == CustomerType.Test
+            ? 'วัตถุประสงค์การเยี่ยมลูกค้า'
+            : 'วัตถุประสงค์การเยี่ยมลูกค้า')
+        .get();
+
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshotGoal.docs) {
+      listGoals.add(documentSnapshot.data() as Map<String, dynamic>);
+      listGoalsString.add(listGoals.last['Name']);
+    }
+
     if (widget.entry != null) {
       print('1');
 
@@ -147,6 +163,16 @@ class _FormVisitCustomerPlanWidgetState
 
       textController6 =
           TextEditingController(text: widget.entry!.value['ชื่อนามสกุล']);
+
+      textController2GoalEtc = TextEditingController(
+          text: widget.entry!.value['รายละเอียดอื่นๆ'] ?? '');
+
+      _model.dropDownValueController3Goal = FormFieldController<String>(
+          widget.entry!.value['วัตถุประสงค์การเยี่ยมลูกค้า'] ?? '');
+
+      _model.dropDownValue3Goal =
+          widget.entry!.value['วัตถุประสงค์การเยี่ยมลูกค้า'] ?? '';
+
       print('11');
 
       selectedTime = convertTimestampToTimeOfDay(
@@ -220,10 +246,15 @@ class _FormVisitCustomerPlanWidgetState
         print('!= null');
         int index = latAll.indexOf(widget.entry!.value['ละติจูด']!);
 
-        _model.dropDownValueController3 =
-            FormFieldController<String>(addressAll[index]);
+        if (index == -1) {
+        
+        } else {
+          _model.dropDownValueController3 =
+              FormFieldController<String>(addressAll[index]);
 
-        _model.dropDownValue3 = addressAll[index];
+          _model.dropDownValue3 = addressAll[index];
+        }
+
         _kGooglePlex = CameraPosition(
           target: google_maps.LatLng(
               double.parse(widget.entry!.value['ละติจูด']),
@@ -584,6 +615,9 @@ class _FormVisitCustomerPlanWidgetState
         'หัวข้อ': textController21.text,
         'ที่อยู่': _model.dropDownValue3Address,
         'รายละเอียด': textController22.text,
+        'วัตถุประสงค์การเยี่ยมลูกค้า':
+            _model.dropDownValue3Goal == null ? '' : _model.dropDownValue3Goal,
+        'รายละเอียดอื่นๆ': textController2GoalEtc.text,
         'ละติจูด': lati,
         'ลองติจูด': loti,
         'UserID': userData!['UserID'],
@@ -661,6 +695,12 @@ class _FormVisitCustomerPlanWidgetState
             ? ''
             : _model.dropDownValue3Address,
         'รายละเอียด': textController22.text == '' ? '' : textController22.text,
+
+        'วัตถุประสงค์การเยี่ยมลูกค้า':
+            _model.dropDownValue3Goal == null ? '' : _model.dropDownValue3Goal,
+        'รายละเอียดอื่นๆ':
+            textController2GoalEtc.text == '' ? '' : textController22.text,
+
         'ละติจูด': lati,
         'ลองติจูด': loti,
         'UserID': userData!['UserID'],
@@ -716,7 +756,7 @@ class _FormVisitCustomerPlanWidgetState
 // }
 
     return isLoading
-        ? Center(
+        ? const Center(
             child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -737,6 +777,13 @@ class _FormVisitCustomerPlanWidgetState
                   const SizedBox(height: 5),
                   nameCustomer(context),
                   timeToVisit(context),
+
+                  goalDropdown(context),
+
+                  _model.dropDownValue3Goal == 'อื่น ๆ (ระบุ)'
+                      ? goalEtc(context)
+                      : const SizedBox(),
+
                   titleToVisit(context),
                   // dataApiCustomer(context),
                   addressDropdown(context),
@@ -777,6 +824,113 @@ class _FormVisitCustomerPlanWidgetState
               ),
             ),
           );
+  }
+
+  Padding goalEtc(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+      child: TextFormField(
+        readOnly: false,
+        controller: textController2GoalEtc,
+        focusNode: textFieldFocusNode2GoalEtc,
+        obscureText: false,
+        decoration: InputDecoration(
+          labelText: 'รายละเอียดอื่นๆ',
+          isDense: true,
+          labelStyle: FlutterFlowTheme.of(context).labelMedium,
+          hintText: 'รายละเอียดอื่นๆ',
+          hintStyle: FlutterFlowTheme.of(context).labelMedium,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).alternate,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).primary,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: FlutterFlowTheme.of(context).error,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        style: FlutterFlowTheme.of(context).bodyMedium,
+        textAlign: TextAlign.start,
+        // validator: textController2Validator.asValidator(context),
+      ),
+    );
+  }
+
+  Align goalDropdown(BuildContext context) {
+    return Align(
+      alignment: const AlignmentDirectional(0.00, 0.00),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 5.0, 8.0, 5.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '  วัตถุประสงค์การเยี่ยมลูกค้า',
+                  style: FlutterFlowTheme.of(context).bodySmall,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 2,
+            ),
+            FlutterFlowDropDown<String>(
+              controller: _model.dropDownValueController3Goal ??=
+                  FormFieldController<String>(null),
+              options: listGoalsString,
+              onChanged: (val) async {
+                setState(() {
+                  _model.dropDownValue3Goal = val;
+                });
+
+                print(_model.dropDownValue3Goal);
+                print(_model.dropDownValue3Goal);
+                print(_model.dropDownValue3Goal);
+              },
+              height: 45.0,
+              textStyle: FlutterFlowTheme.of(context).bodyMedium,
+              hintText: 'วัตถุประสงค์การเยี่ยมลูกค้า',
+              icon: Icon(
+                Icons.arrow_left_outlined,
+                color: FlutterFlowTheme.of(context).secondaryText,
+                size: 24.0,
+              ),
+              elevation: 2.0,
+              borderColor: FlutterFlowTheme.of(context).alternate,
+              borderWidth: 2.0,
+              borderRadius: 8.0,
+              margin:
+                  const EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 4.0),
+              hidesUnderline: true,
+              isSearchable: false,
+              isMultiSelect: false,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Padding saveData(BuildContext context) {
@@ -1004,6 +1158,65 @@ class _FormVisitCustomerPlanWidgetState
                       //   });
                       // },
 
+                      onTap: (argument) async {
+                        try {
+                          Map<String, dynamic>? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MapWidgetFirst(latitude: '', longtitude: ''),
+                            ),
+                          );
+                          // อัปเดต State ด้วยค่าที่ส่งกลับมา
+                          // print(result!['latitudeToBack']);
+                          // print(result['longitudeToBack']);
+
+                          // latitude = result['latitudeToBack'].toString();
+
+                          // longtitude = result['longitudeToBack'].toString();
+
+                          // print(latitude);
+                          // print(longtitude);
+
+                          double? lat = result!['latitudeToBack'];
+                          double? lot = result['longitudeToBack'];
+                          _kGooglePlex = CameraPosition(
+                            target: google_maps.LatLng(lat!, lot!),
+                            zoom: mapZoom,
+                          );
+
+                          print(lat);
+                          print(lot);
+                          print('END');
+
+                          lati = lat.toString();
+                          loti = lot.toString();
+                          checkLatLot = true;
+                          markers.clear();
+
+                          markers.add(
+                            Marker(
+                              markerId: MarkerId("ปักหมุด"),
+                              position: google_maps.LatLng(lat, lot),
+                              infoWindow: InfoWindow(
+                                title: 'แผนที่ปักหมุด',
+                              ),
+                            ),
+                          );
+
+                          _mapKey = GlobalKey();
+
+                          if (mounted) {
+                            setStateMap(
+                              () {
+                                loadMap = false;
+                              },
+                            );
+                          }
+                        } catch (e) {
+                          print(e.toString());
+                        }
+                      },
                       key: _mapKey,
                       mapType: ui_maps.MapType.hybrid,
                       initialCameraPosition: _kGooglePlex,
@@ -1016,37 +1229,38 @@ class _FormVisitCustomerPlanWidgetState
                       },
                     ),
                   ),
+                  //=============================================================
+                  checkLatLot
+                      ? SizedBox()
+                      : Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                30.0, 15.0, 30.0, 5.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: MediaQuery.sizeOf(context).width * 0.4,
+                                  height: 25.0,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade900,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  alignment: AlignmentDirectional(0.00, 0.00),
+                                  child: Text(
+                                      'สถานที่คุณเลือกไม่มีพิกัดที่บันทึกไว้',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMediumWhite),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                 ],
               );
             }),
-            //=============================================================
-            checkLatLot
-                ? SizedBox()
-                : Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(30.0, 15.0, 30.0, 5.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: MediaQuery.sizeOf(context).width * 0.4,
-                            height: 25.0,
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade900,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            alignment: AlignmentDirectional(0.00, 0.00),
-                            child: Text('สถานที่คุณเลือกไม่มีพิกัดที่บันทึกไว้',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMediumWhite),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
           ],
         ),
       ),

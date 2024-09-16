@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:m_food/a09_customer_open_sale/a0902_customer_history_list.dart';
 import 'package:m_food/a09_customer_open_sale/widget/list_open_sale_widget.dart';
@@ -47,6 +48,9 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
 
   TextEditingController textControllerFindSaleOrderID = TextEditingController();
   FocusNode textFieldFocusNodeFindSaleOrderID = FocusNode();
+
+  TextEditingController textControllerFindInvoiceNo = TextEditingController();
+  FocusNode textFieldFocusNodeFindInvoiceNo = FocusNode();
 
   TextEditingController textControllerFindCustomerID = TextEditingController();
   FocusNode textFieldFocusNodeFindCustomerID = FocusNode();
@@ -197,6 +201,38 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
 
     if (!mapData.isNotEmpty) {
       Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
+    } else {
+      textControllerFindSaleOrderID.clear();
+      textControllerFindCustomerID.clear();
+      textControllerFindCustmerName.clear();
+
+      textFieldFocusNodeFindSaleOrderID.unfocus();
+      textFieldFocusNodeFindCustomerID.unfocus();
+      textFieldFocusNodeFindCustomerName.unfocus();
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => A1603OrderDetail(
+              customerID: mapData['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData,
+              checkTeam: widget.checkTeam,
+            ),
+          ));
+    }
+  }
+
+  void findINVOICENO(String id) {
+    print(id);
+
+    Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
+      (element) => element['INVOICE_NO'] == id,
+      orElse: () => {},
+    );
+    print(id);
+    print(mapData);
+
+    if (!mapData.isNotEmpty) {
+      Fluttertoast.showToast(msg: 'ไม่มี INVOICE NO. นี้ค่ะ');
     } else {
       textControllerFindSaleOrderID.clear();
       textControllerFindCustomerID.clear();
@@ -1024,6 +1060,10 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                                                 //       textControllerFindSaleOrderID
                                                 //           .text);
                                                 // },
+
+                                                inputFormatters: [
+                                                  UpperCaseTextFormatter(), // ตัวแปลงให้เป็นตัวพิมพ์ใหญ่
+                                                ],
                                                 controller:
                                                     textControllerFindSaleOrderID,
                                                 focusNode:
@@ -1107,6 +1147,187 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                                       onTap: () {
                                         findSaleOrderID(
                                             textControllerFindSaleOrderID.text);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade900,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                        child: Text(
+                                          '        กดที่นี่เพื่อค้นหา        ',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodySmall
+                                              .override(
+                                                fontSize: 20,
+                                                fontFamily: 'Kanit',
+                                                color: Colors.white,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            10.0, 10.0, 10.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              alignment: Alignment.centerRight,
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade900,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              height: MediaQuery.of(context).size.height * 0.18,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Text(
+                                        '   ค้นหาด้วย INVOICE NO.   ',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodySmall
+                                            .override(
+                                                fontSize: 16,
+                                                fontFamily: 'Kanit',
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                                fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            12.0, 12.0, 12.0, 12.0),
+                                    child: Container(
+                                      height: 50.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      8.0, 0.0, 8.0, 0.0),
+                                              child: TextFormField(
+                                                // onChanged: (value) {
+                                                //   findSaleOrderID(
+                                                //       textControllerFindSaleOrderID
+                                                //           .text);
+                                                // },
+
+                                                inputFormatters: [
+                                                  UpperCaseTextFormatter(), // ตัวแปลงให้เป็นตัวพิมพ์ใหญ่
+                                                ],
+                                                controller:
+                                                    textControllerFindInvoiceNo,
+                                                focusNode:
+                                                    textFieldFocusNodeFindInvoiceNo,
+                                                autofocus: false,
+                                                obscureText: false,
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  labelStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelLarge,
+                                                  alignLabelWithHint: false,
+                                                  hintText:
+                                                      'ค้นหาด้วย INVOICE NO.',
+                                                  hintStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelLarge,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  focusedErrorBorder:
+                                                      InputBorder.none,
+                                                  // suffixIcon: const Icon(
+                                                  //   Icons.search,
+                                                  // ),
+                                                ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium,
+                                                textAlign: TextAlign.center,
+                                                // validator:
+                                                //     textControllerValidator.asValidator(context),
+                                              ),
+                                            ),
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              findINVOICENO(
+                                                  textControllerFindInvoiceNo
+                                                      .text);
+                                            },
+                                            child: Icon(
+                                              Icons.search,
+                                              color: Colors.grey.shade700,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10)
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.all(12.0),
+                                  //   child: Container(
+                                  //     width: 800,
+                                  //     padding: EdgeInsets.all(8),
+                                  //     decoration: BoxDecoration(
+                                  //       color: Colors.white,
+                                  //       borderRadius: BorderRadius.circular(16),
+                                  //     ),
+                                  //     child: Text(
+                                  //       'ค้นหาด้วย Sale Order',
+                                  //       style: FlutterFlowTheme.of(context)
+                                  //           .bodySmall
+                                  //           .override(
+                                  //             fontSize: 20,
+                                  //             fontFamily: 'Kanit',
+                                  //             color: FlutterFlowTheme.of(context)
+                                  //                 .primaryText,
+                                  //           ),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        findINVOICENO(
+                                            textControllerFindInvoiceNo.text);
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(8),
@@ -1570,6 +1791,17 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(), // แปลงข้อความทั้งหมดเป็นตัวพิมพ์ใหญ่
+      selection: newValue.selection,
     );
   }
 }

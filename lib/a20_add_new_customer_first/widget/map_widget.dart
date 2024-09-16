@@ -165,7 +165,18 @@ class _MapWidgetFirstState extends State<MapWidgetFirst> {
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
                                               // context.safePop();
-                                              Navigator.pop(context);
+                                              // Navigator.pop(context);
+                                              Navigator.pop(context, {
+                                                'latitudeToBack':
+                                                    latitudeToBack == 0.0
+                                                        ? widget.latitude
+                                                        : latitudeToBack,
+                                                'longitudeToBack':
+                                                    longitudeToBack == 0.0
+                                                        ? widget.longtitude
+                                                        : longitudeToBack,
+                                                // เพิ่มค่าอื่น ๆ ตามต้องการ
+                                              });
                                             },
                                             child: Icon(
                                               Icons.chevron_left,

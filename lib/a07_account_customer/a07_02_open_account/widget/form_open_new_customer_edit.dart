@@ -17,6 +17,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:m_food/a07_account_customer/a07_02_open_account/a07021_map_widget.dart';
 import 'package:m_food/a07_account_customer/a07_02_open_account/widget/dropdown_custom.dart';
+import 'package:m_food/a07_account_customer/a07_02_open_account/widget/form_open_new_customer.dart';
 import 'package:m_food/components/step_approve_widget.dart';
 import 'package:m_food/controller/category_product_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
@@ -352,6 +353,19 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
   List<TextEditingController?>? postalCodeController = [];
 
   DateTime dateBirthday = DateTime.now();
+
+  List<TextEditingController?>? hourOpenController = [];
+  List<TextEditingController?>? minuteOpenController = [];
+  List<TextEditingController?>? hourCloseController = [];
+  List<TextEditingController?>? minuteCloseController = [];
+  List<TextEditingController?>? hourOpenTimeController = [];
+  List<TextEditingController?>? minuteOpenTimeController = [];
+  List<TextEditingController?>? hourCloseTimeController = [];
+  List<TextEditingController?>? minuteCloseTimeController = [];
+  List<TextEditingController?>? hourOpenCRMController = [];
+  List<TextEditingController?>? minuteOpenCRMController = [];
+  List<TextEditingController?>? hourCloseCRMController = [];
+  List<TextEditingController?>? minuteCloseCrmController = [];
 
   //==OCR===========================
   Map textMap = {
@@ -892,6 +906,19 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         // print(resultList);
         postalCodeController!.add(TextEditingController());
 
+        hourOpenController!.add(TextEditingController());
+        minuteOpenController!.add(TextEditingController());
+        hourCloseController!.add(TextEditingController());
+        minuteCloseController!.add(TextEditingController());
+        hourOpenTimeController!.add(TextEditingController());
+        minuteOpenTimeController!.add(TextEditingController());
+        hourCloseTimeController!.add(TextEditingController());
+        minuteCloseTimeController!.add(TextEditingController());
+        hourOpenCRMController!.add(TextEditingController());
+        minuteOpenCRMController!.add(TextEditingController());
+        hourCloseCRMController!.add(TextEditingController());
+        minuteCloseCrmController!.add(TextEditingController());
+
         phoneInputController.add(TextEditingController());
         amphures!.add([]);
         tambons!.add([]);
@@ -1058,6 +1085,32 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       ['ListCustomerAddress'][i]['SubDistrict'],
                   'PostalCode': widget.entryMap!['value']['ListCustomerAddress']
                       [i]['PostalCode'],
+
+                  'เวลาเปิดHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาเปิดHH'], //new
+                  'เวลาเปิดMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาเปิดMM'], //new
+                  'เวลาปิดHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาปิดHH'], //new
+                  'เวลาปิดMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาปิดMM'], //new
+                  'ตั้งแต่เวลาHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['ตั้งแต่เวลาHH'], //new
+                  'ตั้งแต่เวลาMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['ตั้งแต่เวลาMM'], //new
+                  'ถึงเวลาHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['ถึงเวลาHH'], //new
+                  'ถึงเวลาMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['ถึงเวลาMM'], //new
+                  'เริ่มเวลาCRMHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['เริ่มเวลาCRMHH'], //new
+                  'เริ่มเวลาCRMMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['เริ่มเวลาCRMMM'], //new
+                  'หมดเวลาCRMHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['หมดเวลาCRMHH'], //new
+                  'หมดเวลาCRMMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['หมดเวลาCRMMM'], //new
+
                   'Latitude': widget.entryMap!['value']['ListCustomerAddress']
                       [i]['Latitude'],
                   'Longitude': widget.entryMap!['value']['ListCustomerAddress']
@@ -1201,6 +1254,32 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         ['ListCustomerAddress'][i]['SubDistrict'],
                     'PostalCode': widget.entryMap!['value']
                         ['ListCustomerAddress'][i]['PostalCode'],
+
+                    'เวลาเปิดHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาเปิดHH'], //new
+                    'เวลาเปิดMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาเปิดMM'], //new
+                    'เวลาปิดHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาปิดHH'], //new
+                    'เวลาปิดMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาปิดMM'], //new
+                    'ตั้งแต่เวลาHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ตั้งแต่เวลาHH'], //new
+                    'ตั้งแต่เวลาMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ตั้งแต่เวลาMM'], //new
+                    'ถึงเวลาHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ถึงเวลาHH'], //new
+                    'ถึงเวลาMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ถึงเวลาMM'], //new
+                    'เริ่มเวลาCRMHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เริ่มเวลาCRMHH'], //new
+                    'เริ่มเวลาCRMMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เริ่มเวลาCRMMM'], //new
+                    'หมดเวลาCRMHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['หมดเวลาCRMHH'], //new
+                    'หมดเวลาCRMMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['หมดเวลาCRMMM'], //new
+
                     'Latitude': widget.entryMap!['value']['ListCustomerAddress']
                         [i]['Latitude'],
                     'Longitude': widget.entryMap!['value']
@@ -1353,6 +1432,32 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                         ['ListCustomerAddress'][i]['SubDistrict'],
                     'PostalCode': widget.entryMap!['value']
                         ['ListCustomerAddress'][i]['PostalCode'],
+
+                    'เวลาเปิดHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาเปิดHH'], //new
+                    'เวลาเปิดMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาเปิดMM'], //new
+                    'เวลาปิดHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาปิดHH'], //new
+                    'เวลาปิดMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เวลาปิดMM'], //new
+                    'ตั้งแต่เวลาHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ตั้งแต่เวลาHH'], //new
+                    'ตั้งแต่เวลาMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ตั้งแต่เวลาMM'], //new
+                    'ถึงเวลาHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ถึงเวลาHH'], //new
+                    'ถึงเวลาMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['ถึงเวลาMM'], //new
+                    'เริ่มเวลาCRMHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เริ่มเวลาCRMHH'], //new
+                    'เริ่มเวลาCRMMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['เริ่มเวลาCRMMM'], //new
+                    'หมดเวลาCRMHH': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['หมดเวลาCRMHH'], //new
+                    'หมดเวลาCRMMM': widget.entryMap!['value']
+                        ['ListCustomerAddress'][i]['หมดเวลาCRMMM'], //new
+
                     'Latitude': widget.entryMap!['value']['ListCustomerAddress']
                         [i]['Latitude'],
                     'Longitude': widget.entryMap!['value']
@@ -1484,6 +1589,32 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       ['ListCustomerAddress'][i]['SubDistrict'],
                   'PostalCode': widget.entryMap!['value']['ListCustomerAddress']
                       [i]['PostalCode'],
+
+                  'เวลาเปิดHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาเปิดHH'], //new
+                  'เวลาเปิดMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาเปิดMM'], //new
+                  'เวลาปิดHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาปิดHH'], //new
+                  'เวลาปิดMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาปิดMM'], //new
+                  'ตั้งแต่เวลาHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['ตั้งแต่เวลาHH'], //new
+                  'ตั้งแต่เวลาMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['ตั้งแต่เวลาMM'], //new
+                  'ถึงเวลาHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['ถึงเวลาHH'], //new
+                  'ถึงเวลาMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['ถึงเวลาMM'], //new
+                  'เริ่มเวลาCRMHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['เริ่มเวลาCRMHH'], //new
+                  'เริ่มเวลาCRMMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['เริ่มเวลาCRMMM'], //new
+                  'หมดเวลาCRMHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['หมดเวลาCRMHH'], //new
+                  'หมดเวลาCRMMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['หมดเวลาCRMMM'], //new
+
                   'Latitude': widget.entryMap!['value']['ListCustomerAddress']
                       [i]['Latitude'],
                   'Longitude': widget.entryMap!['value']['ListCustomerAddress']
@@ -1602,6 +1733,31 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       ['ListCustomerAddress'][i]['SubDistrict'],
                   'PostalCode': widget.entryMap!['value']['ListCustomerAddress']
                       [i]['PostalCode'],
+
+                  'เวลาเปิดHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาเปิดHH'], //new
+                  'เวลาเปิดMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาเปิดMM'], //new
+                  'เวลาปิดHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาปิดHH'], //new
+                  'เวลาปิดMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['เวลาปิดMM'], //new
+                  'ตั้งแต่เวลาHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['ตั้งแต่เวลาHH'], //new
+                  'ตั้งแต่เวลาMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['ตั้งแต่เวลาMM'], //new
+                  'ถึงเวลาHH': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['ถึงเวลาHH'], //new
+                  'ถึงเวลาMM': widget.entryMap!['value']['ListCustomerAddress']
+                      [i]['ถึงเวลาMM'], //new
+                  'เริ่มเวลาCRMHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['เริ่มเวลาCRMHH'], //new
+                  'เริ่มเวลาCRMMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['เริ่มเวลาCRMMM'], //new
+                  'หมดเวลาCRMHH': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['หมดเวลาCRMHH'], //new
+                  'หมดเวลาCRMMM': widget.entryMap!['value']
+                      ['ListCustomerAddress'][i]['หมดเวลาCRMMM'], //new
                   'Latitude': widget.entryMap!['value']['ListCustomerAddress']
                       [i]['Latitude'],
                   'Longitude': widget.entryMap!['value']['ListCustomerAddress']
@@ -1738,6 +1894,31 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                   ['SubDistrict'],
               'PostalCode': widget.entryMap!['value']['ListCustomerAddress'][i]
                   ['PostalCode'],
+
+              'เวลาเปิดHH': widget.entryMap!['value']['ListCustomerAddress'][i]
+                  ['เวลาเปิดHH'], //new
+              'เวลาเปิดMM': widget.entryMap!['value']['ListCustomerAddress'][i]
+                  ['เวลาเปิดMM'], //new
+              'เวลาปิดHH': widget.entryMap!['value']['ListCustomerAddress'][i]
+                  ['เวลาปิดHH'], //new
+              'เวลาปิดMM': widget.entryMap!['value']['ListCustomerAddress'][i]
+                  ['เวลาปิดMM'], //new
+              'ตั้งแต่เวลาHH': widget.entryMap!['value']['ListCustomerAddress']
+                  [i]['ตั้งแต่เวลาHH'], //new
+              'ตั้งแต่เวลาMM': widget.entryMap!['value']['ListCustomerAddress']
+                  [i]['ตั้งแต่เวลาMM'], //new
+              'ถึงเวลาHH': widget.entryMap!['value']['ListCustomerAddress'][i]
+                  ['ถึงเวลาHH'], //new
+              'ถึงเวลาMM': widget.entryMap!['value']['ListCustomerAddress'][i]
+                  ['ถึงเวลาMM'], //new
+              'เริ่มเวลาCRMHH': widget.entryMap!['value']['ListCustomerAddress']
+                  [i]['เริ่มเวลาCRMHH'], //new
+              'เริ่มเวลาCRMMM': widget.entryMap!['value']['ListCustomerAddress']
+                  [i]['เริ่มเวลาCRMMM'], //new
+              'หมดเวลาCRMHH': widget.entryMap!['value']['ListCustomerAddress']
+                  [i]['หมดเวลาCRMHH'], //new
+              'หมดเวลาCRMMM': widget.entryMap!['value']['ListCustomerAddress']
+                  [i]['หมดเวลาCRMMM'], //new
               'Latitude': widget.entryMap!['value']['ListCustomerAddress'][i]
                   ['Latitude'],
               'Longitude': widget.entryMap!['value']['ListCustomerAddress'][i]
@@ -1951,7 +2132,57 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
           postalCodeController!.add(TextEditingController(
               text: widget.entryMap!['value']['ListCustomerAddress'][i]
-                  ['PostalCode']));
+                      ['PostalCode'] ??
+                  ''));
+
+          hourOpenController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['เวลาเปิดHH'] ??
+                  ''));
+          minuteOpenController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['เวลาเปิดMM'] ??
+                  ''));
+          hourCloseController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['เวลาปิดHH'] ??
+                  ''));
+          minuteCloseController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['เวลาปิดMM'] ??
+                  ''));
+          hourOpenTimeController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['ตั้งแต่เวลาHH'] ??
+                  ''));
+          minuteOpenTimeController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['ตั้งแต่เวลาMM'] ??
+                  ''));
+          hourCloseTimeController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['ถึงเวลาHH'] ??
+                  ''));
+          minuteCloseTimeController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['ถึงเวลาMM'] ??
+                  ''));
+          hourOpenCRMController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['เริ่มเวลาCRMHH'] ??
+                  ''));
+          minuteOpenCRMController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['เริ่มเวลาCRMMM'] ??
+                  ''));
+          hourCloseCRMController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['หมดเวลาCRMHH'] ??
+                  ''));
+          minuteCloseCrmController!.add(TextEditingController(
+              text: widget.entryMap!['value']['ListCustomerAddress'][i]
+                      ['หมดเวลาCRMMM'] ??
+                  ''));
 
           phoneInputController.add(TextEditingController(text: ''));
           //===================================================================
@@ -11309,6 +11540,19 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
           postalCodeController!.add(TextEditingController());
 
+          hourOpenController!.add(TextEditingController());
+          minuteOpenController!.add(TextEditingController());
+          hourCloseController!.add(TextEditingController());
+          minuteCloseController!.add(TextEditingController());
+          hourOpenTimeController!.add(TextEditingController());
+          minuteOpenTimeController!.add(TextEditingController());
+          hourCloseTimeController!.add(TextEditingController());
+          minuteCloseTimeController!.add(TextEditingController());
+          hourOpenCRMController!.add(TextEditingController());
+          minuteOpenCRMController!.add(TextEditingController());
+          hourCloseCRMController!.add(TextEditingController());
+          minuteCloseCrmController!.add(TextEditingController());
+
           phoneInputController.add(TextEditingController());
 
           amphures!.add([]);
@@ -11451,6 +11695,19 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                                       //     .removeLast();
 
                                       postalCodeController!.removeLast();
+
+                                      hourOpenController!.removeLast();
+                                      minuteOpenController!.removeLast();
+                                      hourCloseController!.removeLast();
+                                      minuteCloseController!.removeLast();
+                                      hourOpenTimeController!.removeLast();
+                                      minuteOpenTimeController!.removeLast();
+                                      hourCloseTimeController!.removeLast();
+                                      minuteCloseTimeController!.removeLast();
+                                      hourOpenCRMController!.removeLast();
+                                      minuteOpenCRMController!.removeLast();
+                                      hourCloseCRMController!.removeLast();
+                                      minuteCloseCrmController!.removeLast();
 
                                       phoneInputController.removeLast();
 
@@ -11761,8 +12018,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             : null
                         : null,
 
-                    initialValue:
-                        checkIDforAddress && index == 0 ? null : resultList[index]['Moo'],
+                    initialValue: checkIDforAddress && index == 0
+                        ? null
+                        : resultList[index]['Moo'],
                     // !checkIDforAddress ? resultList[index]['Moo'] : null,
                     // initialValue: resultList[index]['Moo'],
                     onChanged: (value) {
@@ -11844,8 +12102,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             : null
                         : null,
 
-                    initialValue:
-                        checkIDforAddress && index == 0 ? null : resultList[index]['Soi'],
+                    initialValue: checkIDforAddress && index == 0
+                        ? null
+                        : resultList[index]['Soi'],
 
                     // initialValue:
                     // !checkIDforAddress ? resultList[index]['Soi'] : null,
@@ -12015,8 +12274,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             : null
                         : null,
 
-                    initialValue:
-                        checkIDforAddress  && index == 0? null : resultList[index]['Talad'],
+                    initialValue: checkIDforAddress && index == 0
+                        ? null
+                        : resultList[index]['Talad'],
                     // initialValue:
                     //     !checkIDforAddress ? resultList[index]['Talad'] : null,
                     // initialValue: resultList[index]['Moo'],
@@ -12101,8 +12361,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             : false
                         : false,
 
-                    initialValue:
-                        checkIDforAddress && index == 0 ? null : resultList[index]['Road'],
+                    initialValue: checkIDforAddress && index == 0
+                        ? null
+                        : resultList[index]['Road'],
                     // initialValue:
                     //     !checkIDforAddress ? resultList[index]['Road'] : null,
                     // initialValue: resultList[index]['Road'],
@@ -12574,6 +12835,416 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                     ),
                   ),
 
+                  //======================= เวลาเปิด เวลาปิด ================================
+
+                  Container(
+                    width: double.infinity,
+                    height: 80,
+                    color: Colors.transparent,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 80,
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      ' เวลาเปิด',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: 120,
+                                height: 60,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                hourOpenController![index],
+                                            onChanged: (value) {
+                                              resultList[index]['เวลาเปิดHH'] =
+                                                  value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 23),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'HH',
+                                              hintText: 'HH',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                minuteOpenController![index],
+                                            onChanged: (value) {
+                                              resultList[index]['เวลาเปิดMM'] =
+                                                  value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 59),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              hintText: 'MM',
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'MM',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          width: 120,
+                          height: 80,
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      ' เวลาปิด',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                width: 120,
+                                height: 60,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                hourCloseController![index],
+                                            onChanged: (value) {
+                                              resultList[index]['เวลาปิดHH'] =
+                                                  value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 23),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'HH',
+                                              hintText: 'HH',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                minuteCloseController![index],
+                                            onChanged: (value) {
+                                              resultList[index]['เวลาปิดMM'] =
+                                                  value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 59),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              hintText: 'MM',
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'MM',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                     child: Row(
@@ -12624,6 +13295,811 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                   ),
                   const SizedBox(
                     height: 5,
+                  ),
+
+                  //======================= เวลาเปิด เวลาปิด ================================
+
+                  Container(
+                    width: double.infinity,
+                    height: 80,
+                    color: Colors.transparent,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 80,
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      ' ตั้งแต่เวลา',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: 120,
+                                height: 60,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                hourOpenTimeController![index],
+                                            onChanged: (value) {
+                                              resultList[index]
+                                                  ['ตั้งแต่เวลาHH'] = value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 23),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'HH',
+                                              hintText: 'HH',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                minuteOpenTimeController![
+                                                    index],
+                                            onChanged: (value) {
+                                              resultList[index]
+                                                  ['ตั้งแต่เวลาMM'] = value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 59),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              hintText: 'MM',
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'MM',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          width: 120,
+                          height: 80,
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      ' ถึงเวลา',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                width: 120,
+                                height: 60,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                hourCloseTimeController![index],
+                                            onChanged: (value) {
+                                              resultList[index]['ถึงเวลาHH'] =
+                                                  value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 23),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'HH',
+                                              hintText: 'HH',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                minuteCloseTimeController![
+                                                    index],
+                                            onChanged: (value) {
+                                              resultList[index]['ถึงเวลาMM'] =
+                                                  value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 59),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              hintText: 'MM',
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'MM',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //======================= เวลาเปิด เวลาปิด ================================
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(
+                          ' ช่วงเวลาที่สามารถติดต่อได้ CRM',
+                          style: FlutterFlowTheme.of(context).bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 60,
+                    color: Colors.transparent,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 60,
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 120,
+                                height: 60,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                hourOpenCRMController![index],
+                                            onChanged: (value) {
+                                              resultList[index]
+                                                  ['เริ่มเวลาCRMHH'] = value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 23),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'HH',
+                                              hintText: 'HH',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                minuteOpenCRMController![index],
+                                            onChanged: (value) {
+                                              resultList[index]
+                                                  ['เริ่มเวลาCRMMM'] = value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 59),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              hintText: 'MM',
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'MM',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          width: 120,
+                          height: 60,
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                width: 120,
+                                height: 60,
+                                color: Colors.transparent,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                hourCloseCRMController![index],
+                                            onChanged: (value) {
+                                              resultList[index]
+                                                  ['หมดเวลาCRMHH'] = value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 23),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'HH',
+                                              hintText: 'HH',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: TextField(
+                                            controller:
+                                                minuteCloseCrmController![
+                                                    index],
+                                            onChanged: (value) {
+                                              resultList[index]
+                                                  ['หมดเวลาCRMMM'] = value;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                              TimeInputFormatter(maxValue: 59),
+                                            ],
+                                            focusNode: null,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              hintText: 'MM',
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              labelText: 'MM',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium,
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .alternate,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 2.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   TextFormField(
                     // controller: _model.textController15,
