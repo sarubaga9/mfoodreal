@@ -20,6 +20,7 @@ import 'package:m_food/main.dart';
 import 'package:m_food/widgets/circular_loading.dart';
 import 'package:m_food/widgets/custom_text.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:uuid/uuid.dart';
 import 'package:xml2json/xml2json.dart';
 
 import '/flutter_flow/flutter_flow_count_controller.dart';
@@ -3392,6 +3393,156 @@ class _A09020ProductHistoryDetailState
 
                                                     return;
                                                   } else {
+                                                    for (int i = 0;
+                                                        i <
+                                                            orderList[
+                                                                    'ProductList']
+                                                                .length;
+                                                        i++) {
+                                                      print(orderList[
+                                                              'ProductList'][i]
+                                                          ['DocID']);
+                                                      print(orderList[
+                                                              'ProductList'][i]
+                                                          ['ProductID']);
+                                                      print(orderList[
+                                                              'ProductList'][i]
+                                                          ['CONVERT_RATIO']);
+                                                      print(orderList[
+                                                              'ProductList'][i]
+                                                          ['UNIT_BASE']);
+                                                      print(orderList[
+                                                              'ProductList'][i]
+                                                          ['ยูนิต']);
+                                                      print(orderList[
+                                                              'ProductList'][i]
+                                                          ['จำนวน']);
+
+                                                      Map<String, dynamic>?
+                                                          productData;
+
+                                                      try {
+                                                        // ดึงข้อมูลจาก Firestore และใส่ลงในตัวแปร productData
+                                                        DocumentSnapshot
+                                                            snapshot =
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(AppSettings
+                                                                            .customerType ==
+                                                                        CustomerType
+                                                                            .Test
+                                                                    ? 'ProductTest'
+                                                                    : 'Product')
+                                                                .doc(orderList[
+                                                                        'ProductList']
+                                                                    [
+                                                                    i]['DocID'])
+                                                                .get();
+
+                                                        // ตรวจสอบว่าข้อมูลมีอยู่หรือไม่
+                                                        if (snapshot.exists) {
+                                                          productData =
+                                                              snapshot.data()
+                                                                  as Map<String,
+                                                                      dynamic>;
+                                                          print(
+                                                              'Data: $productData');
+                                                        } else {
+                                                          print(
+                                                              'Document does not exist');
+                                                        }
+
+                                                        double totalOld = double
+                                                            .parse(productData![
+                                                                    'Balance']
+                                                                .toString());
+                                                        double totalBalance = double
+                                                                .parse(orderList[
+                                                                            'ProductList'][i]
+                                                                        [
+                                                                        'CONVERT_RATIO']
+                                                                    .toString()) *
+                                                            double.parse(orderList[
+                                                                        'ProductList']
+                                                                    [i]['จำนวน']
+                                                                .toString());
+
+                                                        double total =
+                                                            totalOld +
+                                                                totalBalance;
+
+                                                        print(totalOld);
+                                                        print(totalBalance);
+                                                        print(total);
+                                                        print(total);
+                                                        print(total);
+                                                        print(total);
+
+                                                        Uuid uuid = Uuid();
+                                                        String docID =
+                                                            uuid.v1();
+
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection(AppSettings
+                                                                        .customerType ==
+                                                                    CustomerType
+                                                                        .Test
+                                                                ? 'คืนสต็อกTest'
+                                                                : 'คืนสต็อก')
+                                                            .doc(docID)
+                                                            .set({
+                                                          'ConvertRatio': orderList[
+                                                                  'ProductList']
+                                                              [
+                                                              i]['CONVERT_RATIO'],
+                                                          'OrdersDateID':
+                                                              orderList[
+                                                                  'OrdersDateID'],
+                                                          'ProductID': orderList[
+                                                                  'ProductList']
+                                                              [i]['ProductID'],
+                                                          'ProductName': orderList[
+                                                                  'ProductList']
+                                                              [i]['ชื่อสินค้า'],
+                                                          'SALE_ORDER_ID_REF':
+                                                              orderList[
+                                                                  'SALE_ORDER_ID_REF'],
+                                                          'จำนวน': orderList[
+                                                                  'ProductList']
+                                                              [i]['จำนวน'],
+                                                          'จำนวนที่คืน':
+                                                              totalBalance,
+                                                          'ยูนิต': orderList[
+                                                                  'ProductList']
+                                                              [i]['ยูนิต'],
+                                                          'วันที่':
+                                                              DateTime.now(),
+                                                          'สถานะ':
+                                                              'คืนสต็อกสำเร็จ',
+                                                          'หมายเหตุ':
+                                                              'ยกเลิกออเดอร์ผ่านแอพ',
+                                                        });
+
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection(AppSettings
+                                                                        .customerType ==
+                                                                    CustomerType
+                                                                        .Test
+                                                                ? 'ProductTest'
+                                                                : 'Product')
+                                                            .doc(orderList[
+                                                                    'ProductList']
+                                                                [i]['DocID'])
+                                                            .update({
+                                                          'Balance': total,
+                                                        });
+                                                      } catch (e) {
+                                                        print(
+                                                            'Error getting document: $e');
+                                                      }
+                                                    }
                                                     await FirebaseFirestore
                                                         .instance
                                                         .collection(AppSettings
