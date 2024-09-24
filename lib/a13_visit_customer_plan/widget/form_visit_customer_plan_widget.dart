@@ -12,6 +12,7 @@ import 'package:m_food/widgets/data_transfer_widget_no_user.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uuid/uuid.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
 
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_google_map.dart';
@@ -513,7 +514,7 @@ class _FormVisitCustomerPlanWidgetState
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

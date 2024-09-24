@@ -261,7 +261,7 @@ class _MyAppState extends State<MyApp> {
         isLoading = true;
       });
 
-      String versionNow = '1.14';
+      String versionNow = '1.15';
 
       print(versionNow);
 

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17901,7 +17903,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -18048,7 +18050,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -18173,7 +18175,7 @@ class _FormOpenNewCustomerState extends State<FormOpenNewCustomer> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

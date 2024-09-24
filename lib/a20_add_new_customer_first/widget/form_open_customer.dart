@@ -35,6 +35,8 @@ import 'package:photo_view/photo_view.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 // import 'package:sn_progress_dialog/progress_dialog.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import '/components/signature_widget.dart';
@@ -1013,8 +1015,6 @@ class _FormOpenCustomerState extends State<FormOpenCustomer> {
       setState(() {
         isLoading = true;
       });
-
-
 
       await fetchData();
 
@@ -2898,7 +2898,7 @@ class _FormOpenCustomerState extends State<FormOpenCustomer> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             checkTimeToSend
-                ? Text('!! กรุณากรอกวันที่มากกว่าวันที่ปัจจุบันค่ะ',
+                ? Text('!! กรุณากรอกวันที่ไม่น้อยกว่าวันที่ปัจจุบันค่ะ',
                     style: FlutterFlowTheme.of(context).redSmall)
                 : SizedBox(),
             GestureDetector(
@@ -6484,7 +6484,7 @@ class _FormOpenCustomerState extends State<FormOpenCustomer> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -6600,8 +6600,16 @@ class _FormOpenCustomerState extends State<FormOpenCustomer> {
                           int month = int.parse(_model.textController8.text);
                           int year =
                               int.parse(_model.textController9.text) - 543;
-                          var check = DateTime(year, month, day, 0, 0, 0)
-                              .isBefore(DateTime.now());
+                          // var check = DateTime(year, month, day, 0, 0, 0)
+                          //     .isBefore(DateTime.now());
+
+                          var check = DateTime(year, month, day).isBefore(
+                              DateTime.now().subtract(Duration(
+                                  hours: DateTime.now().hour,
+                                  minutes: DateTime.now().minute,
+                                  seconds: DateTime.now().second,
+                                  milliseconds: DateTime.now().millisecond,
+                                  microseconds: DateTime.now().microsecond)));
 
                           if (check == true) {
                             setState(
@@ -6631,7 +6639,7 @@ class _FormOpenCustomerState extends State<FormOpenCustomer> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -6756,7 +6764,7 @@ class _FormOpenCustomerState extends State<FormOpenCustomer> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

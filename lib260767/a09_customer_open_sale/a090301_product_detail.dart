@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:m_food/a09_customer_open_sale/a0904_product_order_detail.dart';
+import 'package:m_food/a09_customer_open_sale/a0904_product_order_detail%2024%2009%203567.dart';
 import 'package:m_food/controller/product_controller.dart';
 import 'package:m_food/controller/product_group_controller.dart';
 import 'package:m_food/main.dart';

@@ -16,6 +16,7 @@ import 'package:m_food/widgets/circular_loading.dart';
 import 'package:m_food/widgets/circular_loading_home.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'package:xml2json/xml2json.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
 
 import '/flutter_flow/flutter_flow_count_controller.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -579,7 +580,7 @@ class _A09021AddressSettingTeamState extends State<A09021AddressSettingTeam> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

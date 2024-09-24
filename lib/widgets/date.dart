@@ -17,6 +17,7 @@ import 'package:m_food/components/form_general_user_widget.dart';
 import 'package:m_food/components/form_general_user_widget_jak.dart';
 import 'package:m_food/controller/category_product_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
 import 'package:m_food/widgets/circular_loading.dart';
 import 'package:m_food/widgets/custom_text.dart';
 import 'package:m_food/widgets/watermark_paint.dart';
@@ -11181,7 +11182,7 @@ class _FormGeneralUserWidgetState extends State<FormGeneralUserWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

@@ -11,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dropdown_search/flutter_dropdown_search.dart';
 import 'package:flutter_signature_pad/flutter_signature_pad.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -15908,7 +15910,7 @@ class _FormOpenNewCustomerOLDState extends State<FormOpenNewCustomerOLD> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -16055,7 +16057,7 @@ class _FormOpenNewCustomerOLDState extends State<FormOpenNewCustomerOLD> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -16180,7 +16182,7 @@ class _FormOpenNewCustomerOLDState extends State<FormOpenNewCustomerOLD> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
 
 import '../widgets/format_method.dart';
 import 'dart:ui' as ui;
@@ -21625,7 +21626,7 @@ class _FormGeneralUserEditWidgetState extends State<FormGeneralUserEditWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -21751,7 +21752,7 @@ class _FormGeneralUserEditWidgetState extends State<FormGeneralUserEditWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -21877,7 +21878,7 @@ class _FormGeneralUserEditWidgetState extends State<FormGeneralUserEditWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

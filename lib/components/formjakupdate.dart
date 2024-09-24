@@ -25,6 +25,7 @@ import 'package:scroll_date_picker/scroll_date_picker.dart';
 // import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
 
 import '../widgets/format_method.dart';
 import '../widgets/widget_service.dart';
@@ -10385,7 +10386,7 @@ class _FormGeneralUserWidgetState extends State<FormGeneralUserWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -10500,7 +10501,7 @@ class _FormGeneralUserWidgetState extends State<FormGeneralUserWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -10615,7 +10616,7 @@ class _FormGeneralUserWidgetState extends State<FormGeneralUserWidget> {
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

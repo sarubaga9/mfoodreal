@@ -12,6 +12,8 @@ import 'package:flutter_signature_pad/flutter_signature_pad.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:m_food/package/scroll_date_picker_custom.dart';
+
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -18660,7 +18662,7 @@ class _FormOpenNewCustomerEditOLDState extends State<FormOpenNewCustomerEditOLD>
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -18807,7 +18809,7 @@ class _FormOpenNewCustomerEditOLDState extends State<FormOpenNewCustomerEditOLD>
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;
@@ -18932,7 +18934,7 @@ class _FormOpenNewCustomerEditOLDState extends State<FormOpenNewCustomerEditOLD>
                 ),
                 Container(
                   height: 350,
-                  child: ScrollDatePicker(
+                  child: ScrollDatePickerCustom(
                     onDateTimeChanged: (DateTime value) {
                       setState(() {
                         _selectDate = value;

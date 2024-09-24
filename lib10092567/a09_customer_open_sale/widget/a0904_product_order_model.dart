@@ -1,4 +1,4 @@
-import 'package:m_food/a09_customer_open_sale/a0904_product_order_detail.dart';
+import 'package:m_food/a09_customer_open_sale/a0904_product_order_detail%2024%2009%203567.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';

@@ -349,6 +349,38 @@ class _A09020ProductHistoryDetailTeamState
           orderList['SALE_ORDER_ID_REF'] != null) {
         showButtonEdit = true;
       }
+      print('วันเวลาจัดส่ง');
+      print(orderList['วันเวลาจัดส่ง'].toString());
+
+      // ฟังก์ชันช่วยแปลงจาก DD-MM-YYYY ให้เป็นรูปแบบ ISO (YYYY-MM-DD)
+      String _convertToISO(String date) {
+        List<String> parts = date.split("-");
+        return "${parts[2]}-${parts[1]}-${parts[0]}";
+      }
+
+      Timestamp? timestamp;
+      if (orderList['วันเวลาจัดส่ง'].runtimeType.toString() == 'Timestamp') {
+        // Timestamp timestamp = orderList['วันเวลาจัดส่ง'];
+        // String dateString = convertFirebaseTimestampToDateString(timestamp);
+        // orderDateBefore = dateString;
+        // orderList['วันเวลาจัดส่ง'] = orderDateBefore;
+      } else {
+        // กำหนดรูปแบบของวันที่ และแปลงเป็น DateTime
+        DateTime dateTime = DateTime.parse(
+            _convertToISO(orderList['วันเวลาจัดส่ง'].toString()));
+
+        // แปลงเป็น timestamp ที่เป็น seconds since epoch
+        int secondsSinceEpoch = dateTime.millisecondsSinceEpoch ~/ 1000;
+
+        // สร้างรูปแบบ Timestamp แบบที่ต้องการ
+        timestamp = Timestamp(secondsSinceEpoch, 0);
+
+        orderList['วันเวลาจัดส่ง'] = timestamp;
+      }
+      print(orderList['วันเวลาจัดส่ง'].toString());
+      print(orderList['วันเวลาจัดส่ง'].toString());
+      print(orderList['วันเวลาจัดส่ง'].toString());
+      print(orderList['วันเวลาจัดส่ง'].toString());
       String timestampString = orderList['วันเวลาจัดส่ง'].toDate().toString();
       DateTime dateTimeCheck = DateTime(
         DateTime.parse(timestampString).year,
@@ -3025,6 +3057,8 @@ class _A09020ProductHistoryDetailTeamState
                                                     orderList['ProductList']
                                                         .length;
                                                 i++) {
+                                              orderList['ProductList'][i]
+                                                  ['จำนวนของแถม'] = '0';
                                               nonNullableList!.add(
                                                   orderList['ProductList'][i]);
                                             }
