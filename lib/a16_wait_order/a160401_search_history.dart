@@ -211,117 +211,15 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
         // print('------------');
       });
 
-      print('3');
-
-      //==============================================================
-
-      //==============================================================
-      CollectionReference orderColection = FirebaseFirestore.instance
-          .collection(AppSettings.customerType == CustomerType.Test
-              ? 'OrdersTest'
-              : 'Orders');
-      // FirebaseFirestore.instance.collection('OrdersTest');
-
-      QuerySnapshot orderSubCollections = await orderColection
-          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
-          .get();
-
-      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
-      orderSubCollections.docs.forEach((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        orderListStatename!.add(data);
-        // print('------------');
-        // print(data);
-        // print('------------');
-      });
-
-      print('33');
-
-      orderListStatename = (orderListStatename ?? [])
-          .where((map) => map != null)
-          .cast<Map<String, dynamic>>()
-          .toList();
-
-      // orderListStatename!.removeWhere(
-      //     (element) => element!['CustomerDocId'] != widget.customerID);
-
-      // print('------------');
-
-      // for (var element in orderListStatename!) {
-      //   print(element!['StateName']);
-      // }
-      // print(orderListStatename!.length);
-      // print('------------');
-
       for (int i = 0; i < mapDataOrdersData!.length; i++) {
-        bool check = orderListStatename!.any((element) =>
-            element!['OrdersDateID'] == mapDataOrdersData![i]!['OrdersDateID']);
+        Map<String, dynamic>? dataSectionMatch = sectionID2List!.firstWhere(
+            (element) =>
+                element!['ID'] == mapDataOrdersData![i]!['SectionID2']);
 
-        print(i);
-        if (check) {
-          print(check);
-          Map<String, dynamic>? dataMatch = orderListStatename!.firstWhere(
-              (element) =>
-                  element!['OrdersDateID'] ==
-                  mapDataOrdersData![i]!['OrdersDateID']);
+        mapDataOrdersData![i]!['SectionID2'] = dataSectionMatch!['Name'];
 
-          Map<String, dynamic>? dataSectionMatch = sectionID2List!.firstWhere(
-              (element) => element!['ID'] == dataMatch!['SectionID2']);
-
-          mapDataOrdersData![i]!['ชำระเงินแล้ว'] = dataMatch!['ชำระเงินแล้ว'];
-          mapDataOrdersData![i]!['SectionID2'] = dataSectionMatch!['Name'];
-
-          print(mapDataOrdersData![i]!['SectionID2']);
-        } else {
-          print(check);
-          print(mapDataOrdersData![i]!['SectionID2']);
-          mapDataOrdersData![i]!['SectionID2'] = 'รอดำเนินการ';
-          // mapDataOrdersData![i]!['SectionID2'] = null;
-        }
+        print(mapDataOrdersData![i]!['SectionID2']);
       }
-
-      // mapDataOrdersData = (mapDataOrdersData ?? [])
-      //     .where((map) => map != null)
-      //     .cast<Map<String, dynamic>>()
-      //     .toList();
-
-      // mapDataOrdersData!.removeWhere((element) => !element.isNotEmpty);
-
-      print('333333');
-
-      // for (int i = 0; i < mapDataOrdersData!.length; i++) {
-      //   print(i);
-      //   CollectionReference subCollectionRefCustomer = FirebaseFirestore
-      //       .instance
-      //       .collection(AppSettings.customerType == CustomerType.Test
-      //           ? 'CustomerTest'
-      //           : 'Customer');
-
-      //   QuerySnapshot subCollectionSnapshotCustomer =
-      //       await subCollectionRefCustomer.get();
-
-      //   if (subCollectionSnapshotCustomer.docs.length == 0) {
-      //   } else {
-      //     subCollectionSnapshotCustomer.docs.forEach((doc) {
-      //       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-      //       if (data['CustomerID'] == null) {
-      //       } else {
-      //         if (mapDataOrdersData![i]!['CustomerID'] == data['CustomerID']) {
-      //           print(data['ประเภทลูกค้า']);
-      //           print(data['ชื่อนามสกุล']);
-      //           print(data['ชื่อบริษัท']);
-      //           mapDataOrdersData![i]!['CustomerName'] =
-      //               data['ประเภทลูกค้า'] == 'Personal'
-      //                   ? data['ชื่อนามสกุล']
-      //                   : data['ชื่อบริษัท'];
-      //         } else {}
-      //       }
-      //     });
-      //   }
-
-      //   print(mapDataOrdersData![i]);
-      // }
 
       print('======== 5 ========');
       print(mapDataOrdersData!.length);
@@ -1057,21 +955,13 @@ class _A160401SearchHistoryState extends State<A160401SearchHistory> {
 
                                                                       // '    ${mapDataOrdersData![index]!['สถานะเช็คสต็อก'] == 'ปกติ' ? 'ดำเนินการแล้ว' : 'รอดำเนินการ'}',
                                                                       style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                          fontSize: 14,
-                                                                          fontFamily: 'Kanit',
-                                                                          color: mapDataOrdersData![index]!['ชำระเงินแล้ว'] != null
-                                                                              ? mapDataOrdersData![index]!['ชำระเงินแล้ว'] != '' && mapDataOrdersData![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
-                                                                                  ? Colors.green.shade700
-                                                                                  : Colors.yellow.shade900
-                                                                              : mapDataOrdersData![index]!['SectionID2'] != null && mapDataOrdersData![index]!['SectionID2'] != ''
-                                                                                  ? mapDataOrdersData![index]!['SectionID2'] == 'ออร์เดอร์ไม่สมบูรณ์'
-                                                                                      ? Colors.yellow.shade700
-                                                                                      : Colors.yellow.shade900
-                                                                                  : mapDataOrdersData![index]!['สถานะเช็คสต็อก'] != 'ปกติ'
-                                                                                      ? Colors.yellow.shade700
-                                                                                      : mapDataOrdersData![index]!['สถานะอนุมัติขาย'] != true
-                                                                                          ? Colors.yellow.shade700
-                                                                                          : Colors.yellow.shade900,
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontFamily:
+                                                                              'Kanit',
+                                                                          color: mapDataOrdersData![index]!['SectionID2'] == 'ชำระเงินแล้ว' || mapDataOrdersData![index]!['ชำระเงินแล้ว'] == 'ชำระเงินแล้ว'
+                                                                              ? Colors.green.shade700
+                                                                              : Colors.yellow.shade900,
                                                                           fontWeight: FontWeight.w400),
                                                                     ),
                                                                   ),

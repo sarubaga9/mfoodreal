@@ -458,8 +458,8 @@ class _A1601CustomerWaitOrderMenuState
                                     0.0, 10.0, 0.0, 0.0),
                                 child: CustomerList(
                                   status: widget.status,
-                                  dataOrderList: orderList,
-                                  dataOrderListTeam: [],
+                                  // dataOrderList: orderList,
+                                  // dataOrderListTeam: [],
                                 ),
                               ),
                             ),

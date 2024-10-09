@@ -11,6 +11,7 @@ import 'package:m_food/main.dart';
 import 'package:m_food/widgets/circular_loading.dart';
 import 'package:m_food/widgets/circular_loading_home.dart';
 import 'package:m_food/widgets/menu_sidebar_widget.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -21,15 +22,15 @@ import 'package:m_food/controller/customer_controller.dart';
 import 'package:m_food/controller/user_controller.dart';
 
 class A1604SearchOrder extends StatefulWidget {
-  final List<Map<String, dynamic>>? dataOrderList;
+  // final List<Map<String, dynamic>>? dataOrderList;
 
-  final String? status;
+  // final String? status;
 
   final bool? checkTeam;
   const A1604SearchOrder({
     super.key,
-    this.status,
-    @required this.dataOrderList,
+    // this.status,
+    // @required this.dataOrderList,
     @required this.checkTeam,
   });
 
@@ -64,11 +65,63 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
 
   bool isLoading = false;
 
-  List<Map<String, dynamic>>? mapDataOrdersData = [];
+  // List<Map<String, dynamic>>? mapDataOrdersData = [];
 
   DateTime? selectedDate = DateTime.now();
   DateTime? selectedDateBefore;
   DateTime? selectedDateAfter;
+
+  DateTime? selectedMonth;
+
+  // Future<void> selectMonth(BuildContext context) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: selectedMonth ?? DateTime.now(),
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2101),
+  //     initialDatePickerMode: DatePickerMode.year,
+  //   );
+  //   if (picked != null && picked != selectedMonth) {
+  //     setState(() {
+  //       selectedMonth = DateTime(picked.year, picked.month);
+  //     });
+  //   }
+  // }
+
+  Future<void> selectMonth(BuildContext context) async {
+    final DateTime? picked = await showMonthPicker(
+      context: context,
+      initialDate: selectedMonth ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      locale: Locale('th', 'TH'), // ใช้ภาษาไทย
+    );
+    if (picked != null && picked != selectedMonth) {
+      setState(() {
+        selectedMonth = picked;
+        selectedDateAfter = null;
+        selectedDateBefore = null;
+      });
+    }
+  }
+
+  String formatThaiMonth(DateTime date) {
+    final thaiMonths = [
+      'มกราคม',
+      'กุมภาพันธ์',
+      'มีนาคม',
+      'เมษายน',
+      'พฤษภาคม',
+      'มิถุนายน',
+      'กรกฎาคม',
+      'สิงหาคม',
+      'กันยายน',
+      'ตุลาคม',
+      'พฤศจิกายน',
+      'ธันวาคม'
+    ];
+    return '${thaiMonths[date.month - 1]} ${date.year + 543}';
+  }
 
   @override
   void initState() {
@@ -91,13 +144,13 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       selectedDateBefore = null;
       selectedDateAfter = null;
 
-      mapDataOrdersData = widget.dataOrderList;
+      // mapDataOrdersData = widget.dataOrderList;
 
-      print(mapDataOrdersData!.length);
-      print(mapDataOrdersData!.length);
-      print(mapDataOrdersData!.length);
-      print(mapDataOrdersData!.length);
-      print(mapDataOrdersData!.length);
+      // print(mapDataOrdersData!.length);
+      // print(mapDataOrdersData!.length);
+      // print(mapDataOrdersData!.length);
+      // print(mapDataOrdersData!.length);
+      // print(mapDataOrdersData!.length);
 
       // QuerySnapshot<Map<String, dynamic>> querySnapshot =
       //     await FirebaseFirestore.instance
@@ -162,7 +215,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //   }
       // }
 
-      print(mapDataOrdersData!.length);
+      // print(mapDataOrdersData!.length);
       setState(() {
         isLoading = false;
       });
@@ -189,13 +242,54 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     return formattedDate;
   }
 
-  void findSaleOrderID(String id) {
+  void findSaleOrderID(String id) async {
+    if (id == '') {
+      Fluttertoast.showToast(msg: 'กรุณากรอกเลขออเดอร์');
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
     print(id);
 
-    Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['SALE_ORDER_ID_REF'] == id,
-      orElse: () => {},
-    );
+    // Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
+    //   (element) => element['SALE_ORDER_ID_REF'] == id,
+    //   orElse: () => {},
+    // );
+    QuerySnapshot orderSubCollections;
+
+    print(id);
+    print(userData!['EmployeeID']);
+
+    if (widget.checkTeam == true) {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('SALE_ORDER_ID_REF', isEqualTo: id)
+          .where('เปิดออเดอร์แทน', isEqualTo: true)
+          .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+          .get();
+    } else {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('SALE_ORDER_ID_REF', isEqualTo: id)
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+          .get();
+    }
+
+    List<Map<String, dynamic>> mapData = [];
+
+    orderSubCollections.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      mapData.add(data);
+    });
+
     print(id);
     print(mapData);
 
@@ -209,25 +303,71 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       textFieldFocusNodeFindSaleOrderID.unfocus();
       textFieldFocusNodeFindCustomerID.unfocus();
       textFieldFocusNodeFindCustomerName.unfocus();
+
       Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-              customerID: mapData['CustomerDoc']['CustomerID'],
-              orderDataMap: mapData,
+              customerID: mapData.first['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData.first,
               checkTeam: widget.checkTeam,
             ),
           ));
     }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
-  void findINVOICENO(String id) {
+  void findINVOICENO(
+    String id,
+  ) async {
+    if (id == '') {
+      Fluttertoast.showToast(msg: 'กรุณากรอกเลขออเดอร์');
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
     print(id);
 
-    Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['INVOICE_NO'] == id,
-      orElse: () => {},
-    );
+    // Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
+    //   (element) => element['INVOICE_NO'] == id,
+    //   orElse: () => {},
+    // );
+
+    QuerySnapshot orderSubCollections;
+
+    if (widget.checkTeam == true) {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('INVOICE_NO', isEqualTo: id)
+          .where('เปิดออเดอร์แทน', isEqualTo: true)
+          .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+          .get();
+    } else {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('INVOICE_NO', isEqualTo: id)
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+          .get();
+    }
+
+    List<Map<String, dynamic>> mapData = [];
+
+    orderSubCollections.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      mapData.add(data);
+    });
     print(id);
     print(mapData);
 
@@ -241,25 +381,65 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       textFieldFocusNodeFindSaleOrderID.unfocus();
       textFieldFocusNodeFindCustomerID.unfocus();
       textFieldFocusNodeFindCustomerName.unfocus();
+
       Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-              customerID: mapData['CustomerDoc']['CustomerID'],
-              orderDataMap: mapData,
+              customerID: mapData.first['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData.first,
               checkTeam: widget.checkTeam,
             ),
           ));
     }
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
-  void findSaleCustomerID(String id) {
+  void findSaleCustomerID(String id) async {
+    if (id == '') {
+      Fluttertoast.showToast(msg: 'กรุณากรอกเลขออเดอร์');
+      return;
+    }
     print(id);
 
-    Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['CustomerDoc']['CustomerID'] == id,
-      orElse: () => {},
-    );
+    // Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
+    //   (element) => element['CustomerDoc']['CustomerID'] == id,
+    //   orElse: () => {},
+    // );
+
+    QuerySnapshot orderSubCollections;
+
+    if (widget.checkTeam == true) {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('CustomerDoc.CustomerID', isEqualTo: id)
+          .where('เปิดออเดอร์แทน', isEqualTo: true)
+          .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+          .get();
+    } else {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('CustomerDoc.CustomerID', isEqualTo: id)
+          .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+          .get();
+    }
+
+    List<Map<String, dynamic>> mapData = [];
+
+    orderSubCollections.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      mapData.add(data);
+    });
+
     print(id);
     print(mapData);
 
@@ -273,25 +453,71 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       textFieldFocusNodeFindSaleOrderID.unfocus();
       textFieldFocusNodeFindCustomerID.unfocus();
       textFieldFocusNodeFindCustomerName.unfocus();
+
       Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-              customerID: mapData['CustomerDoc']['CustomerID'],
-              orderDataMap: mapData,
+              customerID: mapData.first['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData.first,
               checkTeam: widget.checkTeam,
             ),
           ));
     }
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
-  void findSaleCustomerName(String id) {
+  void findSaleCustomerName(String id, BuildContext context) async {
+    if (id == '') {
+      Fluttertoast.showToast(msg: 'กรุณากรอกเลขออเดอร์');
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
     print(id);
 
-    Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
-      (element) => element['CustomerDoc']['ชื่อนามสกุล'] == id,
-      orElse: () => {},
-    );
+    // Map<String, dynamic> mapData = mapDataOrdersData!.firstWhere(
+    //   (element) => element['CustomerDoc']['ชื่อนามสกุล'] == id,
+    //   orElse: () => {},
+    // );
+
+    QuerySnapshot orderSubCollections;
+
+    if (widget.checkTeam == true) {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: id)
+          .where('เปิดออเดอร์แทน', isEqualTo: true)
+          .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+          .get();
+    } else {
+      orderSubCollections = await FirebaseFirestore.instance
+          .collection(AppSettings.customerType == CustomerType.Test
+              ? 'OrdersTest'
+              : 'Orders')
+          .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: id)
+          .get();
+    }
+
+    List<Map<String, dynamic>> mapData = [];
+
+    orderSubCollections.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      mapData.add(data);
+    });
+    print(id);
+    print(mapData);
     print(id);
     print(mapData);
 
@@ -305,20 +531,40 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       textFieldFocusNodeFindSaleOrderID.unfocus();
       textFieldFocusNodeFindCustomerID.unfocus();
       textFieldFocusNodeFindCustomerName.unfocus();
+
       Navigator.push(
           context,
           CupertinoPageRoute(
             builder: (context) => A1603OrderDetail(
-              customerID: mapData['CustomerDoc']['CustomerID'],
-              orderDataMap: mapData,
+              customerID: mapData.first['CustomerDoc']['CustomerID'],
+              orderDataMap: mapData.first,
               checkTeam: widget.checkTeam,
             ),
           ));
+    }
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   Future<void> findAll(String customerID, String customerName,
       DateTime? firstDay, DateTime? lastDay) async {
+    if (customerID == '' &&
+        customerName == '' &&
+        firstDay == null &&
+        lastDay == null) {
+      Fluttertoast.showToast(msg: 'กรุณากรอกข้อมูลเพื่อการค้นหาค่ะ');
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
     print(customerID);
     print(customerName);
 
@@ -338,7 +584,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     print(firstDay.toString());
     print(lastDay.toString());
 
-    print(mapDataOrdersData);
+    // print(mapDataOrdersData);
 
     List<Map<String, dynamic>> mapData = [];
     bool check = true;
@@ -381,11 +627,37 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //ค้นหาแค่รหัสลูกค้า
       print('11111');
 
-      mapData = mapDataOrdersData!
-          .where(
-            (element) => element['CustomerDoc']['CustomerID'] == customerID,
-          )
-          .toList();
+      // mapData = mapDataOrdersData!
+      //     .where(
+      //       (element) => element['CustomerDoc']['CustomerID'] == customerID,
+      //     )
+      //     .toList();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
 
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
@@ -397,12 +669,14 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     } else if (customerID == '' &&
         customerName != '' &&
@@ -411,15 +685,42 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //ค้นหาแค่ชื่อลูกค้า
       print('111111');
 
-      mapData = mapDataOrdersData!
-          .where(
-            // (element) => element['CustomerName'] == customerName,
-            (element) =>
-                element['CustomerDoc']['ชื่อนามสกุล'].toString().contains(
-                      customerName,
-                    ),
-          )
-          .toList();
+      // mapData = mapDataOrdersData!
+      //     .where(
+      //       // (element) => element['CustomerName'] == customerName,
+      //       (element) =>
+      //           element['CustomerDoc']['ชื่อนามสกุล'].toString().contains(
+      //                 customerName,
+      //               ),
+      //     )
+      //     .toList();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
+
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
       } else {
@@ -430,12 +731,14 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     } else if (customerID != '' &&
         customerName != '' &&
@@ -444,13 +747,42 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //ค้นหาแค่ชื่อลูกค้า && รหัสลูกค้า
       print('1111111');
 
-      mapData = mapDataOrdersData!
-          .where(
-            (element) =>
-                element['CustomerDoc']['ชื่อนามสกุล'] == customerName &&
-                element['CustomerDoc']['CustomerID'] == customerID,
-          )
-          .toList();
+      // mapData = mapDataOrdersData!
+      //     .where(
+      //       (element) =>
+      //           element['CustomerDoc']['ชื่อนามสกุล'] == customerName &&
+      //           element['CustomerDoc']['CustomerID'] == customerID,
+      //     )
+      //     .toList();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
+
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
       } else {
@@ -461,12 +793,14 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     } else if (customerID != '' &&
         customerName == '' &&
@@ -475,12 +809,46 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //ค้นหาแค่รหัสลูกค้า กับ ระยะเวลา
       print('11111111');
 
-      mapData = mapDataOrdersData!.where((element) {
-        DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
-        return orderDate.isAfter(firstDay!) &&
-            orderDate.isBefore(lastDay!) &&
-            element['CustomerDoc']['CustomerID'] == customerID;
-      }).toList();
+      // mapData = mapDataOrdersData!.where((element) {
+      //   DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
+      //   return orderDate.isAfter(firstDay!) &&
+      //       orderDate.isBefore(lastDay!) &&
+      //       element['CustomerDoc']['CustomerID'] == customerID;
+      // }).toList();
+
+      // DateTime now = DateTime.now();
+      String startOfDay = firstDay.toString();
+      String endOfDay = lastDay.toString();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
 
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
@@ -492,12 +860,14 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     } else if (customerID == '' &&
         customerName != '' &&
@@ -506,15 +876,50 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //ค้นหาแค่ชื่อลูกค้า กับ ระยะเวลา
       print('111111111');
 
-      mapData = mapDataOrdersData!.where((element) {
-        DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
-        return orderDate.isAfter(firstDay!) &&
-            orderDate.isBefore(lastDay!) &&
-            // element['CustomerName'] == customerName!;
-            element['CustomerDoc']['ชื่อนามสกุล'].toString().contains(
-                  customerName,
-                );
-      }).toList();
+      // mapData = mapDataOrdersData!.where((element) {
+      //   DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
+      //   return orderDate.isAfter(firstDay!) &&
+      //       orderDate.isBefore(lastDay!) &&
+      //       // element['CustomerName'] == customerName!;
+      //       element['CustomerDoc']['ชื่อนามสกุล'].toString().contains(
+      //             customerName,
+      //           );
+      // }).toList();
+
+      String startOfDay = firstDay.toString();
+      String endOfDay = lastDay.toString();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            // .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
+
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
       } else {
@@ -525,12 +930,15 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     } else if (customerID == '' &&
         customerName == '' &&
@@ -540,18 +948,51 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       print('1111111111');
       print('อยู่ตรงนี้');
 
-      mapData = mapDataOrdersData!.where((element) {
-        print(element['OrdersDateID']);
-        DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
-        print('ก่อน lastDay');
+      // mapData = mapDataOrdersData!.where((element) {
+      //   print(element['OrdersDateID']);
+      //   DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
+      //   print('ก่อน lastDay');
 
-        print(lastDay);
-        print(lastDay);
-        print(lastDay);
-        print(lastDay);
-        print(lastDay);
-        return orderDate.isAfter(firstDay!) && orderDate.isBefore(lastDay!);
-      }).toList();
+      //   print(lastDay);
+      //   print(lastDay);
+      //   print(lastDay);
+      //   print(lastDay);
+      //   print(lastDay);
+      //   return orderDate.isAfter(firstDay!) && orderDate.isBefore(lastDay!);
+      // }).toList();
+
+      String startOfDay = firstDay.toString();
+      String endOfDay = lastDay.toString();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            // .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            // .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
 
       print(mapData.length);
       print(mapData.length);
@@ -566,12 +1007,14 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     } else if (customerID != '' &&
         customerName != '' &&
@@ -580,16 +1023,51 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
       //ค้นหาทั้งหมด
       print('11111111111');
 
-      mapData = mapDataOrdersData!.where((element) {
-        DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
-        return orderDate.isAfter(firstDay!) &&
-            orderDate.isBefore(lastDay!) &&
-            element['CustomerDoc']['CustomerID'] == customerID &&
-            // element['CustomerName'] == customerName;
-            element['CustomerDoc']['ชื่อนามสกุล']
-                .toString()
-                .contains(customerName);
-      }).toList();
+      // mapData = mapDataOrdersData!.where((element) {
+      //   DateTime orderDate = DateTime.parse(element['OrdersDateID'].toString());
+      //   return orderDate.isAfter(firstDay!) &&
+      //       orderDate.isBefore(lastDay!) &&
+      //       element['CustomerDoc']['CustomerID'] == customerID &&
+      //       // element['CustomerName'] == customerName;
+      //       element['CustomerDoc']['ชื่อนามสกุล']
+      //           .toString()
+      //           .contains(customerName);
+      // }).toList();
+
+      String startOfDay = firstDay.toString();
+      String endOfDay = lastDay.toString();
+
+      QuerySnapshot orderSubCollections;
+
+      if (widget.checkTeam == true) {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('เปิดออเดอร์แทน', isEqualTo: true)
+            .where('idผู้เปิดออเดอร์แทน', isEqualTo: userData!['EmployeeID'])
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .get();
+      } else {
+        orderSubCollections = await FirebaseFirestore.instance
+            .collection(AppSettings.customerType == CustomerType.Test
+                ? 'OrdersTest'
+                : 'Orders')
+            .where('CustomerDoc.CustomerID', isEqualTo: customerID)
+            .where('CustomerDoc.ชื่อนามสกุล', isEqualTo: customerName)
+            .where('OrdersDateID', isGreaterThanOrEqualTo: startOfDay)
+            .where('OrdersDateID', isLessThan: endOfDay)
+            .where('UserDocId', isEqualTo: userData!['EmployeeID'])
+            .get();
+      }
+
+      orderSubCollections.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        mapData.add(data);
+      });
 
       if (!mapData.isNotEmpty) {
         Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
@@ -601,46 +1079,92 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         textFieldFocusNodeFindSaleOrderID.unfocus();
         textFieldFocusNodeFindCustomerID.unfocus();
         textFieldFocusNodeFindCustomerName.unfocus();
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => A160401SearchHistory(
-                  checkTeam: widget.checkTeam, listOrders: mapData),
-            ));
+        if (mounted) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => A160401SearchHistory(
+                    checkTeam: widget.checkTeam, listOrders: mapData),
+              ));
+        }
       }
     }
 
     print(mapData.length);
 
-    // if (!mapData.isNotEmpty) {
-    //   Fluttertoast.showToast(msg: 'ไม่มีเลขออเดอร์นี้ค่ะ');
-    // } else {
-    //   textControllerFindSaleOrderID.clear();
-    //   textControllerFindCustomerID.clear();
-    //   textControllerFindCustmerName.clear();
-
-    //   textFieldFocusNodeFindSaleOrderID.unfocus();
-    //   textFieldFocusNodeFindCustomerID.unfocus();
-    //   textFieldFocusNodeFindCustomerName.unfocus();
-    //   Navigator.push(
-    //       context,
-    //       CupertinoPageRoute(
-    //         builder: (context) => A1603OrderDetail(
-    // checkTeam: widget.checkTeam,
-    //             customerID: mapData['CustomerID'], orderDataMap: mapData),
-    //       ));
-    // }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
+
+  // Future<void> selectDate(
+  //   BuildContext context,
+  //   String day,
+  // ) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2023, 1, 1),
+  //     lastDate: DateTime.now(),
+  //     initialDatePickerMode: DatePickerMode.day,
+  //   );
+
+  //   if (picked != null && picked != selectedDate) {
+  //     setState(() {
+  //       selectedDate = picked;
+
+  //       if (day == 'before') {
+  //         DateTime pickedWithEndOfDay = DateTime(selectedDate!.year,
+  //             selectedDate!.month, selectedDate!.day, 0, 0, 0);
+  //         // selectedDate = pickedWithEndOfDay;
+  //         selectedDateBefore = pickedWithEndOfDay;
+  //         // selectedDateBefore = selectedDate;
+  //       } else if (day == 'after') {
+  //         DateTime pickedWithEndOfDay = DateTime(selectedDate!.year,
+  //             selectedDate!.month, selectedDate!.day, 23, 59, 59);
+  //         // selectedDateAfter = selectedDate;
+  //         selectedDateAfter = pickedWithEndOfDay;
+  //       }
+  //     });
+  //   } else {
+  //     setState(() {
+  //       selectedDate = null;
+  //       if (day == 'before') {
+  //         selectedDateBefore = null;
+  //       } else if (day == 'after') {
+  //         selectedDateAfter = null;
+  //       }
+  //     });
+  //   }
+  // }
 
   Future<void> selectDate(
     BuildContext context,
     String day,
+    DateTime selectedMonth,
   ) async {
+    // กำหนดวันแรกและวันสุดท้ายของเดือนที่เลือก
+    DateTime firstDayOfMonth =
+        DateTime(selectedMonth.year, selectedMonth.month, 1);
+    DateTime lastDayOfMonth =
+        DateTime(selectedMonth.year, selectedMonth.month + 1, 0);
+
+    // กำหนดวันเริ่มต้นสำหรับ DatePicker
+    DateTime initialDate = selectedDate ?? DateTime.now();
+    if (initialDate.isBefore(firstDayOfMonth) ||
+        initialDate.isAfter(lastDayOfMonth)) {
+      initialDate = firstDayOfMonth;
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2023, 1, 1),
-      lastDate: DateTime.now(),
+      initialDate: initialDate,
+      firstDate: firstDayOfMonth,
+      lastDate: lastDayOfMonth.isBefore(DateTime.now())
+          ? lastDayOfMonth
+          : DateTime.now(),
       initialDatePickerMode: DatePickerMode.day,
     );
 
@@ -649,15 +1173,12 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
         selectedDate = picked;
 
         if (day == 'before') {
-          DateTime pickedWithEndOfDay = DateTime(selectedDate!.year,
+          DateTime pickedWithStartOfDay = DateTime(selectedDate!.year,
               selectedDate!.month, selectedDate!.day, 0, 0, 0);
-          // selectedDate = pickedWithEndOfDay;
-          selectedDateBefore = pickedWithEndOfDay;
-          // selectedDateBefore = selectedDate;
+          selectedDateBefore = pickedWithStartOfDay;
         } else if (day == 'after') {
           DateTime pickedWithEndOfDay = DateTime(selectedDate!.year,
               selectedDate!.month, selectedDate!.day, 23, 59, 59);
-          // selectedDateAfter = selectedDate;
           selectedDateAfter = pickedWithEndOfDay;
         }
       });
@@ -678,7 +1199,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
     print('==============================');
     print('This is A1604 search order');
     print('==============================');
-    print(widget.status);
+    // print(widget.status);
     userData = userController.userData;
     customerData = customerController.customerData;
     return Scaffold(
@@ -1369,7 +1890,7 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               width: MediaQuery.of(context).size.width * 0.95,
-                              height: MediaQuery.of(context).size.height * 0.35,
+                              height: MediaQuery.of(context).size.height * 0.40,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -1646,11 +2167,64 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                                     padding: const EdgeInsets.all(12.0),
                                     child: Row(
                                       children: [
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              await selectMonth(context);
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              // width: 350,
+                                              padding: EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                              child: Text(
+                                                selectedMonth != null
+                                                    ? formatThaiMonth(
+                                                        selectedMonth!)
+                                                    : 'เลือกเดือน',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodySmall
+                                                        .override(
+                                                          fontSize: 20,
+                                                          fontFamily: 'Kanit',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryText,
+                                                        ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Row(
+                                      children: [
                                         InkWell(
                                           onTap: () async {
+                                            if (selectedMonth == null) {
+                                              Fluttertoast.showToast(
+                                                msg: 'กรุณาเลือกเดือนก่อนค้นหา',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.CENTER,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.red,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0,
+                                              );
+                                              return;
+                                            }
                                             await selectDate(
                                               context,
                                               'before',
+                                              selectedMonth!,
                                             );
                                           },
                                           child: Container(
@@ -1682,14 +2256,27 @@ class _A1604SearchOrderState extends State<A1604SearchOrder> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 35,
                                         ),
                                         InkWell(
                                           onTap: () async {
+                                            if (selectedMonth == null) {
+                                              Fluttertoast.showToast(
+                                                msg: 'กรุณาเลือกเดือนก่อนค้นหา',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.CENTER,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.red,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0,
+                                              );
+                                              return;
+                                            }
                                             await selectDate(
                                               context,
                                               'after',
+                                              selectedMonth!,
                                             );
                                           },
                                           child: Container(

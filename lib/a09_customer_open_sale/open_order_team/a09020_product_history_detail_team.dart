@@ -339,6 +339,17 @@ class _A09020ProductHistoryDetailTeamState
         print('orderSubCollections.docs.isEmpty');
       }
       //==============================================================
+
+      // print('SectionID2 && SALE_ORDER_ID_REF');
+      // print(orderList['SectionID2']);
+      // print(orderList['SALE_ORDER_ID_REF']);
+      // print(orderList['INVOICE_NO']);
+      // if (orderList['SectionID2'] == 'บุ๊กกิ้งออเดอร์') {
+      //   showButtonEdit = true;
+      // } else if (orderList['SectionID2'] == 'อยู่ระหว่างออกบิลขาย' &&
+      //     orderList['SALE_ORDER_ID_REF'] != null) {
+      //   showButtonEdit = true;
+      // }
       print('SectionID2 && SALE_ORDER_ID_REF');
       print(orderList['SectionID2']);
       print(orderList['SALE_ORDER_ID_REF']);
@@ -3057,8 +3068,11 @@ class _A09020ProductHistoryDetailTeamState
                                                     orderList['ProductList']
                                                         .length;
                                                 i++) {
+                                              // orderList['ProductList'][i]
+                                              //     ['จำนวนของแถม'] = '0';
+
                                               orderList['ProductList'][i]
-                                                  ['จำนวนของแถม'] = '0';
+                                                  ['productHistory'] = true;
                                               nonNullableList!.add(
                                                   orderList['ProductList'][i]);
                                             }

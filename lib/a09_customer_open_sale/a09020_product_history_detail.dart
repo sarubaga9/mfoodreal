@@ -330,7 +330,7 @@ class _A09020ProductHistoryDetailState
         print('orderSubCollections.docs.isEmpty');
       }
       //==============================================================
-        print('SectionID2 && SALE_ORDER_ID_REF');
+      print('SectionID2 && SALE_ORDER_ID_REF');
       print(orderList['SectionID2']);
       print(orderList['SALE_ORDER_ID_REF']);
       print(orderList['INVOICE_NO']);
@@ -375,6 +375,7 @@ class _A09020ProductHistoryDetailState
 
       // Timestamp timestamp = orderList['วันเวลาจัดส่ง'];
       // String timestampString = timestamp.toDate().toString();
+
       String timestampString = orderList['วันเวลาจัดส่ง'].toDate().toString();
       DateTime dateTimeCheck = DateTime(
         DateTime.parse(timestampString).year,
@@ -3023,8 +3024,11 @@ class _A09020ProductHistoryDetailState
                                                     orderList['ProductList']
                                                         .length;
                                                 i++) {
+                                              // orderList['ProductList'][i]
+                                              //     ['จำนวนของแถม'] = '0';
+
                                               orderList['ProductList'][i]
-                                                  ['จำนวนของแถม'] = '0';
+                                                  ['productHistory'] = true;
                                               nonNullableList!.add(
                                                   orderList['ProductList'][i]);
                                             }

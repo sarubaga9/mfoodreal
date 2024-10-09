@@ -17,6 +17,7 @@ import 'package:m_food/main.dart';
 import 'package:m_food/widgets/circular_loading.dart';
 import 'package:m_food/widgets/custom_text.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml2json/xml2json.dart';
 
 import '/flutter_flow/flutter_flow_count_controller.dart';
@@ -118,6 +119,11 @@ class _A090502ProductOrderDetailEditTeamState
   Map<String, dynamic>? customerDataWithmfoodtoken;
 
   Map<String, dynamic>? urlApi;
+
+  Future<String?> readDataFromSharedPreferences(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
 
   bool isBetweenCheckBalance(
       DateTime dateTime, DateTime today, DateTime endDate) {
@@ -318,7 +324,13 @@ class _A090502ProductOrderDetailEditTeamState
 
       // print(orderList);
 
-      await checkPromotions();
+      for (int i = 0; i < orderList['ProductList'].length; i++) {
+        if (orderList['ProductList'][i]['productHistory'] == null) {
+          orderList['ProductList'][i]['productHistory'] = false;
+        }
+      }
+
+      await checkPromotions(false);
 
       //====================== คิดยอดบิล ========================================
 
@@ -628,7 +640,7 @@ class _A090502ProductOrderDetailEditTeamState
     }
   }
 
-  Future<void> checkPromotions() async {
+  Future<void> checkPromotions(bool checkButton) async {
     print('CHECK PROMOTIONS');
 
     DocumentSnapshot customerDoc = await FirebaseFirestore.instance
@@ -703,7 +715,6 @@ class _A090502ProductOrderDetailEditTeamState
 
       DateTime dateTime = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-
       String saleOrderID = orderList['OrdersDateID'];
 
       HttpsCallable callableDiscount =
@@ -735,12 +746,13 @@ class _A090502ProductOrderDetailEditTeamState
 //   </soap12:Body>
 // </soap12:Envelope>
             };
+      print(paramsDiscount['url']);
 
       print(paramsDiscount['xml']);
       // print('======================================= aaaaa');
 
       await callableDiscount.call(paramsDiscount).then((value) async {
-        print('ข้อมูลที่ส่งกลับจาก cloud function ${value.data}');
+        print('ข้อมูลที่ส่งกลับจาก cloud function inde $i ${value.data}');
         if (value.data['status'] == 'success') {}
 
         Xml2Json xml2json = Xml2Json();
@@ -754,20 +766,33 @@ class _A090502ProductOrderDetailEditTeamState
         // print(data);
         // print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']);
 
+        print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
+                ['SALES_ITEM_PROMOTIONResult']
+            .toString());
+        print('--------------------------------------');
+
         if (data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
                 ['SALES_ITEM_PROMOTIONResult'] ==
             'true') {
-          orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+          if (orderList['ProductList'][i]['productHistory'] && !checkButton) {
+            print('เข้าสินค้าเก่า1');
+            orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+          } else {
+            print('ไม่เข้าสินค้าเก่า1');
+            orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
 
-          orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
-          orderList['ProductList'][i]['ไอดีของแถม'] = '';
-          orderList['ProductList'][i]['ชื่อของแถม'] = '';
-          orderList['ProductList'][i]['จำนวนของแถม'] = '0';
-          orderList['ProductList'][i]['หน่วยของแถม'] = '';
-          orderList['ProductList'][i]['มีของแถม'] = false;
+            orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+            orderList['ProductList'][i]['ไอดีของแถม'] = '';
+            orderList['ProductList'][i]['ชื่อของแถม'] = '';
+            orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+            orderList['ProductList'][i]['หน่วยของแถม'] = '';
+            orderList['ProductList'][i]['มีของแถม'] = false;
+          }
 
           // print('is SALES_ITEM_PROMOTIONResult Empty');
         } else {
+          print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
+              ['SALES_ITEM_PROMOTIONResult']);
           print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
               ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST']);
 
@@ -782,6 +807,7 @@ class _A090502ProductOrderDetailEditTeamState
             print('Promotion List');
             print('Promotion List');
             print('Promotion List');
+
             List<dynamic> filteredList = data['Envelope']['Body']
                         ['SALES_ITEM_PROMOTIONResponse']
                     ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST']
@@ -814,58 +840,76 @@ class _A090502ProductOrderDetailEditTeamState
                 // orderList['ProductList'][i]['หน่วยของแถม'] = '';
                 // orderList['ProductList'][i]['มีของแถม'] = false;
               } else if (sellPriceResponse['PRODUCT_TYPE'] == 'FREE') {
-                // if (orderList['ProductList'][i]['จำนวนของแถม'] == null) {
-                //   orderList['ProductList'][i]['จำนวนของแถม'] = '0';
-                // }
-                // I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 2.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
-                print(sellPriceResponse);
-                print(orderList['ProductList'][i]['จำนวนของแถม']);
-                orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+                if (orderList['ProductList'][i]['productHistory'] &&
+                    !checkButton) {
+                  print('เข้าสินค้าเก่า2');
+                  orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+                } else {
+                  print('ไม่เข้าสินค้าเก่า2');
 
-                orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
-                orderList['ProductList'][i]['ไอดีของแถม'] =
-                    sellPriceResponse['FREE_ID'];
+                  // if (orderList['ProductList'][i]['จำนวนของแถม'] == null) {
+                  //   orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+                  // }
+                  // I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 2.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
+                  print(sellPriceResponse);
+                  print(orderList['ProductList'][i]['จำนวนของแถม']);
+                  orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
 
-                Map<String, dynamic> dataMap = resultList.firstWhere(
-                    (product) =>
-                        product['PRODUCT_ID'] ==
-                        orderList['ProductList'][i]['ไอดีของแถม']);
+                  orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] =
+                      false;
+                  orderList['ProductList'][i]['ไอดีของแถม'] =
+                      sellPriceResponse['FREE_ID'];
 
-                // print(resultList[0]);
+                  Map<String, dynamic> dataMap = resultList.firstWhere(
+                      (product) =>
+                          product['PRODUCT_ID'] ==
+                          orderList['ProductList'][i]['ไอดีของแถม']);
 
-                orderList['ProductList'][i]['ชื่อของแถม'] = dataMap['NAMES'];
+                  // print(resultList[0]);
 
-                double discount = double.parse(sellPriceResponse['FREE_QTY']);
+                  orderList['ProductList'][i]['ชื่อของแถม'] = dataMap['NAMES'];
 
-                print(discount);
+                  double discount = double.parse(sellPriceResponse['FREE_QTY']);
 
-                String? totalPriceDiscount = discount.toStringAsFixed(0);
+                  print(discount);
 
-                // double discountOld = double.parse(
-                //     orderList['ProductList'][i]['จำนวนของแถม'].toString());
+                  String? totalPriceDiscount = discount.toStringAsFixed(0);
 
-                // String? totalPriceDiscount;
+                  // double discountOld = double.parse(
+                  //     orderList['ProductList'][i]['จำนวนของแถม'].toString());
 
-                // if (discountOld > discount) {
-                //   totalPriceDiscount =
-                //       orderList['ProductList'][i]['จำนวนของแถม'];
-                // } else {
-                //   totalPriceDiscount = discount.toStringAsFixed(0);
-                // }
+                  // String? totalPriceDiscount;
 
-                orderList['ProductList'][i]['จำนวนของแถม'] = totalPriceDiscount;
-                orderList['ProductList'][i]['หน่วยของแถม'] =
-                    sellPriceResponse['FREE_UNIT'];
-                orderList['ProductList'][i]['มีของแถม'] = true;
+                  // if (discountOld > discount) {
+                  //   totalPriceDiscount =
+                  //       orderList['ProductList'][i]['จำนวนของแถม'];
+                  // } else {
+                  //   totalPriceDiscount = discount.toStringAsFixed(0);
+                  // }
+
+                  orderList['ProductList'][i]['จำนวนของแถม'] =
+                      totalPriceDiscount;
+                  orderList['ProductList'][i]['หน่วยของแถม'] =
+                      sellPriceResponse['FREE_UNIT'];
+                  orderList['ProductList'][i]['มีของแถม'] = true;
+                }
               } else {
-                orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+                if (orderList['ProductList'][i]['productHistory'] &&
+                    !checkButton) {
+                  print('เข้าสินค้าเก่า3');
+                  orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+                } else {
+                  print('ไม่เข้าสินค้าเก่า3');
+                  orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
 
-                orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
-                orderList['ProductList'][i]['ไอดีของแถม'] = '';
-                orderList['ProductList'][i]['ชื่อของแถม'] = '';
-                orderList['ProductList'][i]['จำนวนของแถม'] = '0';
-                orderList['ProductList'][i]['หน่วยของแถม'] = '';
-                orderList['ProductList'][i]['มีของแถม'] = false;
+                  orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] =
+                      false;
+                  orderList['ProductList'][i]['ไอดีของแถม'] = '';
+                  orderList['ProductList'][i]['ชื่อของแถม'] = '';
+                  orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+                  orderList['ProductList'][i]['หน่วยของแถม'] = '';
+                  orderList['ProductList'][i]['มีของแถม'] = false;
+                }
               }
             }
 
@@ -892,7 +936,60 @@ class _A090502ProductOrderDetailEditTeamState
               orderList['ProductList'][i]['หน่วยของแถม'] = '';
               orderList['ProductList'][i]['มีของแถม'] = false;
             } else if (sellPriceResponse['PRODUCT_TYPE'] == 'FREE') {
-              if (sellPriceResponse['FREE_QTY'] == '0') {
+              if (orderList['ProductList'][i]['productHistory'] &&
+                  !checkButton) {
+                print('เข้าสินค้าเก่า4');
+                orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+              } else {
+                print('ไม่เข้าสินค้าเก่า4');
+
+                if (sellPriceResponse['FREE_QTY'] == '0') {
+                  orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+                  orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] =
+                      false;
+                  orderList['ProductList'][i]['ไอดีของแถม'] = '';
+                  orderList['ProductList'][i]['ชื่อของแถม'] = '';
+                  orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+                  orderList['ProductList'][i]['หน่วยของแถม'] = '';
+                  orderList['ProductList'][i]['มีของแถม'] = false;
+                } else {
+                  // I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 2.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
+                  orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+                  orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] =
+                      false;
+                  orderList['ProductList'][i]['ไอดีของแถม'] =
+                      sellPriceResponse['FREE_ID'];
+
+                  Map<String, dynamic> dataMap = resultList.firstWhere(
+                      (product) =>
+                          product['PRODUCT_ID'] ==
+                          orderList['ProductList'][i]['ไอดีของแถม']);
+
+                  // print(resultList[0]);
+
+                  orderList['ProductList'][i]['ชื่อของแถม'] = dataMap['NAMES'];
+
+                  double discount = double.parse(sellPriceResponse['FREE_QTY']);
+
+                  String totalPriceDiscount = discount.toStringAsFixed(
+                      0); // แปลงผลรวมเป็นสตริงที่มีทศนิยม 2 ตำแหน่ง
+
+                  orderList['ProductList'][i]['จำนวนของแถม'] =
+                      totalPriceDiscount;
+                  orderList['ProductList'][i]['หน่วยของแถม'] =
+                      sellPriceResponse['FREE_UNIT'];
+                  orderList['ProductList'][i]['มีของแถม'] = true;
+                }
+              }
+            } else {
+              if (orderList['ProductList'][i]['productHistory'] &&
+                  !checkButton) {
+                print('เข้าสินค้าเก่า5');
+                orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+              } else {
+                print('ไม่เข้าสินค้าเก่า5');
                 orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
 
                 orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
@@ -901,42 +998,7 @@ class _A090502ProductOrderDetailEditTeamState
                 orderList['ProductList'][i]['จำนวนของแถม'] = '0';
                 orderList['ProductList'][i]['หน่วยของแถม'] = '';
                 orderList['ProductList'][i]['มีของแถม'] = false;
-              } else {
-                // I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 2.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
-                orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
-
-                orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
-                orderList['ProductList'][i]['ไอดีของแถม'] =
-                    sellPriceResponse['FREE_ID'];
-
-                Map<String, dynamic> dataMap = resultList.firstWhere(
-                    (product) =>
-                        product['PRODUCT_ID'] ==
-                        orderList['ProductList'][i]['ไอดีของแถม']);
-
-                // print(resultList[0]);
-
-                orderList['ProductList'][i]['ชื่อของแถม'] = dataMap['NAMES'];
-
-                double discount = double.parse(sellPriceResponse['FREE_QTY']);
-
-                String totalPriceDiscount = discount.toStringAsFixed(
-                    0); // แปลงผลรวมเป็นสตริงที่มีทศนิยม 2 ตำแหน่ง
-
-                orderList['ProductList'][i]['จำนวนของแถม'] = totalPriceDiscount;
-                orderList['ProductList'][i]['หน่วยของแถม'] =
-                    sellPriceResponse['FREE_UNIT'];
-                orderList['ProductList'][i]['มีของแถม'] = true;
               }
-            } else {
-              orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
-
-              orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
-              orderList['ProductList'][i]['ไอดีของแถม'] = '';
-              orderList['ProductList'][i]['ชื่อของแถม'] = '';
-              orderList['ProductList'][i]['จำนวนของแถม'] = '0';
-              orderList['ProductList'][i]['หน่วยของแถม'] = '';
-              orderList['ProductList'][i]['มีของแถม'] = false;
             }
 
             print('=================  5   end ===================');
@@ -1021,7 +1083,407 @@ class _A090502ProductOrderDetailEditTeamState
       print(i);
       print(i);
     }
+    if (mounted) {
+      setState(
+        () {},
+      );
+    }
   }
+
+//   Future<void> checkPromotions() async {
+//     print('CHECK PROMOTIONS');
+
+//     DocumentSnapshot customerDoc = await FirebaseFirestore.instance
+//         .collection(AppSettings.customerType == CustomerType.Test
+//             ? 'CustomerTest'
+//             : 'Customer')
+//         .doc(widget.customerID)
+//         .get();
+
+//     Map<String, dynamic> data = customerDoc.data() as Map<String, dynamic>;
+
+//     String totalPriceDiscount = '';
+
+//     double totalPriceDiscountDouble = 0.0;
+
+//     for (int i = 0; i < orderList['ProductList'].length; i++) {
+//       Map<String, dynamic>? foundmapRatio = productCovertRatio.firstWhere(
+//         (element) =>
+//             element!['PRODUCT_ID'] ==
+//                 orderList['ProductList'][i]['ProductID'] &&
+//             element['UNIT'] == orderList['ProductList'][i]['ยูนิต'],
+//         orElse: () => {},
+//       );
+
+//       // foundmapRatio!['CONVERT_RATIO'] = null;
+
+//       if (foundmapRatio!['CONVERT_RATIO'] == null) {
+//         checkConvertRatio = true;
+
+//         // if (i % 2 == 0) {
+//         //   foundmapRatio!['CONVERT_RATIO'] = '0';
+//         // } else {
+//         //   foundmapRatio!['CONVERT_RATIO'] = '1';
+//         // }
+//       }
+
+//       orderList['ProductList'][i]['CONVERT_RATIO'] =
+//           foundmapRatio!['CONVERT_RATIO'] ?? '0';
+
+//       print(i);
+//       print(i);
+//       print(i);
+//       // print(orderList['ProductList']);
+//       //I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 1.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
+
+//       // specialPriceProductList = (specialPriceProductList ?? [])
+//       //     .where((map) => map != null)
+//       //     .cast<Map<String, dynamic>>()
+//       //     .toList();
+
+//       // print(specialPriceProductList);
+//       // ================================= เช็คโปร ============================
+//       double price =
+//           double.parse(orderList['ProductList'][i]['ราคา'].toString());
+//       double total =
+//           double.parse(orderList['ProductList'][i]['จำนวน'].toString());
+
+//       double totalPrice = price * total;
+//       print(totalPrice);
+//       print(totalPrice);
+//       print(totalPrice);
+//       print(totalPrice);
+
+//       print('เช็คค่า ก่อนส่ง SALES_ITEM_PROMOTION');
+//       print(orderList['วันเวลาจัดส่ง']);
+
+//       DateFormat inputFormat = DateFormat("dd-MM-yyyy");
+//       DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+
+//       DateTime dateTimeSend = inputFormat.parse(orderList['วันเวลาจัดส่ง']);
+//       String formattedDateSend = outputFormat.format(dateTimeSend);
+
+//       DateTime dateTime = DateTime.now();
+//       String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
+//       String saleOrderID = orderList['OrdersDateID'];
+
+//       HttpsCallable callableDiscount =
+//           FirebaseFunctions.instance.httpsCallable('getApiMfood');
+//       var paramsDiscount = AppSettings.customerType == CustomerType.Test
+//           ? <String, dynamic>{
+//               "url":
+//                   "${urlApi!['Url']}:7104/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+//               "xml":
+//                   //pro type discount
+//                   '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><SALE_ORDER_ID>$saleOrderID</SALE_ORDER_ID><SHIP_DATE>$formattedDateSend</SHIP_DATE><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+//             }
+//           : <String, dynamic>{
+//               "url":
+//                   "${urlApi!['Url']}:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+//               "xml":
+//                   //pro type discount
+//                   '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><SALE_ORDER_ID>$saleOrderID</SALE_ORDER_ID><SHIP_DATE>$formattedDateSend</SHIP_DATE><Token>${customerDataWithmfoodtoken!['token_key']}</Token><Client_ID>${data['ClientIdจากMfoodAPI']}</Client_ID><ITEMCODE>${orderList['ProductList'][i]['ProductID']}</ITEMCODE><UM>${orderList['ProductList'][i]['ยูนิต']}</UM><QTY>${orderList['ProductList'][i]['จำนวน']}</QTY><DOC_DATE>$formattedDate</DOC_DATE><ITEMAMT>$totalPrice</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+//               //pro type bonus item
+//               // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>01000004</Client_ID><ITEMCODE>0271330020450</ITEMCODE><UM>ซอง</UM><QTY>20</QTY><DOC_DATE>2024-04-01</DOC_DATE><ITEMAMT>980</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+// //    <?xml version="1.0" encoding="utf-8"?>
+// // <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+// //   <soap12:Body>
+// //     <BILL_DISCOUNT_INFO xmlns="MFOODMOBILEAPI">
+// //       <PROMO_DATE>2024-03-19</PROMO_DATE>
+// //       <CUSTMER_ID>01001201</CUSTMER_ID>
+// //       <BILL_AMT>10000</BILL_AMT><!-- ยอดรวมก่อน VAT -->
+// //     </BILL_DISCOUNT_INFO>
+// //   </soap12:Body>
+// // </soap12:Envelope>
+//             };
+
+//       print(paramsDiscount['xml']);
+//       // print('======================================= aaaaa');
+
+//       await callableDiscount.call(paramsDiscount).then((value) async {
+//         print('ข้อมูลที่ส่งกลับจาก cloud function ${value.data}');
+//         if (value.data['status'] == 'success') {}
+
+//         Xml2Json xml2json = Xml2Json();
+//         xml2json.parse(value.data.toString());
+
+//         jsonStringDiscount = xml2json.toOpenRally();
+
+//         Map<String, dynamic> data = json.decode(jsonStringDiscount);
+//         // print('================= 4 ===================');
+
+//         // print(data);
+//         // print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']);
+
+//         if (data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
+//                 ['SALES_ITEM_PROMOTIONResult'] ==
+//             'true') {
+//           orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+//           orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//           orderList['ProductList'][i]['ไอดีของแถม'] = '';
+//           orderList['ProductList'][i]['ชื่อของแถม'] = '';
+//           orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//           orderList['ProductList'][i]['หน่วยของแถม'] = '';
+//           orderList['ProductList'][i]['มีของแถม'] = false;
+
+//           // print('is SALES_ITEM_PROMOTIONResult Empty');
+//         } else {
+//           print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
+//               ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST']);
+
+//           print(data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
+//                   ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST']
+//               .runtimeType);
+
+//           if (data['Envelope']['Body']['SALES_ITEM_PROMOTIONResponse']
+//                       ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST']
+//                   .runtimeType ==
+//               List<dynamic>) {
+//             print('Promotion List');
+//             print('Promotion List');
+//             print('Promotion List');
+//             List<dynamic> filteredList = data['Envelope']['Body']
+//                         ['SALES_ITEM_PROMOTIONResponse']
+//                     ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST']
+//                 .where((item) {
+//               return !(item['PRODUCT_TYPE'] == 'FREE' &&
+//                   item['FREE_QTY'] == '0');
+//             }).toList();
+
+//             print(filteredList);
+//             print('==-=-=-==');
+
+//             for (int j = 0; j < filteredList.length; j++) {
+//               Map<String, dynamic> sellPriceResponse = filteredList[j];
+//               print('================= 5 1===================');
+//               // print(sellPriceResponse);
+//               if (sellPriceResponse['PRODUCT_TYPE'] == 'ITEM DISCOUNT') {
+//                 double discount =
+//                     double.parse(sellPriceResponse['DISCOUNT_UNIT']);
+
+//                 String totalPriceDiscount = discount.toStringAsFixed(
+//                     2); // แปลงผลรวมเป็นสตริงที่มีทศนิยม 2 ตำแหน่ง
+
+//                 orderList['ProductList'][i]['ส่วนลดรายการ'] =
+//                     totalPriceDiscount;
+
+//                 orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//                 // orderList['ProductList'][i]['ไอดีของแถม'] = '';
+//                 // orderList['ProductList'][i]['ชื่อของแถม'] = '';
+//                 // orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//                 // orderList['ProductList'][i]['หน่วยของแถม'] = '';
+//                 // orderList['ProductList'][i]['มีของแถม'] = false;
+//               } else if (sellPriceResponse['PRODUCT_TYPE'] == 'FREE') {
+//                 // if (orderList['ProductList'][i]['จำนวนของแถม'] == null) {
+//                 //   orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//                 // }
+//                 // I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 2.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
+//                 print(sellPriceResponse);
+//                 print(orderList['ProductList'][i]['จำนวนของแถม']);
+//                 orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+//                 orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//                 orderList['ProductList'][i]['ไอดีของแถม'] =
+//                     sellPriceResponse['FREE_ID'];
+
+//                 Map<String, dynamic> dataMap = resultList.firstWhere(
+//                     (product) =>
+//                         product['PRODUCT_ID'] ==
+//                         orderList['ProductList'][i]['ไอดีของแถม']);
+
+//                 // print(resultList[0]);
+
+//                 orderList['ProductList'][i]['ชื่อของแถม'] = dataMap['NAMES'];
+
+//                 double discount = double.parse(sellPriceResponse['FREE_QTY']);
+
+//                 print(discount);
+
+//                 String? totalPriceDiscount = discount.toStringAsFixed(0);
+
+//                 // double discountOld = double.parse(
+//                 //     orderList['ProductList'][i]['จำนวนของแถม'].toString());
+
+//                 // String? totalPriceDiscount;
+
+//                 // if (discountOld > discount) {
+//                 //   totalPriceDiscount =
+//                 //       orderList['ProductList'][i]['จำนวนของแถม'];
+//                 // } else {
+//                 //   totalPriceDiscount = discount.toStringAsFixed(0);
+//                 // }
+
+//                 orderList['ProductList'][i]['จำนวนของแถม'] = totalPriceDiscount;
+//                 orderList['ProductList'][i]['หน่วยของแถม'] =
+//                     sellPriceResponse['FREE_UNIT'];
+//                 orderList['ProductList'][i]['มีของแถม'] = true;
+//               } else {
+//                 orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+//                 orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//                 orderList['ProductList'][i]['ไอดีของแถม'] = '';
+//                 orderList['ProductList'][i]['ชื่อของแถม'] = '';
+//                 orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//                 orderList['ProductList'][i]['หน่วยของแถม'] = '';
+//                 orderList['ProductList'][i]['มีของแถม'] = false;
+//               }
+//             }
+
+//             print('================= 5 1 end      ===================');
+//           } else {
+//             Map<String, dynamic> sellPriceResponse = data['Envelope']['Body']
+//                     ['SALES_ITEM_PROMOTIONResponse']
+//                 ['SALES_ITEM_PROMOTIONResult']['SALESPROMOTION_LIST'];
+//             print('================= 5 ===================');
+//             // print(sellPriceResponse);
+//             if (sellPriceResponse['PRODUCT_TYPE'] == 'ITEM DISCOUNT') {
+//               double discount =
+//                   double.parse(sellPriceResponse['DISCOUNT_UNIT']);
+
+//               String totalPriceDiscount = discount.toStringAsFixed(
+//                   2); // แปลงผลรวมเป็นสตริงที่มีทศนิยม 2 ตำแหน่ง
+
+//               orderList['ProductList'][i]['ส่วนลดรายการ'] = totalPriceDiscount;
+
+//               orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//               orderList['ProductList'][i]['ไอดีของแถม'] = '';
+//               orderList['ProductList'][i]['ชื่อของแถม'] = '';
+//               orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//               orderList['ProductList'][i]['หน่วยของแถม'] = '';
+//               orderList['ProductList'][i]['มีของแถม'] = false;
+//             } else if (sellPriceResponse['PRODUCT_TYPE'] == 'FREE') {
+//               if (sellPriceResponse['FREE_QTY'] == '0') {
+//                 orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+//                 orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//                 orderList['ProductList'][i]['ไอดีของแถม'] = '';
+//                 orderList['ProductList'][i]['ชื่อของแถม'] = '';
+//                 orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//                 orderList['ProductList'][i]['หน่วยของแถม'] = '';
+//                 orderList['ProductList'][i]['มีของแถม'] = false;
+//               } else {
+//                 // I/flutter (11081): {RESULT: true, PRODUCT_ID: 0271330020450, FREE_UNIT: ซอง, PRODUCT_TYPE: FREE, FREE_ID: 0271330020450, FREE_UNIT: ซอง, FREE_QTY: 2.000000, PROMO_PRICE: 0, DISCOUNT_UNIT: true, BILLING_DISCOUNT: true}
+//                 orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+//                 orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//                 orderList['ProductList'][i]['ไอดีของแถม'] =
+//                     sellPriceResponse['FREE_ID'];
+
+//                 Map<String, dynamic> dataMap = resultList.firstWhere(
+//                     (product) =>
+//                         product['PRODUCT_ID'] ==
+//                         orderList['ProductList'][i]['ไอดีของแถม']);
+
+//                 // print(resultList[0]);
+
+//                 orderList['ProductList'][i]['ชื่อของแถม'] = dataMap['NAMES'];
+
+//                 double discount = double.parse(sellPriceResponse['FREE_QTY']);
+
+//                 String totalPriceDiscount = discount.toStringAsFixed(
+//                     0); // แปลงผลรวมเป็นสตริงที่มีทศนิยม 2 ตำแหน่ง
+
+//                 orderList['ProductList'][i]['จำนวนของแถม'] = totalPriceDiscount;
+//                 orderList['ProductList'][i]['หน่วยของแถม'] =
+//                     sellPriceResponse['FREE_UNIT'];
+//                 orderList['ProductList'][i]['มีของแถม'] = true;
+//               }
+//             } else {
+//               orderList['ProductList'][i]['ส่วนลดรายการ'] = '0.0';
+
+//               orderList['ProductList'][i]['สถานะรายการนี้เป็นของแถม'] = false;
+//               orderList['ProductList'][i]['ไอดีของแถม'] = '';
+//               orderList['ProductList'][i]['ชื่อของแถม'] = '';
+//               orderList['ProductList'][i]['จำนวนของแถม'] = '0';
+//               orderList['ProductList'][i]['หน่วยของแถม'] = '';
+//               orderList['ProductList'][i]['มีของแถม'] = false;
+//             }
+
+//             print('=================  5   end ===================');
+//           }
+//         }
+
+//         // print(totalPriceDiscountDouble);
+//         // print(double.parse(
+//         //     orderList['ProductList'][i]['ส่วนลดรายการ'].toString()));
+
+//         // print(totalPriceDiscount);
+
+//         totalPriceDiscountDouble = totalPriceDiscountDouble +
+//             double.parse(
+//                 orderList['ProductList'][i]['ส่วนลดรายการ'].toString());
+
+//         // print(totalPriceDiscountDouble);
+
+//         String totalPriceDiscountDoubleString = totalPriceDiscountDouble
+//             .toStringAsFixed(2); // แปลงผลรวมเป็นสตริงที่มีทศนิยม 2 ตำแหน่ง
+
+//         totalPriceDiscount = totalPriceDiscountDoubleString;
+
+//         orderList['ยอดรวมส่วนลดทั้งหมด'] = totalPriceDiscount;
+
+//         // print(orderList['ยอดรวมส่วนลดทั้งหมด']);
+//       }).whenComplete(() async {});
+
+//       // HttpsCallable callableBonusItem =
+//       //     FirebaseFunctions.instance.httpsCallable('getApiMfood');
+//       // var paramsBonusItem = <String, dynamic>{
+//       //   "url":
+//       //       "http://mobile.mfood.co.th:7105/MBServices.asmx?op=SALES_ITEM_PROMOTION",
+//       //   "xml":
+//       //       // '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><Sell_Price xmlns="MFOODMOBILEAPI"><PRICE_LIST>${tableDesc!['PLIST_DESC1'].toString()}</PRICE_LIST></Sell_Price></soap:Body></soap:Envelope>'
+//       //       // '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><CHECK_PROMOTION_INFO xmlns="MFOODMOBILEAPI"><sCLIENT_ID>01000003</sCLIENT_ID><sPRODUCT_CODE>0140006421000</sPRODUCT_CODE><sORDER_DATE>2024-03-18</sORDER_DATE></CHECK_PROMOTION_INFO></soap12:Body></soap12:Envelope>'
+//       //       '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><SALES_ITEM_PROMOTION xmlns="MFOODMOBILEAPI"><Client_ID>01000004</Client_ID><ITEMCODE>0271330020450</ITEMCODE><UM>ซอง</UM><QTY>20</QTY><DOC_DATE>2024-04-01</DOC_DATE><ITEMAMT>980</ITEMAMT></SALES_ITEM_PROMOTION></soap12:Body></soap12:Envelope>'
+//       // };
+
+//       // // print(params2['xml']);
+//       // // print('======================================= aaaaa');
+
+//       // await callableBonusItem.call(paramsBonusItem).then((value) async {
+//       //   print('ข้อมูลที่ส่งกลับจาก cloud function ${value.data}');
+//       //   if (value.data['status'] == 'success') {}
+
+//       //   Xml2Json xml2json = Xml2Json();
+//       //   xml2json.parse(value.data.toString());
+
+//       //   jsonStringBonusItem = xml2json.toOpenRally();
+
+//       //   Map<String, dynamic> data = json.decode(jsonStringBonusItem);
+//       //   print('================= 6 ===================');
+
+//       //   print(data);
+
+//       //   // Map<String, dynamic> sellPriceResponse = data['Envelope']['Body']
+//       //   //     ['CHECK_PROMOTION_INFOResponse']['CHECK_PROMOTION_INFOResult'];
+
+//       //   print('================= 7 ===================');
+//       //   // // print(sellPriceResponse);
+
+//       //   // // if (sellPriceResponse['Sell_PriceResult'] == 'true') {
+//       //   // //   print('is true');
+//       //   // // } else {
+//       //   // sellPrices = List<Map<String, dynamic>>.from(
+//       //   //     sellPriceResponse['PROMOTION_INFO']);
+//       //   // // }
+
+//       //   // print(sellPrices.length);
+
+//       //   // for (int i = 0; i < sellPrices.length; i++) {
+//       //   //   // if (sellPrices[i]['PRODUCT_ID'] == '0291056100062') {
+//       //   //   print(sellPrices[i]);
+//       //   //   // }
+//       //   // }
+//       //   // // // int count2 = sellPrices
+//       //   // // //     .where((item) => item['PRODUCT_ID'] == '0291056100062')
+//       //   // // //     .length;
+//       // }).whenComplete(() async {});
+//       print(i);
+//       print(i);
+//       print(i);
+//     }
+//   }
 
   @override
   void dispose() {
@@ -1070,7 +1532,7 @@ class _A090502ProductOrderDetailEditTeamState
     //   total = total + sumTotal;
     // }
 
-    await checkPromotions();
+    await checkPromotions(true);
 
     double sumTotalVat = 0.0;
     double sumTotalNoVat = 0.0;
@@ -1169,7 +1631,7 @@ class _A090502ProductOrderDetailEditTeamState
 
     //   total = total + sumTotal;
     // }
-    await checkPromotions();
+    await checkPromotions(true);
 
     double sumTotalVat = 0.0;
     double sumTotalNoVat = 0.0;
@@ -2493,7 +2955,7 @@ class _A090502ProductOrderDetailEditTeamState
                                                                                               );
                                                                                               CustomProgressDialog.show(context);
 
-                                                                                              await checkPromotions().whenComplete(() => CustomProgressDialog.hide(context));
+                                                                                              await checkPromotions(true).whenComplete(() => CustomProgressDialog.hide(context));
                                                                                             }
                                                                                           },
                                                                                           child: Container(
@@ -2634,7 +3096,7 @@ class _A090502ProductOrderDetailEditTeamState
                                                                                                           } else {
                                                                                                             CustomProgressDialog.show(context);
 
-                                                                                                            await checkPromotions();
+                                                                                                            await checkPromotions(true);
 
                                                                                                             double sumTotalVat = 0.0;
                                                                                                             double sumTotalNoVat = 0.0;
@@ -2865,7 +3327,7 @@ class _A090502ProductOrderDetailEditTeamState
                                                                                                                 // }
                                                                                                                 CustomProgressDialog.show(context);
 
-                                                                                                                await checkPromotions();
+                                                                                                                await checkPromotions(true);
 
                                                                                                                 double sumTotalVat = 0.0;
                                                                                                                 double sumTotalNoVat = 0.0;
@@ -3059,7 +3521,7 @@ class _A090502ProductOrderDetailEditTeamState
 
                                                                                               CustomProgressDialog.show(context);
 
-                                                                                              await checkPromotions().whenComplete(() => CustomProgressDialog.hide(context));
+                                                                                              await checkPromotions(true).whenComplete(() => CustomProgressDialog.hide(context));
                                                                                             }
                                                                                           },
                                                                                           // onTap: () => increment(
@@ -7951,6 +8413,34 @@ class _A090502ProductOrderDetailEditTeamState
                                     // 'PO': textController1.text.trim(),
                                     // 'หมายเหตุ': textController2.text,
                                   }).whenComplete(() async {
+                                    //===========================================================================================
+                                    String? data =
+                                        await readDataFromSharedPreferences(
+                                            'message_key');
+                                    String? message = data == '' || data == null
+                                        ? 'No data found!'
+                                        : data;
+                                    await FirebaseFirestore.instance
+                                        .collection('User')
+                                        .where('Username', isEqualTo: message)
+                                        .get()
+                                        .then(
+                                      (QuerySnapshot querySnapshot) async {
+                                        querySnapshot.docs.forEach(
+                                          (doc) async {
+                                            Map<String, dynamic>? dataMap =
+                                                doc.data()
+                                                    as Map<String, dynamic>?;
+                                            await userController
+                                                .updateUserDataUsername(
+                                                    dataMap);
+                                            userData!['EmployeeID'] =
+                                                dataMap!['EmployeeID'];
+                                          },
+                                        );
+                                      },
+                                    );
+                                    //===========================================================================================
                                     HttpsCallable callable = FirebaseFunctions
                                         .instance
                                         .httpsCallable('apiConfirmEditOrder');

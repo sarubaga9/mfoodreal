@@ -99,13 +99,11 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
     if (productGetData != null) {
       productGetData!.forEach((key, value) {
-        // print(value);
         Map<String, dynamic> entry = value;
 
         // เพิ่มข้อมูล 'รายละเอียดสตริง' : 'นี่คือข้อความ' ลงใน Map
         String parsedstring3 = Bidi.stripHtmlIfNeeded(
             entry['รายละเอียด'] == null ? '' : entry['รายละเอียด']);
-        // print(parsedstring3);
         entry['รายละเอียดสตริง'] = parsedstring3.trimLeft().trimRight();
 
         List<String>? name = [];
@@ -128,10 +126,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
         // bool isStringFound = false;
 
-        // print(userData!);
-        // print(userData!);
-        // print(userData!);
-        // print(entry['PRODUCT_ID']);
 
         // if (userData!.isEmpty) {
         //   entry['Favorite'] = false;
@@ -149,9 +143,7 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
         //   }
         // }
 
-        print(entry['รูปภาพ']);
 
-        // print(entry);
 
         if (entry['RESULT'] == false) {
         } else {
@@ -161,7 +153,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
       });
     }
 
-    print('eeeeerrrrrrrooooorrrrrrr');
 
     if (productGroupGetData != null) {
       Map<String, dynamic> allProduct = {
@@ -202,7 +193,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
       }
 
       productGroupGetData!.forEach((key, value) {
-        // print(value);
         Map<String, dynamic> entry = value;
         resultProductGroupList.add(entry);
       });
@@ -215,25 +205,11 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
     firstList = resultProductGroupList.sublist(0, firstListLength);
     secondList = resultProductGroupList.sublist(firstListLength);
 
-    // print(firstList.length);
-    print(resultList.length);
-    print(resultList.length);
-    print(resultList.length);
-    print(resultList.length);
-    print(resultList.length);
-
-    // for (var element in resultList) {
-    //   print(element['รูปภาพ']);
-    //   print(element['รายละเอียด']);
-    // }
     if (mounted) {
       setState(() {
         isLoading = false;
       });
     }
-    print('eeeeerrrrrrrooooorrrrrrr2222222');
-    print(firstList.length);
-    print(secondList.length);
   }
 
   @override
@@ -244,12 +220,10 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
   void changeGroupProductList(String nameGroup) {
     checkFavGroup = nameGroup;
     // searchTextController.clear();
-    print(nameGroup);
 
     bool isStringFound = tagresultList.any((map) => map['Name'] == nameGroup);
 
     if (isStringFound) {
-      print('พบสตริงที่ค้นหาในฟิลด์แท๊ก \'Name\' $nameGroup');
       resultList.clear();
 
       // List<Map<String, dynamic>> checkProduct = resultListAll;
@@ -267,7 +241,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
       resultList.addAll(checkProduct);
 
-      print(resultList);
 
       // productCount.clear();
       // for (var element in resultList) {
@@ -312,14 +285,9 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
       //   // priceChoose.last = price.substring(0, price.indexOf(".") + 3);
 
-      //   // print(unitChoose.last);
-      //   // print(priceChoose.last);
-
-      //   // print(element);
       // }
     } else if (nameGroup == 'สินค้าชื่นชอบ' ||
         nameGroup == 'สินค้าที่เคยสั่งซื้อ') {
-      print('พบสตริงที่ค้นหาในฟิลด์พิเศษ \'Name\' $nameGroup');
 
       resultList.clear();
       String text = '';
@@ -329,17 +297,9 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
         text = 'สินค้าที่เคยสั่ง';
       }
 
-      print(text);
-      print(text);
-      print(text);
-      print(text);
-      print(text);
 
       if (userData!.isEmpty) {
       } else {
-        print(userData!['สินค้าถูกใจ']);
-        print(userData!['สินค้าที่เคยสั่ง']);
-        print(userData);
 
         // List<Map<String, dynamic>> checkProduct = resultListAll;
         List<Map<String, dynamic>> checkProduct = List.from(resultListAll);
@@ -348,7 +308,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
           for (int i = 0; i < userData![text].length; i++) {
             if (userData![text][i] == map['PRODUCT_ID']) {
               if (text == 'สินค้าที่เคยสั่ง') {
-                print(userData!['สินค้าที่เคยสั่ง_วันที่'][i]);
                 returnType = false;
               } else if (text == 'สินค้าถูกใจ') {
                 returnType = true;
@@ -363,7 +322,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
         resultList.addAll(checkProduct);
 
-        print(resultList);
 
         // productCount.clear();
         // for (var element in resultList) {
@@ -408,14 +366,9 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
         //   // priceChoose.last = price.substring(0, price.indexOf(".") + 3);
 
-        //   // print(unitChoose.last);
-        //   // print(priceChoose.last);
-
-        //   // print(element);
         // }
       }
     } else {
-      print('ไม่พบสตริงที่ค้นหาในฟิลด์แท๊ก \'Name\'');
       if (nameGroup == 'สินค้าทั้งหมด') {
         resultList.clear();
 
@@ -489,21 +442,15 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
       //   // priceChoose.last = price.substring(0, price.indexOf(".") + 3);
 
-      //   // print(unitChoose.last);
-      //   // print(priceChoose.last);
-
-      //   // print(element);
       // }
     }
 
-    print(resultList.length);
     if (mounted) {
       setState(() {});
     }
   }
 
   void findNameProductList(String nameProduct) {
-    print(nameProduct);
 
     resultList.clear();
 
@@ -557,13 +504,8 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
     //   // priceChoose.last = price.substring(0, price.indexOf(".") + 3);
 
-    //   print(unitChoose.last);
-    //   print(priceChoose.last);
-
-    //   print(element);
     // }
 
-    print(resultList.length);
     if (mounted) {
       setState(() {});
     }
@@ -587,9 +529,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // print(resultList.length);
-    // print(resultList[0]['key0']['รูปภาพ']);
-    // print(resultList[0]['key0']['รูปภาพ'][0]);
 
     String formatThaiDate(Timestamp timestamp) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -921,10 +860,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
                                                             bool isStringFound =
                                                                 false;
 
-                                                            print(userData!);
-                                                            print(userData!);
-                                                            print(userData!);
-                                                            // print(entry['PRODUCT_ID']);
 
                                                             if (userData!
                                                                 .isEmpty) {
@@ -956,7 +891,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
                                                               }
                                                             }
 
-                                                            // print(entry);
 
                                                             resultList
                                                                 .add(entry);
@@ -1012,7 +946,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
                                                             productGetData!
                                                                 .forEach((key,
                                                                     value) {
-                                                              // print(value);
                                                               Map<String,
                                                                       dynamic>
                                                                   entry = value;
@@ -1026,7 +959,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
                                                                           ? ''
                                                                           : entry[
                                                                               'รายละเอียด']);
-                                                              // print(parsedstring3);
                                                               entry['รายละเอียดสตริง'] =
                                                                   parsedstring3
                                                                       .trimLeft()
@@ -1072,18 +1004,12 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
                                                                   isStringFound =
                                                                   false;
 
-                                                              print(userData!);
-                                                              print(userData!);
-                                                              print(userData!);
-                                                              // print(entry['PRODUCT_ID']);
 
                                                               if (userData!
                                                                   .isEmpty) {
-                                                                print('if');
                                                                 entry['Favorite'] =
                                                                     false;
                                                               } else {
-                                                                print('else');
 
                                                                 for (int i = 0;
                                                                     i <
@@ -1109,7 +1035,6 @@ class _A0101HomeWidgetState extends State<A0101HomeWidget> {
                                                                 }
                                                               }
 
-                                                              // print(entry);
 
                                                               resultList
                                                                   .add(entry);

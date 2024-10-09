@@ -450,8 +450,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         dataApplove['key${index}'] = docData;
       }
     }
-    //print('Approve Comment');
-    //print(dataApplove);
+    print('Approve Comment');
+    print(dataApplove);
     List<MapEntry<String, dynamic>> entriesList = dataApplove.entries.toList();
 
     for (var entry in entriesList) {
@@ -462,24 +462,24 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         });
       }
     }
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print(boolEditApprove);
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print(boolEditApprove);
 
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
-    //print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
+    print('===============================');
 
     //======================================================================
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -649,9 +649,9 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
       var permission = permissionRef.data();
 
-      //print(
-      // 'permissionpermissionpermissionpermissionpermissionpermissionpermission');
-      ////print(permission);
+      print(
+          'permissionpermissionpermissionpermissionpermissionpermissionpermission');
+      print(permission);
 
       print(permission!['User']);
       if (permission!['User'].length > 0) {
@@ -666,13 +666,13 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           // _model.textController1Company.text;
         }
 
-        //print(cusName);
-        //print(cusName);
-        //print(cusName);
+        print(cusName);
+        print(cusName);
+        print(cusName);
 
         for (int i = 0; i < permission['User'].length; i++) {
-          //print('permission');
-          //print(permission['User'][i]);
+          print('permission');
+          print(permission['User'][i]);
           Map<String, dynamic> permissionUser = permission['User'][i]; // Map
 
           var refUser = await FirebaseFirestore.instance
@@ -680,26 +680,26 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
               .doc(permissionUser['UserID'])
               .get();
 
-          //print('refUser');
+          print('refUser');
 
-          //print(refUser.data());
+          print(refUser.data());
 
           if (refUser.data() == null) {
           } else {
             var docUser = refUser.data();
             //     _docsUserList.push(_docUser)
             String mail = docUser!['Email'];
-            //print(mail);
-            //print(mail);
-            //print(mail);
-            //print(mail);
-            //print(mail);
+            print(mail);
+            print(mail);
+            print(mail);
+            print(mail);
+            print(mail);
           }
         }
       }
       //=====================================================================
 
-      //print('fetchData');
+      print('fetchData');
       await fetchData();
 
       if (widget.entryMap!['value']['ใช้ที่อยู่ตามบัตร'] == null) {
@@ -709,16 +709,16 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
       homeAddress =
           TextEditingController(text: widget.entryMap!['value']['บ้านเลขที่']);
-      //print('--------------');
-      //print('--------------');
-      //print(homeAddress.text);
-      //print(homeAddress.text);
-      //print(homeAddress.text);
-      //print(homeAddress.text);
-      //print(homeAddress.text);
-      //print(homeAddress.text);
-      //print('--------------');
-      //print('--------------');
+      print('--------------');
+      print('--------------');
+      print(homeAddress.text);
+      print(homeAddress.text);
+      print(homeAddress.text);
+      print(homeAddress.text);
+      print(homeAddress.text);
+      print(homeAddress.text);
+      print('--------------');
+      print('--------------');
 
       mooAddress = TextEditingController(
           text: widget.entryMap!['value']['หมู่'] == null
@@ -767,11 +767,11 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       });
 
       print(widget.entryMap!['value']['จังหวัด']);
-      //print(widget.entryMap!['value']['จังหวัด']);
-      //print(widget.entryMap!['value']['จังหวัด']);
-      //print(widget.entryMap!['value']['จังหวัด']);
+      print(widget.entryMap!['value']['จังหวัด']);
+      print(widget.entryMap!['value']['จังหวัด']);
+      print(widget.entryMap!['value']['จังหวัด']);
 
-      // //print(provinces);
+      // print(provinces);
 
       if (widget.entryMap!['value']['จังหวัด'] == '' ||
           widget.entryMap!['value']['จังหวัด'] == null) {
@@ -781,19 +781,19 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
         Map<String, dynamic> parent =
             provinces!.firstWhere((item) => item['name_th'] == nameThOnly);
-        // //print(parent);
+        // print(parent);
 
         // List<dynamic> childs = parent['amphure'];
-        // //print('parent');
-        // //print('parent');
-        // //print('parent');
-        // //print('parent');
+        // print('parent');
+        // print('parent');
+        // print('parent');
+        // print('parent');
 
-        // //print(parent['amphure']);
+        // print(parent['amphure']);
 
         amphuresListFirst = parent['amphure'];
 
-        // //print(amphuresListFirst);
+        // print(amphuresListFirst);
 
         if (widget.entryMap!['value']['อำเภอ'] == '' ||
             widget.entryMap!['value']['อำเภอ'] == null) {
@@ -801,10 +801,10 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           String nameThOnlyAmphor =
               widget.entryMap!['value']['อำเภอ'].split(' - ')[0];
 
-          // //print(nameThOnlyAmphor);
-          // //print(nameThOnlyAmphor);
-          // //print(nameThOnlyAmphor);
-          // //print(nameThOnlyAmphor);
+          // print(nameThOnlyAmphor);
+          // print(nameThOnlyAmphor);
+          // print(nameThOnlyAmphor);
+          // print(nameThOnlyAmphor);
 
           Map<String, dynamic> parentAmphor = amphuresListFirst!
               .firstWhere((item) => item['name_th'] == nameThOnlyAmphor);
@@ -840,16 +840,16 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         });
       }
 
-      //print('************');
-      //print(productTypeEmployee);
-      //print(productTypeEmployee);
-      //print(productTypeEmployee);
-      //print(productTypeEmployee);
+      print('************');
+      print(productTypeEmployee);
+      print(productTypeEmployee);
+      print(productTypeEmployee);
+      print(productTypeEmployee);
 
       // categoryProduct = categoryProductController.categoryProductsData;
 
       // for (int i = 0; i < categoryProduct!.length; i++) {
-      //   //print(categoryProduct);
+      //   print(categoryProduct);
       //   categoryNameList.add(categoryProduct!['key${i}']['GROUP_DESC']);
       // }
       //=====================================================================
@@ -861,12 +861,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       }
       //=====================================================================
 
-      print('เออเร่ออะไรวะ');
-
       if (widget.entryMap!['value']['ListCustomerAddress'].length == 0) {
-        // ////print('ไม่มีประวัติ');
-        print('เออเร่ออะไรวะ1');
-
+        // print('ไม่มีประวัติ');
         resultList.add({
           'ID': DateTime.now().toString(),
           'รหัสสาขา': '', //new
@@ -908,8 +904,8 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           'amphure_id': null,
           'tambon_id': null,
         });
-        // //print('5555555555');
-        // //print(resultList);
+        // print('5555555555');
+        // print(resultList);
         postalCodeController!.add(TextEditingController());
 
         hourOpenController!.add(TextEditingController());
@@ -945,10 +941,10 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         lotList!.add(TextEditingController());
 
         //===================================================================
-        // //print('object');
+        // print('object');
         phoneList!.add(PhoneNumber(isoCode: 'TH'));
 
-        // //print(phoneList);
+        // print(phoneList);
 
         textFieldFocusSaka!.add(FocusNode());
         textFieldFocusNameSaka!.add(FocusNode());
@@ -982,22 +978,21 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           listBillTaxIndex.add(widget.entryMap!['value']['ListCustomerAddress']
               [i]['indexที่อยู่จัดส่งและออกใบกำกับภาษี']);
 
-          //print('---------------------------------------------------------');
-          //print(widget.entryMap!['value']['ListCustomerAddress'].length);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
-          //print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print('---------------------------------------------------------');
+          print(widget.entryMap!['value']['ListCustomerAddress'].length);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+          print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
           //========================================================
           if (widget.entryMap!['value']['ListCustomerAddress'][i]['Latitude'] ==
                   null ||
               widget.entryMap!['value']['ListCustomerAddress'][i]['Latitude'] ==
                   '') {
-
             _mapController.add(Completer<GoogleMapController>());
             _kGooglePlexDialog.add(CameraPosition(
               target: google_maps.LatLng(13.7563309, 100.5017651),
@@ -1008,8 +1003,6 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
             searchMap.add(TextEditingController());
           } else {
-            print('เออเร่ออะไรวะ4');
-
             _mapController.add(Completer<GoogleMapController>());
             _kGooglePlexDialog.add(CameraPosition(
               target: google_maps.LatLng(
@@ -1019,11 +1012,6 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       [i]['Longitude'])),
               zoom: 14.4746,
             ));
-
-            print(widget.entryMap!['value']['ListCustomerAddress'][i]
-                ['Latitude'].toString());
-            print(widget.entryMap!['value']['ListCustomerAddress'][i]
-                ['Longitude'].toString());
 
             Set<Marker> markerSet = Set<Marker>();
             markerSet.add(
@@ -1039,7 +1027,6 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                 ),
               ),
             );
-
             markersDialog.add(markerSet);
 
             _mapKeyDialog.add(GlobalKey());
@@ -1048,11 +1035,11 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           }
 
           if (widget.entryMap!['value']['รูปร้านค้า'].length != 0) {
-            //print('---------- เข้า if ----------------');
+            print('---------- เข้า if ----------------');
             if (widget.entryMap!['value']['ListCustomerAddress'].length >
                 widget.entryMap!['value']['รูปร้านค้า'].length) {
               if ((i + 1) > widget.entryMap!['value']['รูปร้านค้า'].length) {
-                //print('resultList.add({11111    ');
+                print('resultList.add({11111    ');
                 resultList.add({
                   'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
                       ['ID'], //new
@@ -1192,7 +1179,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                 dropDownControllersimageAddress
                     .add(FormFieldController<String>(''));
 
-                //print('1');
+                print('1');
                 if (widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์'] ==
                     '') {
@@ -1212,15 +1199,15 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             'TH'));
                   }
                 }
-                //print('2');
+                print('2');
 
                 textFieldControllerPhoneAddress!.add(TextEditingController(
                     text: widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์']));
-                //print('3');
+                print('3');
               } else {
                 if (widget.entryMap!['value']['รูปร้านค้า'][i] == '') {
-                  //print('resultList.add({22222    ');
+                  print('resultList.add({22222    ');
 
                   resultList.add({
                     'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
@@ -1372,7 +1359,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                   //     phoneNumber: '+66' +
                   //         widget.entryMap!['value']['ListCustomerAddress'][i]
                   //             ['โทรศัพท์']));
-                  //print('4');
+                  print('4');
 
                   if (widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['โทรศัพท์'] ==
@@ -1398,7 +1385,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                       text: widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['โทรศัพท์']));
                 } else {
-                  //print('resultList.add({33333    ');
+                  print('resultList.add({33333    ');
 
                   resultList.add({
                     'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
@@ -1526,7 +1513,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                   //         widget.entryMap!['value']['ListCustomerAddress'][i]
                   //             ['โทรศัพท์']));
 
-                  //print('5');
+                  print('5');
 
                   if (widget.entryMap!['value']['ListCustomerAddress'][i]
                           ['โทรศัพท์'] ==
@@ -1555,7 +1542,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
               }
             } else {
               if (widget.entryMap!['value']['รูปร้านค้า'][i] == '') {
-                //print('resultList.add({44444    ');
+                print('resultList.add({44444    ');
 
                 resultList.add({
                   'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
@@ -1673,7 +1660,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                 //         widget.entryMap!['value']['ListCustomerAddress'][i]
                 //             ['โทรศัพท์']));
 
-                //print('6');
+                print('6');
 
                 if (widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์'] ==
@@ -1699,7 +1686,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                     text: widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์']));
               } else {
-                //print('resultList.add({55555    ');
+                print('resultList.add({55555    ');
 
                 resultList.add({
                   'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
@@ -1824,7 +1811,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                 //         widget.entryMap!['value']['ListCustomerAddress'][i]
                 //             ['โทรศัพท์']));
 
-                //print('7');
+                print('7');
 
                 if (widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์'] ==
@@ -1852,17 +1839,17 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
               }
             }
           } else {
-            //print('---------- เข้า else ----------------');
+            print('---------- เข้า else ----------------');
 
-            //print('resultList.add({66666    ');
+            print('resultList.add({66666    ');
 
-            //print(resultList.length);
+            print(resultList.length);
 
-            //print(widget.entryMap!['value']['ListCustomerAddress'][i]
-            // ['HouseNumber']);
-            ////print(widget.entryMap!['value']['ListCustomerAddress'][i]['Moo']);
-            ////print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
-            ////print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]
+                ['HouseNumber']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]['Moo']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]['Soi']);
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]['Talad']);
 
             resultList.add({
               'ID': widget.entryMap!['value']['ListCustomerAddress'][i]
@@ -1977,35 +1964,35 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             //         widget.entryMap!['value']['ListCustomerAddress'][i]
             //             ['โทรศัพท์']));
 
-            //print('8');
-            //print(widget.entryMap!['value']['ListCustomerAddress'][i]
-            // ['โทรศัพท์']);
+            print('8');
+            print(widget.entryMap!['value']['ListCustomerAddress'][i]
+                ['โทรศัพท์']);
 
             if (widget.entryMap!['value']['ListCustomerAddress'][i]
                     ['โทรศัพท์'] ==
                 '') {
               phoneList!.add(PhoneNumber(isoCode: 'TH'));
-              //print('111');
+              print('111');
             } else {
               if (widget
                       .entryMap!['value']['ListCustomerAddress'][i]['โทรศัพท์']
                       .length <
                   10) {
                 phoneList!.add(PhoneNumber(isoCode: 'TH'));
-                //print('222');
+                print('222');
               } else {
-                //print('333');
-                //print(widget.entryMap!['value']['ListCustomerAddress'][i]
-                //     ['โทรศัพท์']);
-                // //print(widget.entryMap!['value']['ListCustomerAddress'][i]
-                //     ['โทรศัพท์']);
-                // //print(widget.entryMap!['value']['ListCustomerAddress'][i]
-                //     ['โทรศัพท์']);
+                print('333');
+                print(widget.entryMap!['value']['ListCustomerAddress'][i]
+                    ['โทรศัพท์']);
+                print(widget.entryMap!['value']['ListCustomerAddress'][i]
+                    ['โทรศัพท์']);
+                print(widget.entryMap!['value']['ListCustomerAddress'][i]
+                    ['โทรศัพท์']);
                 phoneList!.add(await PhoneNumber.getRegionInfoFromPhoneNumber(
                     widget.entryMap!['value']['ListCustomerAddress'][i]
                         ['โทรศัพท์'],
                     'TH'));
-                //print('333');
+                print('333');
               }
             }
 
@@ -2021,14 +2008,13 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                   text: widget.entryMap!['value']['ListCustomerAddress'][i]
                       ['โทรศัพท์']));
             }
-            //print('9');
+            print('9');
           }
-
-          //print('---------------check resultList.length -----------');
-          //print(resultList.length);
-          //print(resultList.length);
-          //print(resultList.length);
-          //print('---------------check resultList.length -----------');
+          print('---------------check resultList.length -----------');
+          print(resultList.length);
+          print(resultList.length);
+          print(resultList.length);
+          print('---------------check resultList.length -----------');
 
           List<dynamic>? childs;
           if (resultList[i]['Province'] == '') {
@@ -2048,7 +2034,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             List<dynamic> childsTambon = parentTambon['tambon'];
             tambons!.add(childsTambon);
           }
-          //print('10');
+          print('10');
 
           //================= find Province =====================================
           Map<String, dynamic>? foundMapProvince;
@@ -2064,26 +2050,26 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
                 provincesString.add([]);
 
-                //print(addressProvincesStringControllerType);
-                //print(addressProvincesStringControllerType!.length);
-                //print(addressProvincesStringControllerType!.length);
-                //print(addressProvincesStringControllerType!.length);
-                //print(addressProvincesStringControllerType!.length);
-                //print(addressProvincesStringControllerType!.length);
+                print(addressProvincesStringControllerType);
+                print(addressProvincesStringControllerType!.length);
+                print(addressProvincesStringControllerType!.length);
+                print(addressProvincesStringControllerType!.length);
+                print(addressProvincesStringControllerType!.length);
+                print(addressProvincesStringControllerType!.length);
 
                 foundMapProvince = map;
                 break;
               }
             }
           }
-          //print('11');
+          print('11');
 
           // if (foundMapProvince != null) {
-          //   //print(
+          //   print(
           //       "พบ Map ที่มี id เท่ากับ ${resultList[i]['Province']}: $foundMapProvince");
           //   // resultList[index]['Province'] = foundMapProvince['name_th'];
           // } else {
-          //   //print("ไม่พบ Map ที่มี id เท่ากับ ${resultList[i]['Province']}");
+          //   print("ไม่พบ Map ที่มี id เท่ากับ ${resultList[i]['Province']}");
           // }
           //================= find Amphor =====================================
           Map<String, dynamic>? foundMapAmphor;
@@ -2100,14 +2086,14 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             }
           }
 
-          //print('12');
+          print('12');
 
           // if (foundMapAmphor != null) {
-          //   //print(
+          //   print(
           //       "พบ Map ที่มี id เท่ากับ ${resultList[i]['District']}: $foundMapAmphor");
           //   // resultList[index]['District'] = foundMapAmphor['name_th'];
           // } else {
-          //   //print("ไม่พบ Map ที่มี id เท่ากับ ${resultList[i]['District']}");
+          //   print("ไม่พบ Map ที่มี id เท่ากับ ${resultList[i]['District']}");
           // }
           //================= find Tambon =====================================
 
@@ -2125,13 +2111,13 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             }
           }
 
-          //print('13');
+          print('13');
 
           // if (foundMap != null) {
-          //   //print(
+          //   print(
           //       "พบ Map ที่มี id เท่ากับ ${resultList[i]['SubDistrict']}: $foundMap");
           // } else {
-          //   //print("ไม่พบ Map ที่มี id เท่ากับ ${resultList[i]['SubDistrict']}");
+          //   print("ไม่พบ Map ที่มี id เท่ากับ ${resultList[i]['SubDistrict']}");
           // }
           //================= find Tambon =====================================
           selected.add({
@@ -2142,7 +2128,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             'tambon_id':
                 resultList[i]['SubDistrict'] == '' ? '' : foundMap!['id'],
           });
-          //print('14');
+          print('14');
 
           //================= find Tambon =====================================
 
@@ -2202,7 +2188,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
           phoneInputController.add(TextEditingController(text: ''));
           //===================================================================
-          //print('15');
+          print('15');
 
           textFieldFocusSaka!.add(FocusNode());
           textFieldFocusNameSaka!.add(FocusNode());
@@ -2224,7 +2210,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           // dropDownValueControllerProvince.add(FormFieldController<String>(''));
           // dropDownValueControllerDistrict.add(FormFieldController<String>(''));
           // dropDownValueControllerSubDistrict.add(FormFieldController<String>(''));
-          //print('16');
+          print('16');
 
           List<dynamic> dynamicList = widget.entryMap!['value']
                   ['ListCustomerAddress'][i]['รูปภาพร้าน'] ??
@@ -2245,12 +2231,12 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           imageAddressList!.add(a);
           imageAddressUint8List!.add(b);
 
-          //print('+++++++');
-          //print('+++++++');
-          //print('+++++++');
-          //print('+++++++');
-          //print(imageAddressList);
-          //print(imageAddressUint8List);
+          print('+++++++');
+          print('+++++++');
+          print('+++++++');
+          print('+++++++');
+          print(imageAddressList);
+          print(imageAddressUint8List);
 
           dropDownControllersPriceTable.add(FormFieldController(widget
               .entryMap!['value']['ListCustomerAddress'][i]['ตารางราคา']));
@@ -2264,15 +2250,13 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
 
           latList!.add(TextEditingController(text: resultList[i]['Latitude']));
           lotList!.add(TextEditingController(text: resultList[i]['Longitude']));
-          //print('Success');
+          print('Success');
         }
 
         total3 = resultList.length;
       }
-
-
-      //print(dropDownControllersPriceTable);
-      //print(phoneList);
+      print(dropDownControllersPriceTable);
+      print(phoneList);
 
       categoryProduct = categoryProductController.categoryProductsData;
 
@@ -2281,7 +2265,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       });
 
       // for (int i = 0; i < categoryProduct!.length; i++) {
-      //   // //print(categoryProduct);
+      //   // print(categoryProduct);
       //   categoryNameList.add(categoryProduct!['key${i}']['GROUP_DESC']);
       // }
 
@@ -2327,7 +2311,6 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       if (dropDownControllers2.isEmpty) {
         dropDownControllers2.add(FormFieldController<String>(null));
         dropDownValues2.add('');
-        total2 = 0;
       } else {
         total2 = dropDownControllers2.length;
       }
@@ -2457,6 +2440,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       _model.textFieldFocusNode5 ??= FocusNode();
 
       //=================================================================
+      print('123');
       if (widget.entryMap!['value']['PhoneTypeCountry'] == null ||
           widget.entryMap!['value']['PhoneTypeCountry'] == '') {
         number = PhoneNumber(isoCode: 'TH');
@@ -2465,13 +2449,12 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
             widget.entryMap!['value']['PhoneNumber'] == '') {
           number = PhoneNumber(isoCode: 'TH');
         } else {
-          print(
-              '${widget.entryMap!['value']['PhoneTypeCountry']}${widget.entryMap!['value']['PhoneNumber']}');
           number = await PhoneNumber.getRegionInfoFromPhoneNumber(
               '${widget.entryMap!['value']['PhoneTypeCountry']}${widget.entryMap!['value']['PhoneNumber']}',
               'TH');
         }
       }
+      print('321');
 
       //=================================================================
 
@@ -2719,7 +2702,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         image!.add(File(''));
         imageUint8List.add(Uint8List(0));
       }
-      //print('รูปร้านค้า');
+      print('รูปร้านค้า');
       //================================================================
 
       for (int i = 0; i < widget.entryMap!['value']['รูปเอกสาร'].length; i++) {
@@ -2774,7 +2757,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
       //   imageUint8List2.add(Uint8List(0));
       // }
       //================================================================
-      //print('load Data to Map');
+      print('load Data to Map');
       late double lat;
       late double lot;
 
@@ -2920,28 +2903,28 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
           }
         } else {}
 
-        // //print(addressAllForDropdown[0]);
+        // print(addressAllForDropdown[0]);
         // String textFirst =
         // '${resultList[i]['รหัสสาขา']} ${resultList[i]['ชื่อสาขา']} ${resultList[i]['HouseNumber']} ${resultList[i]['VillageName']} ${resultList[i]['Road']} ${resultList[i]['SubDistrict']} ${resultList[i]['District']} ${resultList[i]['Province']} ${resultList[i]['PostalCode']} ${resultList[i]['ผู้ติดต่อ']} ${resultList[i]['ตำแหน่ง']} ${resultList[i]['โทรศัพท์']}';
       }
 
-      // for (var element in addressAllForDropdown) {
-      //   ////print('aaaaaa');
-      //   ////print(element);
-      //   ////print('aaaaaaa');
-      // }
+      for (var element in addressAllForDropdown) {
+        print('aaaaaa');
+        print(element);
+        print('aaaaaaa');
+      }
 
-      // for (var element in addressAllForDropdownForCheckIndex) {
-      //   //print('bbbbbbbbb');
-      //   //print(element);
-      //   //print('bbbbbbbbb');
-      // }
+      for (var element in addressAllForDropdownForCheckIndex) {
+        print('bbbbbbbbb');
+        print(element);
+        print('bbbbbbbbb');
+      }
 
-      // for (var element in dropDownControllersBillTax) {
-      //   //print('ccccc');
-      //   //print(element.value);
-      //   //print('ccccccc');
-      // }
+      for (var element in dropDownControllersBillTax) {
+        print('ccccc');
+        print(element.value);
+        print('ccccccc');
+      }
 
       if (checkIDforAddress) {
         houseNumber.text = homeAddress.text;
@@ -2960,7 +2943,7 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         nameContract.text = resultList[0]['ผู้ติดต่อ'] ?? '';
         namePosition.text = resultList[0]['ตำแหน่ง'] ?? '';
       } else {
-        //print(resultList[0]['HouseNumber']);
+        print(resultList[0]['HouseNumber']);
 
         saka.text = resultList[0]['รหัสสาขา'] ?? '';
         sakaID.text = resultList[0]['ชื่อสาขา'] ?? '';
@@ -2979,13 +2962,13 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         postalCodeController![0].text = resultList[0]['PostalCode'];
       }
 
-      // //print('---------------check resultList.length -----------');
-      // print(resultList.length);
-      // print(resultList.length);
-      // print(resultList.length);
-      // for (var element in resultList) {
-      //   print(element);
-      // }
+      print('---------------check resultList.length -----------');
+      print(resultList.length);
+      print(resultList.length);
+      print(resultList.length);
+      for (var element in resultList) {
+        print(element);
+      }
       print('---------------check resultList.length -----------');
     } catch (e) {
       print(e);
@@ -3280,22 +3263,22 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
         int? dependId =
             selectedValue.isNotEmpty ? int.parse(selectedValue) : null;
 
-        // print(dependId.toString());
-        // print(dependId.toString());
-        // print(dependId.toString());
+        print(dependId.toString());
+        print(dependId.toString());
+        print(dependId.toString());
 
-        // print(proviceAddress.text);
-        // print(proviceAddress.text);
-        // print(proviceAddress.text);
-        // print(proviceAddress.text);
-        // print(proviceAddress.text);
-        // print(proviceAddress.text);
+        print(proviceAddress.text);
+        print(proviceAddress.text);
+        print(proviceAddress.text);
+        print(proviceAddress.text);
+        print(proviceAddress.text);
+        print(proviceAddress.text);
 
         Map<String, dynamic> parent =
             list!.firstWhere((item) => item['id'] == dependId);
         List<dynamic> childs = parent[child];
 
-        // print(childs);
+        print(childs);
 
         amphuresListFirst = childs;
         checkIDforAddress = false;
@@ -3399,18 +3382,18 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
     int? index,
   }) {
     return StatefulBuilder(builder: (context, setState) {
-      // print(index);
-      // print('select dropdown index');
-      // print('select dropdown index');
-      // print('select dropdown index');
-      // print('select dropdown index');
-      // print('select dropdown index');
-      // print('select dropdown index');
-      // print('select dropdown index');
+      print(index);
+      print('select dropdown index');
+      print('select dropdown index');
+      print('select dropdown index');
+      print('select dropdown index');
+      print('select dropdown index');
+      print('select dropdown index');
+      print('select dropdown index');
 
       void onChangeHandle(String? selectedValue) {
         print('IN onChangeHandle()');
-        // print(selectedValue);
+        print(selectedValue);
 
         setChilds == null
             ? null
@@ -5219,39 +5202,33 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
                             SizedBox(
                               height: 5,
                             ),
-                            IgnorePointer(
-                              ignoring: !checkStatusToEdit,
-                              child: Row(
-                                children: [
-                                  Checkbox(
-                                    value: checkNumberID,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        checkNumberID = !checkNumberID;
-                                        if (checkNumberID) {
-                                          textNumberID =
-                                              '${homeAddress.text} ${mooAddress.text == '' || mooAddress == null ? '' : 'หมู่'} ${mooAddress.text} ${soiAddress.text} ${nameMooAddress.text} ${taladAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: checkNumberID,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      checkNumberID = !checkNumberID;
+                                      if (checkNumberID) {
+                                        textNumberID =
+                                            '${homeAddress.text} ${mooAddress.text == '' || mooAddress == null ? '' : 'หมู่'} ${mooAddress.text} ${soiAddress.text} ${nameMooAddress.text} ${taladAddress.text} ${roadAddress.text} ${subDistricAddressController.text.split(' - ')[0]} ${districAddressController.text.split(' - ')[0]} ${proviceAddress.text.split(' - ')[0]} ${codeAddress.text}';
 
-                                          textNumberID = textNumberID
-                                              .trimLeft()
-                                              .trimRight();
-                                          refreshAddressForDropdown(
-                                              setState, -1);
-                                        } else {
-                                          textNumberID = '';
-                                          refreshAddressForDropdown(
-                                              setState, -1);
-                                        }
-                                      });
-                                    },
-                                  ),
-                                  Text(
-                                    'ใช้ที่อยู่นี้เป็นตัวเลือก ออกใบกำกับภาษี',
-                                    style:
-                                        FlutterFlowTheme.of(context).labelLarge,
-                                  ),
-                                ],
-                              ),
+                                        textNumberID =
+                                            textNumberID.trimLeft().trimRight();
+                                        refreshAddressForDropdown(setState, -1);
+                                      } else {
+                                        textNumberID = '';
+                                        refreshAddressForDropdown(setState, -1);
+                                      }
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  'ใช้ที่อยู่นี้เป็นตัวเลือก ออกใบกำกับภาษี',
+                                  style:
+                                      FlutterFlowTheme.of(context).labelLarge,
+                                ),
+                              ],
                             ),
                             //===================== เบอร์โทรศัพท์ ========================================
                             IgnorePointer(
@@ -16986,10 +16963,6 @@ class _FormOpenNewCustomerEditState extends State<FormOpenNewCustomerEdit> {
   }
 
   Padding phoneEdit(BuildContext context) {
-    print('phoneEdit');
-    print(number.phoneNumber);
-    print(number.isoCode);
-    print(number.dialCode);
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(8.0, 5.0, 8.0, 5.0),
       child: Column(

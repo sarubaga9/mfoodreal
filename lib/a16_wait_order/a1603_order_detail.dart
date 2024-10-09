@@ -328,7 +328,8 @@ class _A1603OrderDetailState extends State<A1603OrderDetail> {
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
                                               // context.safePop();
-                                              Navigator.pop(context, orderList);
+                                              // Navigator.pop(context, orderList);
+                                              Navigator.pop(context);
                                             },
                                             child: Icon(
                                               Icons.chevron_left,

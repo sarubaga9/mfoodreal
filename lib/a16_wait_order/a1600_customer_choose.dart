@@ -58,7 +58,7 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
   void initState() {
     super.initState();
 
-    fetchData();
+    // fetchData();
   }
 
   void fetchData() async {
@@ -67,57 +67,57 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
         isLoading = true;
       });
 
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
-      print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
+      // print(widget.id);
 
       //==============================================================
       // CollectionReference orderColection =
       //     FirebaseFirestore.instance.collection('OrdersTest');
 
-      QuerySnapshot orderSubCollections = await FirebaseFirestore.instance
-          // .collection('OrdersTest')
-          .collection(AppSettings.customerType == CustomerType.Test
-              ? 'OrdersTest'
-              : 'Orders')
-          .where('UserDocId', isEqualTo: widget.id)
-          .get();
+      // QuerySnapshot orderSubCollections = await FirebaseFirestore.instance
+      //     // .collection('OrdersTest')
+      //     .collection(AppSettings.customerType == CustomerType.Test
+      //         ? 'OrdersTest'
+      //         : 'Orders')
+      //     .where('UserDocId', isEqualTo: widget.id)
+      //     .get();
 
-      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
-      orderSubCollections.docs.forEach((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        orderList!.add(data);
-        orderListTosend!.add(data);
-        print('------------');
-        print(data['INVOICE_NO']);
-        print('------------');
-      });
+      // // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      // orderSubCollections.docs.forEach((doc) {
+      //   Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   orderList!.add(data);
+      //   orderListTosend!.add(data);
+      //   print('------------');
+      //   print(data['INVOICE_NO']);
+      //   print('------------');
+      // });
 
-      QuerySnapshot orderSubCollectionsTeam = await FirebaseFirestore.instance
-          // .collection('OrdersTest')
-          .collection(AppSettings.customerType == CustomerType.Test
-              ? 'OrdersTest'
-              : 'Orders')
-          .where('idผู้เปิดออเดอร์แทน', isEqualTo: widget.id)
-          .get();
+      // QuerySnapshot orderSubCollectionsTeam = await FirebaseFirestore.instance
+      //     // .collection('OrdersTest')
+      //     .collection(AppSettings.customerType == CustomerType.Test
+      //         ? 'OrdersTest'
+      //         : 'Orders')
+      //     .where('idผู้เปิดออเดอร์แทน', isEqualTo: widget.id)
+      //     .get();
 
-      // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
-      orderSubCollectionsTeam.docs.forEach((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        orderListTeam!.add(data);
-        orderListTosendTeam!.add(data);
-        // print('------------');
-        // print(data);
-        // print('------------');
-      });
+      // // วนลูปเพื่อดึงข้อมูลจาก documents ใน subcollection 'นพกำพห'
+      // orderSubCollectionsTeam.docs.forEach((doc) {
+      //   Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      //   orderListTeam!.add(data);
+      //   orderListTosendTeam!.add(data);
+      //   // print('------------');
+      //   // print(data);
+      //   // print('------------');
+      // });
 
-      print(orderList!.length);
+      // print(orderList!.length);
       // // ดึงข้อมูลจาก collection 'Customer'
       // DocumentSnapshot customerDoc = await FirebaseFirestore.instance
       //     .collection(AppSettings.customerType == CustomerType.Test
@@ -553,9 +553,10 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                 CupertinoPageRoute(
                                                   builder: (context) =>
                                                       A06001CustomerHistoryToday(
-                                                    dataOrderList: orderList,
-                                                    dataOrderListTeam:
-                                                        orderListTeam,
+                                                    // dataOrderList: orderList,
+                                                    // dataOrderListTeam:
+                                                    //     orderListTeam,
+                                                    id: userData!['id'],
                                                   ),
                                                 ));
 
@@ -743,10 +744,10 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                         CupertinoPageRoute(
                                                           builder: (context) =>
                                                               A1604SearchOrder(
-                                                            status:
-                                                                widget.status,
-                                                            dataOrderList:
-                                                                orderListTosend,
+                                                            // status:
+                                                            //     widget.status,
+                                                            // dataOrderList:
+                                                            //     orderListTosend,
                                                             checkTeam: false,
                                                           ),
                                                         ));
@@ -835,10 +836,10 @@ class _A1600CustomerChooseState extends State<A1600CustomerChoose> {
                                                         CupertinoPageRoute(
                                                           builder: (context) =>
                                                               A1604SearchOrder(
-                                                            status:
-                                                                widget.status,
-                                                            dataOrderList:
-                                                                orderListTosendTeam,
+                                                            // status:
+                                                            //     widget.status,
+                                                            // dataOrderList:
+                                                            //     orderListTosendTeam,
                                                             checkTeam: true,
                                                           ),
                                                         ));

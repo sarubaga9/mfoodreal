@@ -111,15 +111,12 @@ class _MyAppState extends State<MyApp> {
       String? data = await readDataFromSharedPreferences('message_key');
       message = data == '' || data == null ? 'No data found!' : data;
 
-      // print('shared preference');
-      // print(message);
 
       String text = message;
       bool isAllNumeric = isNumeric(text);
 //=========================================================================
       if (isAllNumeric) {
         print('ข้อความนี้มีเป็นตัวเลขทั้งหมด');
-        // print(message);
         await FirebaseFirestore.instance
             .collection('User')
             .doc(message)
@@ -151,8 +148,6 @@ class _MyAppState extends State<MyApp> {
         });
       } else {
         print('ข้อความนี้เป็นตัวอักษร');
-        print('1');
-        print(message);
         await FirebaseFirestore.instance
             .collection('User')
             .where('Username', isEqualTo: message)
@@ -163,7 +158,6 @@ class _MyAppState extends State<MyApp> {
               (doc) async {
                 Map<String, dynamic>? dataMap =
                     doc.data() as Map<String, dynamic>?;
-                // print(dataMap!['UserAppointment'].length.toString());
                 await userController.updateUserDataUsername(dataMap);
                 // dataMap!['Level'] == 'Employee'
                 //     ? await FirebaseFirestore.instance
@@ -177,7 +171,6 @@ class _MyAppState extends State<MyApp> {
                 //           await userController.updateEmployeeData(value);
                 //         },
                 //       )
-                //     : print(dataMap['Level']);
 
                 await messaging.requestPermission();
               },
@@ -203,10 +196,6 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
     } finally {
       if (userData!.isNotEmpty) {
-        print('LOAD DATA CONPLETE IN MYAPP');
-        // print(userData!.isNotEmpty);
-        // print('LOAD DATA CONPLETE IN MYAPP');
-        // print('is load in muapp');
         if (mounted) {
           setState(() {
             isLoading = false;
@@ -218,10 +207,6 @@ class _MyAppState extends State<MyApp> {
             isLoading = false;
           });
         }
-        print('LOAD DATA CONPLETE IN MYAPP');
-        // print(userData!.isNotEmpty);
-        // print('LOAD DATA CONPLETE IN MYAPP');
-        // print('is load in muapp');
       }
     }
   }
@@ -238,9 +223,6 @@ class _MyAppState extends State<MyApp> {
 
     // ?.pushNamed('/deeplink', arguments: {'ref': widget.initialRoute});
 
-    // print('initstate');
-    // print(widget.initialRoute);
-    // print(widget.initialRouteArgs);
 
     // WidgetsBinding.instance?.addPostFrameCallback((_) {
     //   // ให้เรียก pushNamed ใน addPostFrameCallback เพื่อให้ build กำลังจะเสร็จสิ้น
@@ -261,7 +243,8 @@ class _MyAppState extends State<MyApp> {
         isLoading = true;
       });
 
-      String versionNow = '1.15';
+      String versionNow = '1.14';
+      // String versionNow = '1.14';
 
       print(versionNow);
 
@@ -277,7 +260,6 @@ class _MyAppState extends State<MyApp> {
           final Map<String, dynamic> employeeMap =
               value.data() as Map<String, dynamic>;
 
-          print(employeeMap['Version']);
           if (employeeMap['Version'] != versionNow) {
             print('version ไม่ตรง');
             checkVersion = false;
@@ -309,7 +291,6 @@ class _MyAppState extends State<MyApp> {
           .get()
           .then((QuerySnapshot<Map<String, dynamic>>? querySnapshot) async {
         await getProductController.updateProcutData(querySnapshot);
-        print('finish product');
 
         // List<Map<String, dynamic>> list = [];
 
@@ -320,14 +301,8 @@ class _MyAppState extends State<MyApp> {
         //   list.add(currentData);
         // });
 
-        // print('.....................................................');
-        // print('.....................................................');
-        // print('.....................................................');
-        // print('.....................................................');
-        // print(list.length);
 
         // list.removeWhere((map) => map['CONVERT_RATIO'] != 1);
-        // print(list.length);
 
         // for (int i = 0; i < list.length; i++) {
         //   try {
@@ -2405,9 +2380,7 @@ class _MyAppState extends State<MyApp> {
                 // },
                 navigatorKey: navigatorKey,
                 onGenerateRoute: (settings) {
-                  print('1123243432');
                   if (settings.name == '/deeplink') {
-                    print('hhhhhhh');
                     // print(settings.name);
                     // print(settings.arguments);
 

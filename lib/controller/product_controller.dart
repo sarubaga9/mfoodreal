@@ -27,8 +27,6 @@ class ProductController extends GetxController {
 
         // list.add(value);
       });
-      // print('Product');
-      // print(list.length);
     }
   }
 

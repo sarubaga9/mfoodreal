@@ -356,8 +356,8 @@ class _A1601CustomerWaitOrderState extends State<A1601CustomerWaitOrder> {
                               0.0, 10.0, 0.0, 0.0),
                           child: CustomerList(
                               status: widget.status,
-                              dataOrderList: widget.dataOrderList,
-                              dataOrderListTeam: widget.dataOrderListTeam,
+                              // dataOrderList: widget.dataOrderList,
+                              // dataOrderListTeam: widget.dataOrderListTeam,
                               ),
                         ),
                       ),

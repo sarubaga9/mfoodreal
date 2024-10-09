@@ -62,7 +62,8 @@ void main() async {
   print("Initial Customer Type: ${AppSettings.customerType}");
 
   // ทดสอบการเปลี่ยนค่าเป็น Test
-  AppSettings.customerType = CustomerType.Real;
+  //AppSettings.customerType = CustomerType.Test;
+   AppSettings.customerType = CustomerType.Real;
 
   print("Updated Customer Type: ${AppSettings.customerType}");
 
